@@ -1,25 +1,63 @@
 <template>
   <div class="app">
     <nav class="nav">
-      <router-link to="/" class="nav-logo">
-        <span class="logo-text">VERSA</span>
-        <span class="logo-subtext">Spotting</span>
-      </router-link>
-      <div class="nav-links">
-        <router-link to="/" class="nav-link">Home</router-link>
-        <router-link to="/portfolio" class="nav-link">Portfolio</router-link>
-        <router-link to="/contact" class="nav-link">Contact</router-link>
+      <div class="nav-container">
+        <router-link to="/" class="nav-logo">
+          <span class="logo-text">VERSA</span>
+          <span class="logo-subtext">Spotting</span>
+        </router-link>
+        
+        <div class="nav-links">
+          <router-link to="/" class="nav-link">
+            <span class="link-text">Home</span>
+            <span class="link-icon">
+              <font-awesome-icon :icon="['fas', 'home']" />
+            </span>
+          </router-link>
+          <router-link to="/portfolio" class="nav-link">
+            <span class="link-text">Portfolio</span>
+            <span class="link-icon">
+              <font-awesome-icon :icon="['fas', 'images']" />
+            </span>
+          </router-link>
+          <router-link to="/contact" class="nav-link">
+            <span class="link-text">Contact</span>
+            <span class="link-icon">
+              <font-awesome-icon :icon="['fas', 'envelope']" />
+            </span>
+          </router-link>
+        </div>
+
+        <button class="mobile-menu-btn" @click="toggleMobileMenu">
+          <span class="menu-icon">
+            <font-awesome-icon :icon="['fas', 'bars']" />
+          </span>
+        </button>
       </div>
-      <button class="mobile-menu-btn" @click="toggleMobileMenu">
-        <font-awesome-icon :icon="['fas', 'bars']" />
-      </button>
     </nav>
 
     <div class="mobile-menu" :class="{ 'is-open': isMobileMenuOpen }">
-      <button class="close-btn" @click="toggleMobileMenu">×</button>
-      <router-link to="/" class="mobile-link" @click="toggleMobileMenu">Home</router-link>
-      <router-link to="/portfolio" class="mobile-link" @click="toggleMobileMenu">Portfolio</router-link>
-      <router-link to="/contact" class="mobile-link" @click="toggleMobileMenu">Contact</router-link>
+      <div class="mobile-menu-header">
+        <router-link to="/" class="mobile-logo" @click="toggleMobileMenu">
+          <span class="logo-text">VERSA</span>
+          <span class="logo-subtext">Spotting</span>
+        </router-link>
+        <button class="close-btn" @click="toggleMobileMenu">×</button>
+      </div>
+      <div class="mobile-links">
+        <router-link to="/" class="mobile-link" @click="toggleMobileMenu">
+          <font-awesome-icon :icon="['fas', 'home']" />
+          <span>Home</span>
+        </router-link>
+        <router-link to="/portfolio" class="mobile-link" @click="toggleMobileMenu">
+          <font-awesome-icon :icon="['fas', 'images']" />
+          <span>Portfolio</span>
+        </router-link>
+        <router-link to="/contact" class="mobile-link" @click="toggleMobileMenu">
+          <font-awesome-icon :icon="['fas', 'envelope']" />
+          <span>Contact</span>
+        </router-link>
+      </div>
     </div>
 
     <main class="main-content">
@@ -151,17 +189,24 @@ body {
 
 /* Navigation */
 .nav {
-  background-color: var(--dark);
-  padding: var(--spacing-md) var(--spacing-xl);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  background-color: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   z-index: 1000;
-  box-shadow: var(--shadow-lg);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.nav-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-md) var(--spacing-xl);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .nav-logo {
@@ -170,21 +215,53 @@ body {
   text-decoration: none;
   color: var(--white);
   font-weight: 700;
+  transition: var(--transition);
+  position: relative;
+  padding: var(--spacing-sm) 0;
+}
+
+.nav-logo::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+  transition: var(--transition);
+}
+
+.nav-logo:hover::after {
+  width: 100%;
 }
 
 .logo-text {
   font-size: 1.5rem;
   line-height: 1;
+  background: linear-gradient(45deg, var(--white), var(--primary-color));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transition: var(--transition);
 }
 
 .logo-subtext {
   font-size: 0.9rem;
   opacity: 0.8;
+  transition: var(--transition);
+}
+
+.nav-logo:hover .logo-text {
+  transform: translateY(-2px);
+}
+
+.nav-logo:hover .logo-subtext {
+  opacity: 1;
 }
 
 .nav-links {
   display: flex;
   gap: var(--spacing-xl);
+  align-items: center;
 }
 
 .nav-link {
@@ -193,12 +270,34 @@ body {
   font-weight: 500;
   transition: var(--transition);
   position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.nav-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(132, 155, 85, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.nav-link:hover::before {
+  transform: translateX(100%);
 }
 
 .nav-link::after {
   content: '';
   position: absolute;
-  bottom: -4px;
+  bottom: 0;
   left: 0;
   width: 0;
   height: 2px;
@@ -210,6 +309,17 @@ body {
   width: 100%;
 }
 
+.link-icon {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: var(--transition);
+}
+
+.nav-link:hover .link-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 .mobile-menu-btn {
   display: none;
   background: none;
@@ -217,6 +327,14 @@ body {
   color: var(--white);
   font-size: 1.5rem;
   cursor: pointer;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: var(--transition);
+}
+
+.mobile-menu-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: rotate(90deg);
 }
 
 .mobile-menu {
@@ -225,12 +343,10 @@ body {
   right: -100%;
   width: 100%;
   height: 100vh;
-  background-color: var(--dark);
+  background-color: rgba(0, 0, 0, 0.95);
+  backdrop-filter: blur(10px);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: var(--spacing-xl);
   transition: var(--transition);
   z-index: 999;
 }
@@ -239,32 +355,61 @@ body {
   right: 0;
 }
 
+.mobile-menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mobile-logo {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--white);
+  font-weight: 700;
+}
+
+.mobile-links {
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-xl);
+  gap: var(--spacing-lg);
+}
+
 .mobile-link {
   color: var(--white);
   text-decoration: none;
   font-size: 1.5rem;
   font-weight: 500;
   transition: var(--transition);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
 }
 
 .mobile-link:hover {
-  color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: translateX(10px);
 }
 
 .close-btn {
-  position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-xl);
   background: none;
   border: none;
   color: var(--white);
   font-size: 2rem;
   cursor: pointer;
   transition: var(--transition);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
 }
 
 .close-btn:hover {
-  color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.1);
+  transform: rotate(90deg);
 }
 
 /* Main Content */
@@ -339,6 +484,10 @@ body {
 
   .mobile-menu-btn {
     display: block;
+  }
+
+  .nav-container {
+    padding: var(--spacing-sm) var(--spacing-md);
   }
 
   .footer-content {
