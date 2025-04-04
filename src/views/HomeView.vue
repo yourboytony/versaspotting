@@ -60,7 +60,7 @@ const features = [
   },
   {
     title: 'Spotting Community',
-    description: 'Connecting aviation enthusiasts through our shared passion for aircraft spotting',
+    description: 'Connecting aviation enthusiasts through our shared passion for aircraft',
     icon: ['fas', 'users']
   },
   {
