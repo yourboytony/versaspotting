@@ -27,7 +27,60 @@
           <font-awesome-icon :icon="['fas', 'users']" />
         </div>
         <h2>Our Team</h2>
-        <p>Our team consists of dedicated aviation photographers and spotters from around the world. Each member brings their unique perspective and expertise to create a diverse and vibrant community.</p>
+        <p>Meet the passionate individuals behind VERSA Spotting who make our vision a reality.</p>
+        
+        <div class="team-grid">
+          <div class="team-member">
+            <div class="member-photo">
+              <span class="emoji">📸</span>
+            </div>
+            <h3>Anthony Nigro</h3>
+            <p class="role">Founder & Lead Photographer</p>
+            <p class="bio">With over a decade of aviation photography experience, Anthony leads our team with his expertise and passion for capturing the perfect shot.</p>
+            <div class="social-links">
+              <a href="https://instagram.com/yourboytony" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'instagram']" />
+              </a>
+              <a href="https://twitter.com/yourboytony" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'twitter']" />
+              </a>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <div class="member-photo">
+              <span class="emoji">📊</span>
+            </div>
+            <h3>Sarah Chen</h3>
+            <p class="role">Operations Manager</p>
+            <p class="bio">Sarah brings her organizational expertise to ensure smooth operations and exceptional service for our clients and community.</p>
+            <div class="social-links">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'instagram']" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'linkedin']" />
+              </a>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <div class="member-photo">
+              <span class="emoji">💻</span>
+            </div>
+            <h3>Michael Rodriguez</h3>
+            <p class="role">Technical Director</p>
+            <p class="bio">Michael oversees our technical operations and ensures our equipment and processes are always at the cutting edge.</p>
+            <div class="social-links">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'instagram']" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'linkedin']" />
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -151,6 +204,77 @@
   justify-content: center;
 }
 
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
+  margin-top: var(--spacing-xl);
+}
+
+.team-member {
+  background: var(--white);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+  transition: transform 0.3s ease;
+}
+
+.team-member:hover {
+  transform: translateY(-5px);
+}
+
+.member-photo {
+  width: 150px;
+  height: 150px;
+  margin: 0 auto var(--spacing-md);
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid var(--primary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(132, 155, 85, 0.1);
+}
+
+.emoji {
+  font-size: 4rem;
+  line-height: 1;
+}
+
+.team-member h3 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-xs);
+}
+
+.role {
+  color: var(--text-color);
+  font-weight: 500;
+  margin-bottom: var(--spacing-md);
+}
+
+.bio {
+  color: var(--text-color);
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.social-links {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.social-links a {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+.social-links a:hover {
+  color: var(--primary-light);
+}
+
 @media (max-width: 768px) {
   .about-header h1 {
     font-size: 2.5rem;
@@ -162,6 +286,10 @@
 
   .cta-buttons {
     flex-direction: column;
+  }
+
+  .team-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style> 
