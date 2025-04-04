@@ -59,7 +59,7 @@ const features = [
     icon: ['fas', 'plane']
   },
   {
-    title: 'Spotting Community',
+    title: 'Building Community',
     description: 'Connecting aviation enthusiasts through our shared passion for aircraft',
     icon: ['fas', 'users']
   },

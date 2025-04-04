@@ -10,7 +10,9 @@
         <div class="story-text">
           <h2>Our Story</h2>
           <p>VERSA Spotting Group was founded by a group of passionate aviation enthusiasts who share a common love for aircraft photography. Based at Vancouver International Airport (YVR), we capture the beauty and power of aviation through our lenses.</p>
-          <p>What started as a small group of friends sharing their spotting experiences has grown into a community of photographers dedicated to documenting the diverse aircraft that grace YVR's runways.</p>
+          <p class="about-description">
+            What started as a small group of friends sharing their aviation experiences has grown into a community of photographers dedicated to documenting the diverse aircraft found worldwide.
+          </p>
         </div>
         <div class="story-icon">
           <font-awesome-icon :icon="['fas', 'plane']" />
