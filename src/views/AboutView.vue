@@ -252,7 +252,7 @@
           </div>
           
           <div class="form-group">
-            <label for="experience">Years of experience</label>
+            <label for="experience">Years of photography experience</label>
             <select id="experience" v-model="application.experience">
               <option value="0-1">Less than 1 year</option>
               <option value="1-3">1-3 years</option>
