@@ -157,9 +157,7 @@
 }
 
 .hero-section {
-  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('@/assets/images/hero-bg.jpg');
-  background-size: cover;
-  background-position: center;
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
   height: 400px;
   display: flex;
   align-items: center;
@@ -168,6 +166,28 @@
   color: var(--white);
   margin-bottom: var(--spacing-xl);
   border-radius: var(--radius-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section::before {
+  content: '✈️';
+  position: absolute;
+  font-size: 10rem;
+  opacity: 0.1;
+  transform: rotate(-15deg);
+  top: -20px;
+  right: -20px;
+}
+
+.hero-section::after {
+  content: '📸';
+  position: absolute;
+  font-size: 10rem;
+  opacity: 0.1;
+  transform: rotate(15deg);
+  bottom: -20px;
+  left: -20px;
 }
 
 .hero-content {
