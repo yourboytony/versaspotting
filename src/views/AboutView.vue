@@ -175,7 +175,7 @@
       </div>
     </section>
 
-    <section class="join-section">
+    <section class="join-section" id="join-section">
       <h2 class="section-title">Join Our Team</h2>
       <div class="join-content">
         <div class="join-text">
@@ -185,6 +185,11 @@
           <div class="form-group">
             <label for="name">Full Name</label>
             <input type="text" id="name" v-model="application.name" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="email">Email Address</label>
+            <input type="email" id="email" v-model="application.email" required />
           </div>
           
           <div class="form-group">
@@ -204,30 +209,39 @@
           </div>
           
           <div class="form-group">
-            <label for="reason">Why do you want to join VERSA Spotting?</label>
-            <textarea id="reason" v-model="application.reason" rows="3" required></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label for="specialization">What kind of photography do you specialize in?</label>
-            <textarea id="specialization" v-model="application.specialization" rows="2" required></textarea>
-          </div>
-          
-          <div class="form-group">
-            <label>Do you want to solely be an editor?</label>
+            <label>Application Type</label>
             <div class="radio-group">
               <label class="radio-label">
-                <input type="radio" v-model="application.editorOnly" :value="true" />
-                Yes, editor only
+                <input type="radio" v-model="application.applicationType" value="photographer" checked />
+                Photographer
               </label>
               <label class="radio-label">
-                <input type="radio" v-model="application.editorOnly" :value="false" />
-                No, I want to photograph as well
+                <input type="radio" v-model="application.applicationType" value="editor" />
+                Editor
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="application.applicationType" value="both" />
+                Both
               </label>
             </div>
           </div>
           
           <div class="form-group">
+            <label for="reason">Why do you want to join VERSA Spotting?</label>
+            <textarea id="reason" v-model="application.reason" rows="3" required></textarea>
+          </div>
+          
+          <div class="form-group" v-if="application.applicationType !== 'editor'">
+            <label for="specialization">What kind of photography do you specialize in?</label>
+            <textarea id="specialization" v-model="application.specialization" rows="2" required></textarea>
+          </div>
+          
+          <div class="form-group" v-if="application.applicationType !== 'photographer'">
+            <label for="editingExperience">Describe your photo editing experience</label>
+            <textarea id="editingExperience" v-model="application.editingExperience" rows="2" required></textarea>
+          </div>
+          
+          <div class="form-group" v-if="application.applicationType !== 'editor'">
             <label for="equipment">What camera equipment do you use?</label>
             <textarea id="equipment" v-model="application.equipment" rows="2"></textarea>
           </div>
@@ -238,7 +252,7 @@
           </div>
           
           <div class="form-group">
-            <label for="experience">Years of aviation photography experience</label>
+            <label for="experience">Years of experience</label>
             <select id="experience" v-model="application.experience">
               <option value="0-1">Less than 1 year</option>
               <option value="1-3">1-3 years</option>
@@ -254,7 +268,7 @@
           
           <div v-if="showError" class="message error">
             <font-awesome-icon :icon="['fas', 'exclamation-circle']" />
-            <span>There was a problem submitting your application. Please try again.</span>
+            <span>{{ errorMessage }}</span>
           </div>
           
           <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
@@ -290,12 +304,14 @@ import { ref } from 'vue';
 // Application form data
 const application = ref({
   name: '',
+  email: '',
   age: null,
   phone: '',
   location: '',
+  applicationType: 'photographer',
   reason: '',
   specialization: '',
-  editorOnly: false,
+  editingExperience: '',
   equipment: '',
   portfolio: '',
   experience: '0-1'
@@ -304,6 +320,10 @@ const application = ref({
 const isSubmitting = ref(false);
 const showSuccess = ref(false);
 const showError = ref(false);
+const errorMessage = ref('There was a problem submitting your application. Please try again.');
+
+// Discord webhook URL
+const DISCORD_WEBHOOK_URL = 'https://discord.com/api/webhooks/1357837874380148967/iRmN80K7udwkoqwSLtQBVvVgSwobhU7tY57rCwyqtJqUkwQSITc3uqStVGffEMJaIltK';
 
 // Handle form submission
 const submitApplication = async () => {
@@ -311,28 +331,93 @@ const submitApplication = async () => {
   showError.value = false;
   
   try {
-    // Simulate API call with timeout
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    // Format the data for Discord webhook
+    const applicationTypeText = {
+      'photographer': 'Photographer',
+      'editor': 'Editor',
+      'both': 'Photographer & Editor'
+    }[application.value.applicationType];
     
-    // In a real application, you would send the data to your backend here
-    console.log('Application submitted:', application.value);
+    const embedFields = [
+      { name: 'Name', value: application.value.name, inline: true },
+      { name: 'Email', value: application.value.email, inline: true },
+      { name: 'Age', value: application.value.age.toString(), inline: true },
+      { name: 'Phone (Last 5)', value: application.value.phone, inline: true },
+      { name: 'Location', value: application.value.location, inline: true },
+      { name: 'Application Type', value: applicationTypeText, inline: true },
+      { name: 'Experience', value: application.value.experience, inline: true },
+      { name: 'Reason for Joining', value: application.value.reason || 'N/A' },
+    ];
+    
+    // Add conditional fields based on application type
+    if (application.value.applicationType !== 'editor') {
+      embedFields.push({ name: 'Photography Specialization', value: application.value.specialization || 'N/A' });
+      embedFields.push({ name: 'Equipment', value: application.value.equipment || 'N/A' });
+    }
+    
+    if (application.value.applicationType !== 'photographer') {
+      embedFields.push({ name: 'Editing Experience', value: application.value.editingExperience || 'N/A' });
+    }
+    
+    if (application.value.portfolio) {
+      embedFields.push({ name: 'Portfolio', value: application.value.portfolio });
+    }
+    
+    const webhookData = {
+      content: `New ${applicationTypeText} Application Received!`,
+      embeds: [
+        {
+          title: `Application from ${application.value.name}`,
+          color: 8767271, // VERSA green color in decimal
+          fields: embedFields,
+          timestamp: new Date().toISOString()
+        }
+      ]
+    };
+    
+    // Send to Discord webhook
+    const response = await fetch(DISCORD_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(webhookData),
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Discord webhook error: ${response.status}`);
+    }
+    
+    // Save to localStorage for admin page access
+    const applications = JSON.parse(localStorage.getItem('versaApplications') || '[]');
+    const newApplication = {
+      ...application.value,
+      id: Date.now().toString(),
+      date: new Date().toISOString(),
+      status: 'pending'
+    };
+    applications.push(newApplication);
+    localStorage.setItem('versaApplications', JSON.stringify(applications));
     
     showSuccess.value = true;
     // Reset form
     application.value = {
       name: '',
+      email: '',
       age: null,
       phone: '',
       location: '',
+      applicationType: 'photographer',
       reason: '',
       specialization: '',
-      editorOnly: false,
+      editingExperience: '',
       equipment: '',
       portfolio: '',
       experience: '0-1'
     };
   } catch (error) {
     console.error('Error submitting application:', error);
+    errorMessage.value = `Error: ${error.message || 'Failed to submit application'}`;
     showError.value = true;
   } finally {
     isSubmitting.value = false;

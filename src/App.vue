@@ -1,5 +1,15 @@
 <template>
   <div class="app">
+    <div v-if="showAnnouncement" class="announcement-banner">
+      <div class="announcement-content">
+        <font-awesome-icon :icon="['fas', 'bullhorn']" class="announcement-icon" />
+        <span>We're looking for editors to join our team! <router-link to="/about#join-section" class="announcement-link">Apply now</router-link></span>
+      </div>
+      <button @click="closeAnnouncement" class="announcement-close">
+        <font-awesome-icon :icon="['fas', 'times']" />
+      </button>
+    </div>
+    
     <nav class="nav">
       <div class="nav-container">
         <router-link to="/" class="nav-logo">
@@ -104,7 +114,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import FeedbackPopup from '@/components/FeedbackPopup.vue';
 import SpeedInsights from '@/components/SpeedInsights.vue';
 
@@ -112,7 +122,31 @@ const isMobileMenuOpen = ref(false);
 
 const toggleMobileMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value;
+  if (isMobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.overflow = '';
+  }
 };
+
+// Announcement banner
+const showAnnouncement = ref(true);
+
+const closeAnnouncement = () => {
+  showAnnouncement.value = false;
+  localStorage.setItem('announcementClosed', Date.now().toString());
+};
+
+onMounted(() => {
+  const lastClosed = localStorage.getItem('announcementClosed');
+  if (lastClosed) {
+    // Show again after 7 days
+    const sevenDaysInMs = 7 * 24 * 60 * 60 * 1000;
+    if (Date.now() - parseInt(lastClosed) < sevenDaysInMs) {
+      showAnnouncement.value = false;
+    }
+  }
+});
 </script>
 
 <style>
@@ -532,5 +566,70 @@ body {
 .page-enter-from,
 .page-leave-to {
   opacity: 0;
+}
+
+/* Announcement Banner */
+.announcement-banner {
+  position: relative;
+  background-color: var(--primary-color);
+  color: var(--white);
+  padding: var(--spacing-sm) var(--spacing-lg);
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-sm);
+  z-index: 1001;
+}
+
+.announcement-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-weight: 500;
+}
+
+.announcement-icon {
+  font-size: 1.2rem;
+}
+
+.announcement-link {
+  color: var(--white);
+  text-decoration: underline;
+  font-weight: 700;
+  transition: var(--transition);
+}
+
+.announcement-link:hover {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.announcement-close {
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  transition: var(--transition);
+  position: absolute;
+  right: var(--spacing-md);
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.announcement-close:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+@media (max-width: 768px) {
+  .announcement-banner {
+    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) var(--spacing-sm);
+  }
+  
+  .announcement-content {
+    font-size: 0.9rem;
+  }
 }
 </style> 
