@@ -93,9 +93,6 @@
               <a href="https://instagram.com/yourboytony" target="_blank" rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'instagram']" />
               </a>
-              <a href="https://twitter.com/yourboytony" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'twitter']" />
-              </a>
             </div>
           </div>
         </div>
@@ -178,6 +175,96 @@
       </div>
     </section>
 
+    <section class="join-section">
+      <h2 class="section-title">Join Our Team</h2>
+      <div class="join-content">
+        <div class="join-text">
+          <p>Interested in becoming part of the VERSA Spotting team? We're always looking for passionate aviation photographers to join our community. Fill out the application form and we'll get back to you.</p>
+        </div>
+        <form class="application-form" @submit.prevent="submitApplication">
+          <div class="form-group">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" v-model="application.name" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="age">How old are you?</label>
+            <input type="number" id="age" v-model="application.age" min="13" max="100" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="phone">Last 5 digits of your phone #</label>
+            <input type="text" id="phone" v-model="application.phone" pattern="[0-9]{5}" maxlength="5" required />
+            <small>For identification purposes only</small>
+          </div>
+          
+          <div class="form-group">
+            <label for="location">Where are you located?</label>
+            <input type="text" id="location" v-model="application.location" required />
+          </div>
+          
+          <div class="form-group">
+            <label for="reason">Why do you want to join VERSA Spotting?</label>
+            <textarea id="reason" v-model="application.reason" rows="3" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="specialization">What kind of photography do you specialize in?</label>
+            <textarea id="specialization" v-model="application.specialization" rows="2" required></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label>Do you want to solely be an editor?</label>
+            <div class="radio-group">
+              <label class="radio-label">
+                <input type="radio" v-model="application.editorOnly" :value="true" />
+                Yes, editor only
+              </label>
+              <label class="radio-label">
+                <input type="radio" v-model="application.editorOnly" :value="false" />
+                No, I want to photograph as well
+              </label>
+            </div>
+          </div>
+          
+          <div class="form-group">
+            <label for="equipment">What camera equipment do you use?</label>
+            <textarea id="equipment" v-model="application.equipment" rows="2"></textarea>
+          </div>
+          
+          <div class="form-group">
+            <label for="portfolio">Link to your portfolio or social media</label>
+            <input type="url" id="portfolio" v-model="application.portfolio" placeholder="https://" />
+          </div>
+          
+          <div class="form-group">
+            <label for="experience">Years of aviation photography experience</label>
+            <select id="experience" v-model="application.experience">
+              <option value="0-1">Less than 1 year</option>
+              <option value="1-3">1-3 years</option>
+              <option value="3-5">3-5 years</option>
+              <option value="5+">5+ years</option>
+            </select>
+          </div>
+          
+          <div v-if="showSuccess" class="message success">
+            <font-awesome-icon :icon="['fas', 'check-circle']" />
+            <span>Application submitted successfully! We'll be in touch soon.</span>
+          </div>
+          
+          <div v-if="showError" class="message error">
+            <font-awesome-icon :icon="['fas', 'exclamation-circle']" />
+            <span>There was a problem submitting your application. Please try again.</span>
+          </div>
+          
+          <button type="submit" class="btn btn-primary" :disabled="isSubmitting">
+            <span v-if="isSubmitting">Submitting...</span>
+            <span v-else>Submit Application</span>
+          </button>
+        </form>
+      </div>
+    </section>
+
     <section class="cta-section">
       <div class="cta-content">
         <h2>Ready to Join Our Journey?</h2>
@@ -198,7 +285,59 @@
 </template>
 
 <script setup>
-// Component logic here
+import { ref } from 'vue';
+
+// Application form data
+const application = ref({
+  name: '',
+  age: null,
+  phone: '',
+  location: '',
+  reason: '',
+  specialization: '',
+  editorOnly: false,
+  equipment: '',
+  portfolio: '',
+  experience: '0-1'
+});
+
+const isSubmitting = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+
+// Handle form submission
+const submitApplication = async () => {
+  isSubmitting.value = true;
+  showError.value = false;
+  
+  try {
+    // Simulate API call with timeout
+    await new Promise(resolve => setTimeout(resolve, 1500));
+    
+    // In a real application, you would send the data to your backend here
+    console.log('Application submitted:', application.value);
+    
+    showSuccess.value = true;
+    // Reset form
+    application.value = {
+      name: '',
+      age: null,
+      phone: '',
+      location: '',
+      reason: '',
+      specialization: '',
+      editorOnly: false,
+      equipment: '',
+      portfolio: '',
+      experience: '0-1'
+    };
+  } catch (error) {
+    console.error('Error submitting application:', error);
+    showError.value = true;
+  } finally {
+    isSubmitting.value = false;
+  }
+};
 </script>
 
 <style scoped>
@@ -568,6 +707,126 @@
   color: var(--primary-color);
 }
 
+/* Join Section */
+.join-section {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+}
+
+.join-section .section-title {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.join-section .section-title::after {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.join-content {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.join-text {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+}
+
+.join-text p {
+  color: var(--white);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  line-height: 1.6;
+}
+
+.application-form {
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-group label {
+  display: block;
+  color: var(--white);
+  margin-bottom: var(--spacing-sm);
+  font-weight: 500;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+}
+
+.form-group input,
+.form-group textarea,
+.form-group select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background-color: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  color: var(--white);
+  transition: var(--transition);
+  font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+.form-group small {
+  display: block;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8rem;
+  margin-top: var(--spacing-xs);
+}
+
+.radio-group {
+  display: flex;
+  gap: var(--spacing-lg);
+  margin-top: var(--spacing-xs);
+}
+
+.radio-label {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  cursor: pointer;
+  font-weight: normal;
+}
+
+.radio-label input {
+  width: auto;
+  margin: 0;
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.success {
+  background-color: rgba(39, 174, 96, 0.2);
+  border: 1px solid rgba(39, 174, 96, 0.4);
+  color: #2ecc71;
+}
+
+.error {
+  background-color: rgba(231, 76, 60, 0.2);
+  border: 1px solid rgba(231, 76, 60, 0.4);
+  color: #e74c3c;
+}
+
 /* CTA Section */
 .cta-section {
   background: rgba(0, 0, 0, 0.5);
@@ -739,6 +998,15 @@
   
   .cta-content h2 {
     font-size: 1.8rem;
+  }
+
+  .radio-group {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+  
+  .application-form {
+    padding: var(--spacing-md);
   }
 }
 </style> 
