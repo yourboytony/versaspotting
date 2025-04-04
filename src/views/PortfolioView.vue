@@ -234,6 +234,7 @@ const formatDate = (dateString) => {
   font-size: 1.5rem;
   cursor: pointer;
   transition: var(--transition);
+  padding: var(--spacing-sm);
 }
 
 .close-btn:hover {
@@ -391,5 +392,23 @@ const formatDate = (dateString) => {
 .photo-details .photo-date {
   font-size: 0.9rem;
   opacity: 0.7;
+}
+
+.photo-modal-content .close-btn {
+  position: absolute;
+  top: -40px;
+  right: 0;
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: var(--spacing-sm);
+}
+
+.photo-modal-content .close-btn:hover {
+  color: var(--primary-color);
+  transform: rotate(90deg);
 }
 </style> 
