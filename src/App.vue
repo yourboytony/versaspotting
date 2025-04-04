@@ -58,12 +58,14 @@
     </footer>
 
     <FeedbackPopup />
+    <SpeedInsights />
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
 import FeedbackPopup from '@/components/FeedbackPopup.vue';
+import SpeedInsights from '@/components/SpeedInsights.vue';
 
 const isMobileMenuOpen = ref(false);
 
