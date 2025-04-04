@@ -34,7 +34,7 @@
           </div>
           <div v-else class="photos-grid">
             <div v-for="photo in selectedProfile.photos" :key="photo.id" class="photo-item">
-              <img :src="photo.url" :alt="photo.title" @click="openPhoto(photo)" />
+              <img :src="photo.imageUrl" :alt="photo.title" @click="openPhoto(photo)" />
               <div class="photo-info">
                 <h3>{{ photo.title }}</h3>
                 <p>{{ photo.description }}</p>
@@ -52,7 +52,7 @@
         <button class="close-btn" @click="closePhotoModal">
           <font-awesome-icon :icon="['fas', 'times']" />
         </button>
-        <img :src="selectedPhoto.url" :alt="selectedPhoto.title" />
+        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title" />
         <div class="photo-details">
           <h3>{{ selectedPhoto.title }}</h3>
           <p>{{ selectedPhoto.description }}</p>
