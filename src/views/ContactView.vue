@@ -34,7 +34,7 @@
         </div>
       </div>
 
-      <form class="contact-form" @submit.prevent="submitForm">
+      <form class="contact-form" @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="name">Name</label>
           <input type="text" id="name" v-model="form.name" required />
@@ -59,6 +59,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import { addContactSubmission } from '@/data/database';
 
 const form = ref({
   name: '',
@@ -67,10 +68,45 @@ const form = ref({
   message: ''
 });
 
-const submitForm = () => {
-  // Here you would typically send the form data to your backend
-  console.log('Form submitted:', form.value);
-  // Reset form
+const handleSubmit = async () => {
+  if (!validateForm()) return;
+  
+  try {
+    const submissionData = {
+      name: form.value.name,
+      email: form.value.email,
+      subject: form.value.subject,
+      message: form.value.message
+    };
+    
+    addContactSubmission(submissionData);
+    
+    // Show success message
+    showSuccessMessage();
+    
+    // Reset form
+    resetForm();
+  } catch (error) {
+    console.error('Error submitting form:', error);
+    // Show error message
+    showErrorMessage();
+  }
+};
+
+const validateForm = () => {
+  // Implement form validation logic here
+  return true; // Placeholder return, actual implementation needed
+};
+
+const showSuccessMessage = () => {
+  // Implement logic to show success message to user
+};
+
+const showErrorMessage = () => {
+  // Implement logic to show error message to user
+};
+
+const resetForm = () => {
   form.value = {
     name: '',
     email: '',

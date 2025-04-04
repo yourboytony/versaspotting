@@ -81,5 +81,37 @@ export const addPhotoToProfile = (profileId, photoData) => {
   return null;
 };
 
+// Initialize contact form submissions in localStorage if not present
+if (!localStorage.getItem('contactSubmissions')) {
+  localStorage.setItem('contactSubmissions', JSON.stringify([]));
+}
+
+// Function to get all contact form submissions
+export function getAllContactSubmissions() {
+  const submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
+  return submissions;
+}
+
+// Function to add a new contact form submission
+export function addContactSubmission(submissionData) {
+  const submissions = getAllContactSubmissions();
+  const newSubmission = {
+    id: Date.now().toString(),
+    ...submissionData,
+    timestamp: new Date().toISOString()
+  };
+  submissions.push(newSubmission);
+  localStorage.setItem('contactSubmissions', JSON.stringify(submissions));
+  return newSubmission;
+}
+
+// Function to delete a contact form submission
+export function deleteContactSubmission(id) {
+  const submissions = getAllContactSubmissions();
+  const filteredSubmissions = submissions.filter(submission => submission.id !== id);
+  localStorage.setItem('contactSubmissions', JSON.stringify(filteredSubmissions));
+  return true;
+}
+
 // Initialize the database
 initializeProfiles(); 

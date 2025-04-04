@@ -5,6 +5,7 @@ import AboutView from '../views/AboutView.vue'
 import ProfilePortfolio from '../views/ProfilePortfolio.vue'
 import ContactView from '../views/ContactView.vue'
 import AddPhotoView from '../views/AddPhotoView.vue'
+import ContactAdminView from '@/views/ContactAdminView.vue'
 
 const routes = [
   {
@@ -52,6 +53,11 @@ const routes = [
     meta: {
       title: 'Add Photo - VERSA Spotting'
     }
+  },
+  {
+    path: '/contactadmin',
+    name: 'contactadmin',
+    component: ContactAdminView
   },
   {
     path: '/:pathMatch(.*)*',
