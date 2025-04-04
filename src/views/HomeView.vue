@@ -6,7 +6,7 @@
           <span class="typing">{{ typedText }}</span>
           <span class="cursor">|</span>
         </h1>
-        <p class="subtitle">Capturing the beauty of aviation at YVR</p>
+        <p class="subtitle">Capturing the beauty of aviation worldwide</p>
         <div class="hero-buttons">
           <router-link to="/portfolio" class="btn btn-primary">View Portfolio</router-link>
           <router-link to="/contact" class="btn btn-secondary">Contact Us</router-link>
@@ -54,18 +54,18 @@ let currentIndex = 0;
 
 const features = [
   {
-    title: 'YVR Aviation Photography',
-    description: 'Specializing in capturing the beauty and power of aircraft at Vancouver International Airport',
+    title: 'Aviation Photography',
+    description: 'Specializing in capturing the beauty and power of aircraft at airports worldwide',
     icon: ['fas', 'plane']
   },
   {
-    title: 'YVR Spotting Community',
-    description: 'Connecting aviation enthusiasts through our shared passion for YVR spotting',
+    title: 'Spotting Community',
+    description: 'Connecting aviation enthusiasts through our shared passion for aircraft spotting',
     icon: ['fas', 'users']
   },
   {
-    title: 'YVR Spotting Locations',
-    description: 'Showcasing the best aircraft spotting locations at our home field, YVR',
+    title: 'Spotting Locations',
+    description: 'Showcasing the best aircraft spotting locations at airports around the world',
     icon: ['fas', 'map-marker-alt']
   }
 ];
