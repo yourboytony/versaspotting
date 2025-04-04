@@ -1,4 +1,5 @@
-export const profiles = [
+// Initial profiles data
+const initialProfiles = [
   {
     id: 1,
     name: 'Anthony Nigro',
@@ -41,25 +42,45 @@ export const profiles = [
   }
 ];
 
-// Function to add a photo to a profile
-export const addPhotoToProfile = (profileId, photoData) => {
-  const profile = profiles.find(p => p.id === profileId);
-  if (profile) {
-    profile.photos.push({
-      id: Date.now(),
-      ...photoData,
-      date: new Date().toISOString()
-    });
+// Initialize profiles in localStorage if not already present
+const initializeProfiles = () => {
+  if (!localStorage.getItem('versaProfiles')) {
+    localStorage.setItem('versaProfiles', JSON.stringify(initialProfiles));
   }
 };
 
-// Function to get all photos for a profile
+// Get all profiles
+export const getAllProfiles = () => {
+  initializeProfiles();
+  return JSON.parse(localStorage.getItem('versaProfiles'));
+};
+
+// Get photos for a specific profile
 export const getProfilePhotos = (profileId) => {
+  const profiles = getAllProfiles();
   const profile = profiles.find(p => p.id === profileId);
   return profile ? profile.photos : [];
 };
 
-// Function to get all profiles
-export const getAllProfiles = () => {
-  return profiles;
-}; 
+// Add a photo to a profile
+export const addPhotoToProfile = (profileId, photoData) => {
+  const profiles = getAllProfiles();
+  const profileIndex = profiles.findIndex(p => p.id === profileId);
+  
+  if (profileIndex !== -1) {
+    const newPhoto = {
+      id: Date.now(),
+      ...photoData,
+      date: new Date().toISOString()
+    };
+    
+    profiles[profileIndex].photos.push(newPhoto);
+    localStorage.setItem('versaProfiles', JSON.stringify(profiles));
+    return newPhoto;
+  }
+  
+  return null;
+};
+
+// Initialize the database
+initializeProfiles(); 
