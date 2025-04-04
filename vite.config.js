@@ -13,7 +13,7 @@ export default defineConfig({
     port: 3000,
     open: true
   },
-  base: '/versaspotting/',
+  base: '/',
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
