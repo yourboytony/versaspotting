@@ -55,7 +55,7 @@ let currentIndex = 0;
 const features = [
   {
     title: 'Aviation Photography',
-    description: 'Specializing in capturing the beauty and power of aircraft at airports worldwide',
+    description: 'Capturing the beauty and power',
     icon: ['fas', 'plane']
   },
   {
