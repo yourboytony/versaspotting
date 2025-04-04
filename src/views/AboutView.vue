@@ -7,63 +7,50 @@
 
     <section class="about-content">
       <div class="about-section">
-        <div class="about-text">
-          <h2>Our Story</h2>
-          <p>VERSA Spotting was founded by a group of passionate aviation enthusiasts dedicated to capturing the beauty and power of aircraft. What started as a hobby has grown into a community of photographers and spotters who share a common love for aviation.</p>
-          <p>Based at Vancouver International Airport (YVR), we've expanded our reach to document aircraft from around the world, creating a comprehensive portfolio of aviation photography.</p>
+        <div class="section-icon">
+          <font-awesome-icon :icon="['fas', 'history']" />
         </div>
-        <div class="about-image">
-          <img src="@/assets/about-team.jpg" alt="VERSA Spotting Team" />
-        </div>
+        <h2>Our Story</h2>
+        <p>VERSA Spotting was founded by a group of passionate aviation enthusiasts who share a common love for aircraft photography. What started as a hobby quickly evolved into a community of like-minded individuals dedicated to capturing the beauty of aviation.</p>
       </div>
 
       <div class="about-section">
-        <div class="about-text">
-          <h2>Our Mission</h2>
-          <p>Our mission is to:</p>
-          <ul>
-            <li>Capture stunning aviation moments</li>
-            <li>Build a community of aviation enthusiasts</li>
-            <li>Document the evolution of aviation</li>
-            <li>Share our passion with the world</li>
-          </ul>
+        <div class="section-icon">
+          <font-awesome-icon :icon="['fas', 'bullseye']" />
         </div>
-        <div class="about-image">
-          <img src="@/assets/about-mission.jpg" alt="Our Mission" />
-        </div>
+        <h2>Our Mission</h2>
+        <p>Our mission is to showcase the beauty of aviation through high-quality photography while building a community of aviation enthusiasts. We aim to document and share the unique moments that make aviation photography so special.</p>
       </div>
 
       <div class="about-section">
-        <div class="about-text">
-          <h2>Our Team</h2>
-          <p>Our team consists of experienced photographers and aviation enthusiasts who bring their unique perspectives to every shot. Each member specializes in different aspects of aviation photography, from commercial airliners to military aircraft.</p>
-          <p>We're constantly learning and improving our craft, ensuring that we deliver the highest quality content to our community.</p>
+        <div class="section-icon">
+          <font-awesome-icon :icon="['fas', 'users']" />
         </div>
-        <div class="about-image">
-          <img src="@/assets/about-team-work.jpg" alt="Our Team at Work" />
-        </div>
+        <h2>Our Team</h2>
+        <p>Our team consists of dedicated aviation photographers and spotters from around the world. Each member brings their unique perspective and expertise to create a diverse and vibrant community.</p>
       </div>
+    </section>
 
-      <div class="cta-section">
-        <h2>Join Our Community</h2>
-        <p>Whether you're a seasoned spotter or just starting out, we welcome you to join our community and share in our passion for aviation photography.</p>
-        <div class="cta-buttons">
-          <router-link to="/contact" class="btn btn-primary">Contact Us</router-link>
-          <router-link to="/portfolio" class="btn btn-secondary">View Our Work</router-link>
-        </div>
+    <section class="cta-section">
+      <h2>Join Our Community</h2>
+      <p>Whether you're an experienced aviation photographer or just starting out, we welcome you to join our community and share your passion for aviation.</p>
+      <div class="cta-buttons">
+        <router-link to="/contact" class="btn btn-primary">Get in Touch</router-link>
+        <router-link to="/portfolio" class="btn btn-outline">View Portfolio</router-link>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-// Component logic can be added here if needed
+// No script needed for this component
 </script>
 
 <style scoped>
 .about {
   min-height: 100vh;
   padding: var(--spacing-xl) 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 .about-header {
@@ -89,84 +76,70 @@
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: var(--spacing-xl);
 }
 
 .about-section {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-xl);
-  margin-bottom: var(--spacing-xl);
-  align-items: center;
-}
-
-.about-text {
-  padding: var(--spacing-lg);
-  background: rgba(0, 0, 0, 0.4);
+  background-color: rgba(0, 0, 0, 0.4);
   border-radius: var(--radius-lg);
+  padding: var(--spacing-xl);
+  text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: var(--transition);
 }
 
-.about-text h2 {
-  color: var(--white);
+.about-section:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  border-color: var(--primary-color);
+}
+
+.section-icon {
+  width: 80px;
+  height: 80px;
+  background-color: rgba(132, 155, 85, 0.2);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--spacing-md);
   font-size: 2rem;
+  color: var(--primary-color);
+}
+
+.about-section h2 {
+  font-size: 1.5rem;
+  color: var(--white);
   margin-bottom: var(--spacing-md);
 }
 
-.about-text p {
+.about-section p {
   color: var(--white);
   opacity: 0.9;
-  margin-bottom: var(--spacing-md);
   line-height: 1.6;
-}
-
-.about-text ul {
-  color: var(--white);
-  opacity: 0.9;
-  padding-left: var(--spacing-lg);
-  margin-bottom: var(--spacing-md);
-}
-
-.about-text li {
-  margin-bottom: var(--spacing-sm);
-}
-
-.about-image {
-  position: relative;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  aspect-ratio: 16/9;
-}
-
-.about-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.3s ease;
-}
-
-.about-image:hover img {
-  transform: scale(1.05);
 }
 
 .cta-section {
   text-align: center;
-  padding: var(--spacing-xl);
-  background: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  padding: var(--spacing-xl) var(--spacing-md);
   margin-top: var(--spacing-xl);
+  background: linear-gradient(135deg, rgba(132, 155, 85, 0.2), rgba(0, 0, 0, 0.4));
 }
 
 .cta-section h2 {
+  font-size: 2.5rem;
   color: var(--white);
-  font-size: 2rem;
   margin-bottom: var(--spacing-md);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .cta-section p {
+  font-size: 1.25rem;
   color: var(--white);
-  opacity: 0.9;
   margin-bottom: var(--spacing-xl);
+  opacity: 0.9;
   max-width: 600px;
   margin-left: auto;
   margin-right: auto;
@@ -179,24 +152,16 @@
 }
 
 @media (max-width: 768px) {
-  .about-section {
+  .about-header h1 {
+    font-size: 2.5rem;
+  }
+
+  .about-content {
     grid-template-columns: 1fr;
-  }
-
-  .about-text {
-    order: 2;
-  }
-
-  .about-image {
-    order: 1;
   }
 
   .cta-buttons {
     flex-direction: column;
-  }
-
-  .about-header h1 {
-    font-size: 2.5rem;
   }
 }
 </style> 
