@@ -1,118 +1,134 @@
 <template>
-  <div class="about">
-    <section class="about-header">
-      <h1>About VERSA Spotting</h1>
-      <p>Capturing the beauty of aviation worldwide</p>
+  <div class="about-page">
+    <section class="hero-section">
+      <div class="hero-content">
+        <h1>About VERSA Spotting</h1>
+        <p class="tagline">Capturing the beauty of aviation worldwide</p>
+      </div>
     </section>
 
-    <section class="about-content">
-      <div class="about-section">
-        <div class="section-icon">
-          <font-awesome-icon :icon="['fas', 'history']" />
+    <section class="about-section">
+      <div class="section-content">
+        <div class="text-content">
+          <h2>Our Story</h2>
+          <p>VERSA Spotting was founded by a group of passionate aviation photographers who shared a common vision: to capture and share the beauty of aircraft from around the world. What started as a small group of enthusiasts has grown into a global community of aviation spotters and photographers.</p>
+          <p>Our journey began at airports and airshows, where we discovered our shared passion for aviation photography. Today, we continue to document the ever-evolving world of aviation, from commercial airliners to military aircraft, and everything in between.</p>
         </div>
-        <h2>Our Story</h2>
-        <p>VERSA Spotting was founded by a group of passionate aviation enthusiasts who share a common love for aircraft photography. What started as a hobby quickly evolved into a community of like-minded individuals dedicated to capturing the beauty of aviation.</p>
+        <div class="image-content">
+          <div class="image-placeholder">
+            <span class="emoji">✈️</span>
+          </div>
+        </div>
       </div>
+    </section>
 
-      <div class="about-section">
-        <div class="section-icon">
-          <font-awesome-icon :icon="['fas', 'bullseye']" />
+    <section class="mission-section">
+      <div class="section-content">
+        <div class="image-content">
+          <div class="image-placeholder">
+            <span class="emoji">📸</span>
+          </div>
         </div>
-        <h2>Our Mission</h2>
-        <p>Our mission is to showcase the beauty of aviation through high-quality photography while building a community of aviation enthusiasts. We aim to document and share the unique moments that make aviation photography so special.</p>
+        <div class="text-content">
+          <h2>Our Mission</h2>
+          <p>At VERSA Spotting, we're dedicated to:</p>
+          <ul>
+            <li>Capturing stunning aviation photography</li>
+            <li>Building a global community of aviation enthusiasts</li>
+            <li>Documenting the evolution of aircraft and aviation technology</li>
+            <li>Sharing our knowledge and passion with others</li>
+          </ul>
+        </div>
       </div>
+    </section>
 
-      <div class="about-section">
-        <div class="section-icon">
-          <font-awesome-icon :icon="['fas', 'users']" />
+    <section class="team-section">
+      <h2>Our Team</h2>
+      <p class="section-description">Meet the photographers behind VERSA Spotting</p>
+      
+      <div class="team-grid">
+        <div class="team-member">
+          <div class="member-photo">
+            <span class="emoji">📸</span>
+          </div>
+          <h3>Anthony Nigro</h3>
+          <p class="role">Lead Photographer & Web Master</p>
+          <p class="bio">With over a decade of aviation photography experience, Anthony leads our team with his expertise in both photography and web development.</p>
+          <div class="social-links">
+            <a href="https://instagram.com/yourboytony" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'instagram']" />
+            </a>
+            <a href="https://twitter.com/yourboytony" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'twitter']" />
+            </a>
+          </div>
         </div>
-        <h2>Our Team</h2>
-        <p>Meet the passionate photographers behind VERSA Spotting who make our vision a reality.</p>
-        
-        <div class="team-grid">
-          <div class="team-member">
-            <div class="member-photo">
-              <span class="emoji">📸</span>
-            </div>
-            <h3>Anthony Nigro</h3>
-            <p class="role">Lead Photographer & Web Master</p>
-            <p class="bio">With over a decade of aviation photography experience, Anthony leads our team with his expertise in both photography and web development.</p>
-            <div class="social-links">
-              <a href="https://instagram.com/yourboytony" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'instagram']" />
-              </a>
-              <a href="https://twitter.com/yourboytony" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'twitter']" />
-              </a>
-            </div>
-          </div>
 
-          <div class="team-member">
-            <div class="member-photo">
-              <span class="emoji">📸</span>
-            </div>
-            <h3>Skyeler Kho</h3>
-            <p class="role">Photographer</p>
-            <p class="bio">Skyeler brings a unique perspective to aviation photography, capturing stunning moments from around the world.</p>
-            <div class="social-links">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'instagram']" />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'linkedin']" />
-              </a>
-            </div>
+        <div class="team-member">
+          <div class="member-photo">
+            <span class="emoji">📸</span>
           </div>
-
-          <div class="team-member">
-            <div class="member-photo">
-              <span class="emoji">📸</span>
-            </div>
-            <h3>Spencer Parkinson</h3>
-            <p class="role">Photographer</p>
-            <p class="bio">Spencer's keen eye for detail and composition brings a fresh perspective to our aviation photography collection.</p>
-            <div class="social-links">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'instagram']" />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'linkedin']" />
-              </a>
-            </div>
+          <h3>Skyeler Kho</h3>
+          <p class="role">Photographer</p>
+          <p class="bio">Skyeler brings a unique perspective to aviation photography, capturing stunning moments from around the world.</p>
+          <div class="social-links">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'instagram']" />
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'linkedin']" />
+            </a>
           </div>
+        </div>
 
-          <div class="team-member">
-            <div class="member-photo">
-              <span class="emoji">📸</span>
-            </div>
-            <h3>Stefan Tofan</h3>
-            <p class="role">Photographer</p>
-            <p class="bio">Stefan's passion for aviation and photography shines through in his ability to capture the perfect moment.</p>
-            <div class="social-links">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'instagram']" />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'linkedin']" />
-              </a>
-            </div>
+        <div class="team-member">
+          <div class="member-photo">
+            <span class="emoji">📸</span>
           </div>
+          <h3>Spencer Parkinson</h3>
+          <p class="role">Photographer</p>
+          <p class="bio">Spencer's keen eye for detail and composition brings a fresh perspective to our aviation photography collection.</p>
+          <div class="social-links">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'instagram']" />
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'linkedin']" />
+            </a>
+          </div>
+        </div>
 
-          <div class="team-member">
-            <div class="member-photo">
-              <span class="emoji">📸</span>
-            </div>
-            <h3>Jared Powers</h3>
-            <p class="role">Photographer</p>
-            <p class="bio">Jared's technical expertise and creative vision contribute to our diverse collection of aviation photography.</p>
-            <div class="social-links">
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'instagram']" />
-              </a>
-              <a href="#" target="_blank" rel="noopener noreferrer">
-                <font-awesome-icon :icon="['fab', 'linkedin']" />
-              </a>
-            </div>
+        <div class="team-member">
+          <div class="member-photo">
+            <span class="emoji">📸</span>
+          </div>
+          <h3>Stefan Tofan</h3>
+          <p class="role">Photographer</p>
+          <p class="bio">Stefan's passion for aviation and photography shines through in his ability to capture the perfect moment.</p>
+          <div class="social-links">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'instagram']" />
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'linkedin']" />
+            </a>
+          </div>
+        </div>
+
+        <div class="team-member">
+          <div class="member-photo">
+            <span class="emoji">📸</span>
+          </div>
+          <h3>Jared Powers</h3>
+          <p class="role">Photographer</p>
+          <p class="bio">Jared's technical expertise and creative vision contribute to our diverse collection of aviation photography.</p>
+          <div class="social-links">
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'instagram']" />
+            </a>
+            <a href="#" target="_blank" rel="noopener noreferrer">
+              <font-awesome-icon :icon="['fab', 'linkedin']" />
+            </a>
           </div>
         </div>
       </div>
@@ -120,127 +136,139 @@
 
     <section class="cta-section">
       <h2>Join Our Community</h2>
-      <p>Whether you're an experienced aviation photographer or just starting out, we welcome you to join our community and share your passion for aviation.</p>
+      <p>Become part of our growing community of aviation enthusiasts and photographers.</p>
       <div class="cta-buttons">
-        <router-link to="/contact" class="btn btn-primary">Get in Touch</router-link>
-        <router-link to="/portfolio" class="btn btn-outline">View Portfolio</router-link>
+        <router-link to="/contact" class="btn btn-primary">Contact Us</router-link>
+        <router-link to="/portfolio" class="btn btn-secondary">View Our Work</router-link>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-// No script needed for this component
+// Component logic here
 </script>
 
 <style scoped>
-.about {
-  min-height: 100vh;
-  padding: var(--spacing-xl) 0;
-  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
-}
-
-.about-header {
-  text-align: center;
-  margin-bottom: var(--spacing-xl);
-  padding: 0 var(--spacing-md);
-}
-
-.about-header h1 {
-  font-size: 3rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-md);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.about-header p {
-  font-size: 1.25rem;
-  color: var(--white);
-  opacity: 0.9;
-}
-
-.about-content {
+.about-page {
   max-width: 1200px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
 }
 
-.about-section {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
+.hero-section {
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('@/assets/images/hero-bg.jpg');
+  background-size: cover;
+  background-position: center;
+  height: 400px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: var(--transition);
+  color: var(--white);
+  margin-bottom: var(--spacing-xl);
+  border-radius: var(--radius-lg);
 }
 
-.about-section:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-  border-color: var(--primary-color);
+.hero-content {
+  max-width: 800px;
+  padding: var(--spacing-xl);
 }
 
-.section-icon {
-  width: 80px;
-  height: 80px;
-  background-color: rgba(132, 155, 85, 0.2);
+.hero-content h1 {
+  font-size: 3rem;
+  margin-bottom: var(--spacing-md);
+  color: var(--white);
+}
+
+.tagline {
+  font-size: 1.5rem;
+  opacity: 0.9;
+}
+
+.about-section,
+.mission-section,
+.team-section {
+  margin-bottom: var(--spacing-xl);
+  padding: var(--spacing-xl) 0;
+}
+
+.section-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  align-items: center;
+}
+
+.text-content {
+  padding: var(--spacing-lg);
+}
+
+.text-content h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.text-content p {
+  margin-bottom: var(--spacing-md);
+  line-height: 1.6;
+}
+
+.image-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.image-placeholder {
+  width: 300px;
+  height: 300px;
+  background: rgba(132, 155, 85, 0.1);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-md);
-  font-size: 2rem;
+}
+
+.emoji {
+  font-size: 5rem;
+}
+
+.mission-section {
+  background: var(--light-bg);
+  border-radius: var(--radius-lg);
+}
+
+.mission-section ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.mission-section li {
+  margin-bottom: var(--spacing-sm);
+  padding-left: var(--spacing-md);
+  position: relative;
+}
+
+.mission-section li:before {
+  content: "✓";
   color: var(--primary-color);
+  position: absolute;
+  left: 0;
 }
 
-.about-section h2 {
-  font-size: 1.5rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-md);
-}
-
-.about-section p {
-  color: var(--white);
-  opacity: 0.9;
-  line-height: 1.6;
-}
-
-.cta-section {
+.team-section {
   text-align: center;
-  padding: var(--spacing-xl) var(--spacing-md);
-  margin-top: var(--spacing-xl);
-  background: linear-gradient(135deg, rgba(132, 155, 85, 0.2), rgba(0, 0, 0, 0.4));
 }
 
-.cta-section h2 {
-  font-size: 2.5rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-md);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
-}
-
-.cta-section p {
-  font-size: 1.25rem;
-  color: var(--white);
+.section-description {
   margin-bottom: var(--spacing-xl);
-  opacity: 0.9;
-  max-width: 600px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.cta-buttons {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
+  color: var(--text-color);
 }
 
 .team-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-xl);
   margin-top: var(--spacing-xl);
 }
@@ -269,11 +297,6 @@
   align-items: center;
   justify-content: center;
   background: rgba(132, 155, 85, 0.1);
-}
-
-.emoji {
-  font-size: 4rem;
-  line-height: 1;
 }
 
 .team-member h3 {
@@ -309,13 +332,71 @@
   color: var(--primary-light);
 }
 
+.cta-section {
+  text-align: center;
+  padding: var(--spacing-xl) 0;
+  background: var(--light-bg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--spacing-xl);
+}
+
+.cta-section h2 {
+  color: var(--primary-color);
+  margin-bottom: var(--spacing-md);
+}
+
+.cta-section p {
+  margin-bottom: var(--spacing-xl);
+  color: var(--text-color);
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.btn {
+  padding: var(--spacing-sm) var(--spacing-lg);
+  border-radius: var(--radius-sm);
+  font-weight: 500;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-primary {
+  background: var(--primary-color);
+  color: var(--white);
+}
+
+.btn-primary:hover {
+  background: var(--primary-light);
+  transform: translateY(-2px);
+}
+
+.btn-secondary {
+  background: var(--white);
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-secondary:hover {
+  background: var(--primary-color);
+  color: var(--white);
+  transform: translateY(-2px);
+}
+
 @media (max-width: 768px) {
-  .about-header h1 {
+  .section-content {
+    grid-template-columns: 1fr;
+  }
+
+  .hero-content h1 {
     font-size: 2.5rem;
   }
 
-  .about-content {
-    grid-template-columns: 1fr;
+  .tagline {
+    font-size: 1.2rem;
   }
 
   .cta-buttons {
