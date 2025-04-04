@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - Versa Spotting Group</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .portfolio-header {
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('images/portfolio-bg.jpg');
+            background-size: cover;
+            background-position: center;
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+        }
+
+        .portfolio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            padding: 5rem 5%;
+        }
+
+        .portfolio-item {
+            position: relative;
+            overflow: hidden;
+            border-radius: 10px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+
+        .portfolio-item img {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-item:hover img {
+            transform: scale(1.05);
+        }
+
+        .portfolio-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 1rem;
+            transform: translateY(100%);
+            transition: transform 0.3s ease;
+        }
+
+        .portfolio-item:hover .portfolio-overlay {
+            transform: translateY(0);
+        }
+
+        .filter-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            padding: 2rem 5%;
+            background-color: #f9f9f9;
+        }
+
+        .filter-button {
+            padding: 0.5rem 1rem;
+            border: none;
+            background-color: #3498db;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .filter-button:hover {
+            background-color: #2980b9;
+        }
+
+        .filter-button.active {
+            background-color: #2c3e50;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">
+            <h1>Versa Spotting Group</h1>
+        </div>
+        <ul class="nav-links">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="portfolio.html">Portfolio</a></li>
+            <li><a href="about.html">About Us</a></li>
+            <li><a href="contact.html">Contact</a></li>
+        </ul>
+        <div class="burger">
+            <div class="line1"></div>
+            <div class="line2"></div>
+            <div class="line3"></div>
+        </div>
+    </nav>
+
+    <header class="portfolio-header">
+        <div class="header-content">
+            <h1>Our Portfolio</h1>
+            <p>Explore our collection of aviation photography</p>
+        </div>
+    </header>
+
+    <div class="filter-buttons">
+        <button class="filter-button active" data-filter="all">All</button>
+        <button class="filter-button" data-filter="commercial">Commercial</button>
+        <button class="filter-button" data-filter="military">Military</button>
+        <button class="filter-button" data-filter="private">Private</button>
+    </div>
+
+    <main class="portfolio-grid">
+        <div class="portfolio-item" data-category="commercial">
+            <img src="images/portfolio1.jpg" alt="Commercial Aircraft">
+            <div class="portfolio-overlay">
+                <h3>Boeing 777</h3>
+                <p>Los Angeles International Airport</p>
+            </div>
+        </div>
+        <div class="portfolio-item" data-category="military">
+            <img src="images/portfolio2.jpg" alt="Military Aircraft">
+            <div class="portfolio-overlay">
+                <h3>F-16 Fighting Falcon</h3>
+                <p>Nellis Air Force Base</p>
+            </div>
+        </div>
+        <div class="portfolio-item" data-category="private">
+            <img src="images/portfolio3.jpg" alt="Private Aircraft">
+            <div class="portfolio-overlay">
+                <h3>Gulfstream G650</h3>
+                <p>Van Nuys Airport</p>
+            </div>
+        </div>
+        <div class="portfolio-item" data-category="commercial">
+            <img src="images/portfolio4.jpg" alt="Commercial Aircraft">
+            <div class="portfolio-overlay">
+                <h3>Airbus A350</h3>
+                <p>Heathrow Airport</p>
+            </div>
+        </div>
+        <div class="portfolio-item" data-category="military">
+            <img src="images/portfolio5.jpg" alt="Military Aircraft">
+            <div class="portfolio-overlay">
+                <h3>B-2 Spirit</h3>
+                <p>Whiteman Air Force Base</p>
+            </div>
+        </div>
+        <div class="portfolio-item" data-category="private">
+            <img src="images/portfolio6.jpg" alt="Private Aircraft">
+            <div class="portfolio-overlay">
+                <h3>Bombardier Global 7500</h3>
+                <p>Teterboro Airport</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p>Email: info@versaspotting.com</p>
+                <p>Phone: (123) 456-7890</p>
+            </div>
+            <div class="footer-section">
+                <h3>Follow Us</h3>
+                <div class="social-links">
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Versa Spotting Group. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="js/main.js"></script>
+    <script>
+        // Portfolio Filtering
+        const filterButtons = document.querySelectorAll('.filter-button');
+        const portfolioItems = document.querySelectorAll('.portfolio-item');
+
+        filterButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove active class from all buttons
+                filterButtons.forEach(btn => btn.classList.remove('active'));
+                // Add active class to clicked button
+                button.classList.add('active');
+
+                const filter = button.getAttribute('data-filter');
+
+                portfolioItems.forEach(item => {
+                    if (filter === 'all' || item.getAttribute('data-category') === filter) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html> 
