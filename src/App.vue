@@ -9,22 +9,20 @@
         
         <div class="nav-links">
           <router-link to="/" class="nav-link">
-            <span class="link-text">Home</span>
-            <span class="link-icon">
-              <font-awesome-icon :icon="['fas', 'home']" />
-            </span>
+            <font-awesome-icon :icon="['fas', 'home']" class="link-icon" />
+            <span>Home</span>
           </router-link>
           <router-link to="/portfolio" class="nav-link">
-            <span class="link-text">Portfolio</span>
-            <span class="link-icon">
-              <font-awesome-icon :icon="['fas', 'images']" />
-            </span>
+            <font-awesome-icon :icon="['fas', 'images']" class="link-icon" />
+            <span>Portfolio</span>
+          </router-link>
+          <router-link to="/about" class="nav-link">
+            <font-awesome-icon :icon="['fas', 'info-circle']" class="link-icon" />
+            <span>About</span>
           </router-link>
           <router-link to="/contact" class="nav-link">
-            <span class="link-text">Contact</span>
-            <span class="link-icon">
-              <font-awesome-icon :icon="['fas', 'envelope']" />
-            </span>
+            <font-awesome-icon :icon="['fas', 'envelope']" class="link-icon" />
+            <span>Contact</span>
           </router-link>
         </div>
 
@@ -52,6 +50,10 @@
         <router-link to="/portfolio" class="mobile-link" @click="toggleMobileMenu">
           <font-awesome-icon :icon="['fas', 'images']" />
           <span>Portfolio</span>
+        </router-link>
+        <router-link to="/about" class="mobile-link" @click="toggleMobileMenu">
+          <font-awesome-icon :icon="['fas', 'info-circle']" />
+          <span>About</span>
         </router-link>
         <router-link to="/contact" class="mobile-link" @click="toggleMobileMenu">
           <font-awesome-icon :icon="['fas', 'envelope']" />
