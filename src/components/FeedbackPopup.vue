@@ -14,11 +14,7 @@
           <font-awesome-icon :icon="['fas', 'star']" />
         </button>
       </div>
-      <div class="rating-text" v-if="selectedRating">
-        {{ getRatingText(selectedRating) }}
-      </div>
       <textarea
-        v-if="selectedRating"
         v-model="feedbackText"
         placeholder="Tell us more about your experience..."
         rows="3"
@@ -59,17 +55,6 @@ const showError = ref(false);
 setTimeout(() => {
   isVisible.value = true;
 }, 30000);
-
-const getRatingText = (rating) => {
-  const texts = {
-    1: 'Poor',
-    2: 'Fair',
-    3: 'Good',
-    4: 'Very Good',
-    5: 'Excellent'
-  };
-  return texts[rating] || '';
-};
 
 const closePopup = () => {
   isVisible.value = false;
@@ -168,7 +153,7 @@ h3 {
 .rating-buttons {
   display: flex;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
   justify-content: center;
 }
 
@@ -190,14 +175,6 @@ h3 {
 .rating-btn.active {
   color: var(--primary-color);
   opacity: 1;
-}
-
-.rating-text {
-  text-align: center;
-  color: var(--white);
-  margin-bottom: var(--spacing-md);
-  font-weight: 500;
-  font-size: 1.1rem;
 }
 
 textarea {
@@ -227,18 +204,18 @@ textarea:focus {
 }
 
 .success-message {
-  background: rgba(132, 155, 85, 0.2);
-  color: var(--primary-color);
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
 }
 
 .error-message {
-  background: rgba(255, 0, 0, 0.2);
-  color: #ff4444;
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #f44336;
 }
 
 .submit-btn {
   width: 100%;
-  padding: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
   background-color: var(--primary-color);
   color: var(--white);
   border: none;
@@ -255,6 +232,5 @@ textarea:focus {
 .submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
-  transform: none;
 }
 </style> 
