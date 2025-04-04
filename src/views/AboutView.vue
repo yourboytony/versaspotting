@@ -27,7 +27,7 @@
           <font-awesome-icon :icon="['fas', 'users']" />
         </div>
         <h2>Our Team</h2>
-        <p>Meet the passionate individuals behind VERSA Spotting who make our vision a reality.</p>
+        <p>Meet the passionate photographers behind VERSA Spotting who make our vision a reality.</p>
         
         <div class="team-grid">
           <div class="team-member">
@@ -35,8 +35,8 @@
               <span class="emoji">📸</span>
             </div>
             <h3>Anthony Nigro</h3>
-            <p class="role">Founder & Lead Photographer</p>
-            <p class="bio">With over a decade of aviation photography experience, Anthony leads our team with his expertise and passion for capturing the perfect shot.</p>
+            <p class="role">Lead Photographer & Web Master</p>
+            <p class="bio">With over a decade of aviation photography experience, Anthony leads our team with his expertise in both photography and web development.</p>
             <div class="social-links">
               <a href="https://instagram.com/yourboytony" target="_blank" rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'instagram']" />
@@ -49,11 +49,11 @@
 
           <div class="team-member">
             <div class="member-photo">
-              <span class="emoji">📊</span>
+              <span class="emoji">📸</span>
             </div>
-            <h3>Sarah Chen</h3>
-            <p class="role">Operations Manager</p>
-            <p class="bio">Sarah brings her organizational expertise to ensure smooth operations and exceptional service for our clients and community.</p>
+            <h3>Skyeler Kho</h3>
+            <p class="role">Photographer</p>
+            <p class="bio">Skyeler brings a unique perspective to aviation photography, capturing stunning moments from around the world.</p>
             <div class="social-links">
               <a href="#" target="_blank" rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'instagram']" />
@@ -66,11 +66,45 @@
 
           <div class="team-member">
             <div class="member-photo">
-              <span class="emoji">💻</span>
+              <span class="emoji">📸</span>
             </div>
-            <h3>Michael Rodriguez</h3>
-            <p class="role">Technical Director</p>
-            <p class="bio">Michael oversees our technical operations and ensures our equipment and processes are always at the cutting edge.</p>
+            <h3>Spencer Parkinson</h3>
+            <p class="role">Photographer</p>
+            <p class="bio">Spencer's keen eye for detail and composition brings a fresh perspective to our aviation photography collection.</p>
+            <div class="social-links">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'instagram']" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'linkedin']" />
+              </a>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <div class="member-photo">
+              <span class="emoji">📸</span>
+            </div>
+            <h3>Stefan Tofan</h3>
+            <p class="role">Photographer</p>
+            <p class="bio">Stefan's passion for aviation and photography shines through in his ability to capture the perfect moment.</p>
+            <div class="social-links">
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'instagram']" />
+              </a>
+              <a href="#" target="_blank" rel="noopener noreferrer">
+                <font-awesome-icon :icon="['fab', 'linkedin']" />
+              </a>
+            </div>
+          </div>
+
+          <div class="team-member">
+            <div class="member-photo">
+              <span class="emoji">📸</span>
+            </div>
+            <h3>Jared Powers</h3>
+            <p class="role">Photographer</p>
+            <p class="bio">Jared's technical expertise and creative vision contribute to our diverse collection of aviation photography.</p>
             <div class="social-links">
               <a href="#" target="_blank" rel="noopener noreferrer">
                 <font-awesome-icon :icon="['fab', 'instagram']" />
