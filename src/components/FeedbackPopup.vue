@@ -3,30 +3,45 @@
     <div class="feedback-content">
       <button class="close-btn" @click="closePopup">×</button>
       <h3>How's your experience?</h3>
-      <div class="rating-buttons">
-        <button 
-          v-for="rating in 5" 
-          :key="rating"
-          class="rating-btn"
-          :class="{ active: selectedRating === rating }"
-          @click="selectRating(rating)"
-        >
-          <font-awesome-icon :icon="['fas', 'star']" />
-        </button>
+      
+      <div class="rating-section">
+        <div class="rating-buttons">
+          <button 
+            v-for="rating in 5" 
+            :key="rating"
+            class="rating-btn"
+            :class="{ active: selectedRating === rating }"
+            @click="selectRating(rating)"
+          >
+            <font-awesome-icon :icon="['fas', 'star']" />
+          </button>
+        </div>
+        <div class="rating-labels">
+          <span>Poor</span>
+          <span>Fair</span>
+          <span>Good</span>
+          <span>Very Good</span>
+          <span>Excellent</span>
+        </div>
       </div>
-      <textarea
-        v-model="feedbackText"
-        placeholder="Tell us more about your experience..."
-        rows="3"
-      ></textarea>
-      <div v-if="showSuccess" class="success-message">
+
+      <div class="feedback-section">
+        <textarea
+          v-model="feedbackText"
+          placeholder="Tell us more about your experience..."
+          rows="4"
+        ></textarea>
+      </div>
+
+      <div v-if="showSuccess" class="message success">
         <font-awesome-icon :icon="['fas', 'check-circle']" />
         <span>Thank you for your feedback!</span>
       </div>
-      <div v-if="showError" class="error-message">
+      <div v-if="showError" class="message error">
         <font-awesome-icon :icon="['fas', 'exclamation-circle']" />
         <span>Something went wrong. Please try again.</span>
       </div>
+
       <button 
         class="submit-btn"
         :disabled="!selectedRating || isSubmitting"
@@ -123,7 +138,7 @@ const submitFeedback = async () => {
   border: 1px solid var(--primary-color);
   border-radius: var(--radius-lg);
   padding: var(--spacing-md);
-  width: 300px;
+  width: 350px;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -148,13 +163,18 @@ h3 {
   color: var(--white);
   margin-bottom: var(--spacing-md);
   font-size: 1.2rem;
+  text-align: center;
+}
+
+.rating-section {
+  margin-bottom: var(--spacing-md);
 }
 
 .rating-buttons {
   display: flex;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
   justify-content: center;
+  margin-bottom: var(--spacing-sm);
 }
 
 .rating-btn {
@@ -165,6 +185,7 @@ h3 {
   cursor: pointer;
   transition: all 0.2s;
   font-size: 1.5rem;
+  padding: var(--spacing-sm);
 }
 
 .rating-btn:hover {
@@ -177,38 +198,52 @@ h3 {
   opacity: 1;
 }
 
+.rating-labels {
+  display: flex;
+  justify-content: space-between;
+  color: var(--white);
+  opacity: 0.7;
+  font-size: 0.8rem;
+  padding: 0 var(--spacing-sm);
+}
+
+.feedback-section {
+  margin-bottom: var(--spacing-md);
+}
+
 textarea {
   width: 100%;
   padding: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: var(--radius-sm);
   color: var(--white);
   resize: none;
+  font-family: inherit;
 }
 
 textarea:focus {
   outline: none;
   border-color: var(--primary-color);
+  background: rgba(255, 255, 255, 0.15);
 }
 
-.success-message,
-.error-message {
+.message {
   display: flex;
   align-items: center;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-md);
   padding: var(--spacing-sm);
   border-radius: var(--radius-sm);
+  font-size: 0.9rem;
 }
 
-.success-message {
+.message.success {
   background-color: rgba(76, 175, 80, 0.2);
   color: #4caf50;
 }
 
-.error-message {
+.message.error {
   background-color: rgba(244, 67, 54, 0.2);
   color: #f44336;
 }
@@ -222,6 +257,7 @@ textarea:focus {
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all 0.2s;
+  font-weight: 500;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -232,5 +268,13 @@ textarea:focus {
 .submit-btn:disabled {
   opacity: 0.5;
   cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .feedback-content {
+    width: 90%;
+    max-width: 350px;
+    margin: 0 auto;
+  }
 }
 </style> 
