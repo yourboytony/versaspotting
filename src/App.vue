@@ -21,6 +21,9 @@
     </nav>
 
     <div class="mobile-menu" :class="{ 'is-open': isMobileMenuOpen }">
+      <button class="close-btn" @click="closeMobileMenu">
+        <font-awesome-icon :icon="['fas', 'times']" />
+      </button>
       <router-link to="/" class="mobile-link" @click="closeMobileMenu">Home</router-link>
       <router-link to="/portfolio" class="mobile-link" @click="closeMobileMenu">Portfolio</router-link>
       <router-link to="/about" class="mobile-link" @click="closeMobileMenu">About</router-link>
@@ -341,6 +344,24 @@ body {
 
 .mobile-link:hover {
   color: var(--primary-light);
+}
+
+.close-btn {
+  position: absolute;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  background: none;
+  border: none;
+  color: var(--white);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  padding: var(--spacing-sm);
+}
+
+.close-btn:hover {
+  color: var(--primary-color);
+  transform: rotate(90deg);
 }
 
 .fade-enter-active,
