@@ -12,6 +12,7 @@
             class="rating-btn"
             :class="{ active: selectedRating === rating }"
             @click="selectRating(rating)"
+            type="button"
           >
             <font-awesome-icon :icon="['fas', 'star']" />
           </button>
@@ -186,16 +187,29 @@ h3 {
   transition: all 0.2s;
   font-size: 1.5rem;
   padding: var(--spacing-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
 }
 
 .rating-btn:hover {
   opacity: 0.8;
   transform: scale(1.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .rating-btn.active {
   color: var(--primary-color);
   opacity: 1;
+  background: rgba(132, 155, 85, 0.2);
+}
+
+.rating-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--primary-color);
 }
 
 .rating-labels {
