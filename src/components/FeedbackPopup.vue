@@ -14,7 +14,7 @@
             @click="selectRating(rating)"
             type="button"
           >
-            <font-awesome-icon :icon="['fas', 'star']" />
+            ★
           </button>
         </div>
         <div class="rating-labels">
@@ -185,7 +185,7 @@ h3 {
   opacity: 0.5;
   cursor: pointer;
   transition: all 0.2s;
-  font-size: 1.5rem;
+  font-size: 2rem;
   padding: var(--spacing-sm);
   display: flex;
   align-items: center;
@@ -193,6 +193,8 @@ h3 {
   width: 40px;
   height: 40px;
   border-radius: 50%;
+  position: relative;
+  line-height: 1;
 }
 
 .rating-btn:hover {
