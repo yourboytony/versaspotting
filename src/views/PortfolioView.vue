@@ -101,127 +101,186 @@ const formatDate = (dateString) => {
 
 <style scoped>
 .portfolio {
+  padding: var(--spacing-xl);
+  max-width: 1200px;
+  margin: 0 auto;
   min-height: 100vh;
-  padding: var(--spacing-xl) 0;
+  background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
 }
 
 .portfolio-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
-  padding: 0 var(--spacing-md);
+  animation: fadeIn 0.5s ease-out;
 }
 
 .portfolio-header h1 {
   font-size: 3rem;
   color: var(--white);
   margin-bottom: var(--spacing-md);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: 1px;
 }
 
 .portfolio-header p {
-  font-size: 1.25rem;
   color: var(--white);
-  opacity: 0.9;
+  opacity: 0.8;
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 
-.portfolio-grid {
+.profile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: var(--spacing-md);
+  animation: fadeIn 0.5s ease-out;
 }
 
 .profile-card {
   background-color: rgba(0, 0, 0, 0.4);
   border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  text-align: center;
-  transition: var(--transition);
-  cursor: pointer;
+  padding: var(--spacing-lg);
   border: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeInUp 0.5s ease-out forwards;
-  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
 }
 
 .profile-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.02);
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
   border-color: var(--primary-color);
 }
 
-.profile-icon {
-  width: 80px;
-  height: 80px;
-  background-color: rgba(132, 155, 85, 0.2);
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
+}
+
+.profile-card:hover::before {
+  transform: translateX(100%);
+}
+
+.profile-header {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+}
+
+.profile-avatar {
+  width: 60px;
+  height: 60px;
+  background-color: var(--primary-color);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto var(--spacing-md);
-  font-size: 2rem;
-  color: var(--primary-color);
-}
-
-.profile-card h3 {
+  font-weight: bold;
+  color: var(--white);
   font-size: 1.5rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-sm);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
-.profile-card p {
+.profile-info h3 {
   color: var(--white);
-  opacity: 0.9;
-  margin-bottom: var(--spacing-md);
-}
-
-.profile-stats {
-  color: var(--primary-color);
+  margin: 0;
+  font-size: 1.5rem;
   font-weight: 600;
+}
+
+.profile-info p {
+  color: var(--white);
+  opacity: 0.7;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+}
+
+.photo-item {
+  position: relative;
+  aspect-ratio: 1;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.photo-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.photo-item:hover img {
+  transform: scale(1.1);
+}
+
+.photo-item::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, transparent 50%, rgba(0, 0, 0, 0.7));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.photo-item:hover::after {
+  opacity: 1;
 }
 
 .modal {
   position: fixed;
   top: 0;
   left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.9);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
   z-index: 1000;
   animation: fadeIn 0.3s ease-out;
 }
 
 .modal-content {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: var(--radius-lg);
-  width: 90%;
-  max-width: 1200px;
+  position: relative;
+  max-width: 90%;
   max-height: 90vh;
-  overflow-y: auto;
-  position: relative;
-  animation: slideUp 0.3s ease-out;
+  background-color: rgba(0, 0, 0, 0.8);
+  border-radius: var(--radius-lg);
+  padding: var(--spacing-lg);
   border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.modal-header {
-  padding: var(--spacing-xl);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-}
-
-.modal-header h2 {
-  font-size: 2rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-sm);
-}
-
-.modal-header p {
-  color: var(--white);
-  opacity: 0.9;
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  object-fit: contain;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
 }
 
 .close-btn {
@@ -233,113 +292,53 @@ const formatDate = (dateString) => {
   color: var(--white);
   font-size: 1.5rem;
   cursor: pointer;
-  transition: var(--transition);
   padding: var(--spacing-sm);
+  transition: var(--transition);
+  opacity: 0.7;
+  z-index: 1;
 }
 
 .close-btn:hover {
-  color: var(--primary-color);
-  transform: rotate(90deg);
-}
-
-.modal-body {
-  padding: var(--spacing-xl);
-}
-
-.no-photos {
-  text-align: center;
-  padding: var(--spacing-xl);
-}
-
-.no-photos .fa-camera {
-  font-size: 3rem;
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-md);
-}
-
-.no-photos p {
-  color: var(--white);
-  opacity: 0.9;
-}
-
-.photos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
-}
-
-.photo-item {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-md);
-  overflow: hidden;
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.photo-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.photo-item img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-}
-
-.photo-info {
-  padding: var(--spacing-md);
-}
-
-.photo-info h3 {
-  font-size: 1.2rem;
-  margin-bottom: var(--spacing-sm);
-}
-
-.photo-info p {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin-bottom: var(--spacing-sm);
-}
-
-.photo-info .photo-date {
-  font-size: 0.8rem;
-  opacity: 0.7;
+  color: #ff4444;
+  opacity: 1;
+  transform: scale(1.1);
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
   }
 }
 
 @media (max-width: 768px) {
-  .portfolio-header h1 {
-    font-size: 2.5rem;
-  }
-
-  .portfolio-grid {
+  .profile-grid {
     grid-template-columns: 1fr;
   }
-
-  .modal-content {
-    width: 95%;
+  
+  .portfolio-header h1 {
+    font-size: 2rem;
+  }
+  
+  .profile-card {
+    padding: var(--spacing-md);
+  }
+  
+  .photo-grid {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
   }
 }
 
