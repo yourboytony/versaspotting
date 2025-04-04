@@ -70,8 +70,7 @@ export const addPhotoToProfile = (profileId, photoData) => {
   if (profileIndex !== -1) {
     const newPhoto = {
       id: Date.now(),
-      ...photoData,
-      date: new Date().toISOString()
+      ...photoData
     };
     
     profiles[profileIndex].photos.push(newPhoto);
