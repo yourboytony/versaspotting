@@ -37,21 +37,32 @@
       <form class="contact-form" @submit.prevent="handleSubmit">
         <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" v-model="form.name" required />
+          <input type="text" id="name" v-model="formData.name" required />
         </div>
         <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" v-model="form.email" required />
+          <input type="email" id="email" v-model="formData.email" required />
         </div>
         <div class="form-group">
           <label for="subject">Subject</label>
-          <input type="text" id="subject" v-model="form.subject" required />
+          <input type="text" id="subject" v-model="formData.subject" required />
         </div>
         <div class="form-group">
           <label for="message">Message</label>
-          <textarea id="message" v-model="form.message" required></textarea>
+          <textarea id="message" v-model="formData.message" required></textarea>
         </div>
-        <button type="submit" class="btn btn-primary">Send Message</button>
+        <div v-if="showSuccess" class="message success">
+          <font-awesome-icon :icon="['fas', 'check-circle']" />
+          <span>Message sent successfully!</span>
+        </div>
+        <div v-if="showError" class="message error">
+          <font-awesome-icon :icon="['fas', 'exclamation-circle']" />
+          <span>Failed to send message. Please try again.</span>
+        </div>
+        <button type="submit" :disabled="isSubmitting" class="btn btn-primary">
+          <span v-if="isSubmitting">Sending...</span>
+          <span v-else>Send Message</span>
+        </button>
       </form>
     </section>
   </div>
@@ -60,59 +71,38 @@
 <script setup>
 import { ref } from 'vue';
 import { addContactSubmission } from '@/data/database';
+import { sendContactAlert } from '@/utils/discord';
 
-const form = ref({
+const formData = ref({
   name: '',
   email: '',
   subject: '',
   message: ''
 });
 
+const isSubmitting = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
+
 const handleSubmit = async () => {
-  if (!validateForm()) return;
+  isSubmitting.value = true;
+  showError.value = false;
   
   try {
-    const submissionData = {
-      name: form.value.name,
-      email: form.value.email,
-      subject: form.value.subject,
-      message: form.value.message
+    await sendContactAlert(formData.value);
+    showSuccess.value = true;
+    formData.value = {
+      name: '',
+      email: '',
+      subject: '',
+      message: ''
     };
-    
-    addContactSubmission(submissionData);
-    
-    // Show success message
-    showSuccessMessage();
-    
-    // Reset form
-    resetForm();
   } catch (error) {
-    console.error('Error submitting form:', error);
-    // Show error message
-    showErrorMessage();
+    console.error('Error submitting contact form:', error);
+    showError.value = true;
+  } finally {
+    isSubmitting.value = false;
   }
-};
-
-const validateForm = () => {
-  // Implement form validation logic here
-  return true; // Placeholder return, actual implementation needed
-};
-
-const showSuccessMessage = () => {
-  // Implement logic to show success message to user
-};
-
-const showErrorMessage = () => {
-  // Implement logic to show error message to user
-};
-
-const resetForm = () => {
-  form.value = {
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
-  };
 };
 </script>
 
@@ -248,6 +238,25 @@ const resetForm = () => {
 .btn:hover {
   background-color: var(--primary-light);
   transform: translateY(-2px);
+}
+
+.message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  font-size: 0.9rem;
+}
+
+.message.success {
+  background-color: rgba(76, 175, 80, 0.2);
+  color: #4caf50;
+}
+
+.message.error {
+  background-color: rgba(244, 67, 54, 0.2);
+  color: #f44336;
 }
 
 @media (max-width: 768px) {
