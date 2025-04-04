@@ -54,18 +54,18 @@ let currentIndex = 0;
 
 const features = [
   {
-    title: 'Aviation Photography',
-    description: 'Specializing in capturing the beauty and power of aircraft at YVR',
+    title: 'YVR Aviation Photography',
+    description: 'Specializing in capturing the beauty and power of aircraft at Vancouver International Airport',
     icon: ['fas', 'plane']
   },
   {
-    title: 'Community',
-    description: 'Connecting aviation enthusiasts through our shared passion',
+    title: 'YVR Spotting Community',
+    description: 'Connecting aviation enthusiasts through our shared passion for YVR spotting',
     icon: ['fas', 'users']
   },
   {
-    title: 'YVR Spotting',
-    description: 'Showcasing the best aircraft spotting locations at Vancouver International Airport',
+    title: 'YVR Spotting Locations',
+    description: 'Showcasing the best aircraft spotting locations at our home field, YVR',
     icon: ['fas', 'map-marker-alt']
   }
 ];
