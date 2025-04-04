@@ -2,7 +2,8 @@
   <div class="app">
     <nav class="nav">
       <router-link to="/" class="nav-logo">
-        <img src="@/assets/logo.png" alt="VERSA Spotting" />
+        <span class="logo-text">VERSA</span>
+        <span class="logo-subtext">Spotting</span>
       </router-link>
       <div class="nav-links">
         <router-link to="/" class="nav-link">Home</router-link>
@@ -163,8 +164,22 @@ body {
   box-shadow: var(--shadow-lg);
 }
 
-.nav-logo img {
-  height: 40px;
+.nav-logo {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: var(--white);
+  font-weight: 700;
+}
+
+.logo-text {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.logo-subtext {
+  font-size: 0.9rem;
+  opacity: 0.8;
 }
 
 .nav-links {
