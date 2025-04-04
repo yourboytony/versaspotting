@@ -1,16 +1,23 @@
 <template>
   <div class="app">
-    <div v-if="showAnnouncement" class="announcement-banner">
-      <div class="announcement-content">
-        <font-awesome-icon :icon="['fas', 'bullhorn']" class="announcement-icon" />
-        <span>We're looking for editors to join our team! <router-link to="/about#join-section" class="announcement-link">Apply now</router-link></span>
+    <transition name="slide-down">
+      <div v-if="showAnnouncement" class="announcement-banner">
+        <div class="announcement-content">
+          <div class="announcement-icon-container">
+            <font-awesome-icon :icon="['fas', 'bullhorn']" class="announcement-icon" />
+          </div>
+          <p class="announcement-text">
+            <strong>Editors Wanted:</strong> We're looking for talented photo editors to join our team! 
+            <router-link to="/about#join-section" class="announcement-link">Apply now</router-link>
+          </p>
+          <button @click="closeAnnouncement" class="announcement-close" aria-label="Close announcement">
+            <font-awesome-icon :icon="['fas', 'times']" />
+          </button>
+        </div>
       </div>
-      <button @click="closeAnnouncement" class="announcement-close">
-        <font-awesome-icon :icon="['fas', 'times']" />
-      </button>
-    </div>
+    </transition>
     
-    <nav class="nav">
+    <nav class="nav" :class="{ 'with-announcement': showAnnouncement }">
       <div class="nav-container">
         <router-link to="/" class="nav-logo">
           <span class="logo-text">VERSA</span>
@@ -114,7 +121,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, watchEffect } from 'vue';
 import FeedbackPopup from '@/components/FeedbackPopup.vue';
 import SpeedInsights from '@/components/SpeedInsights.vue';
 
@@ -138,6 +145,7 @@ const closeAnnouncement = () => {
 };
 
 onMounted(() => {
+  // Check if announcement was previously closed
   const lastClosed = localStorage.getItem('announcementClosed');
   if (lastClosed) {
     // Show again after 7 days
@@ -146,6 +154,15 @@ onMounted(() => {
       showAnnouncement.value = false;
     }
   }
+  
+  // Add padding to body when announcement is visible
+  watchEffect(() => {
+    if (showAnnouncement.value) {
+      document.body.classList.add('has-announcement');
+    } else {
+      document.body.classList.remove('has-announcement');
+    }
+  });
 });
 </script>
 
@@ -570,66 +587,136 @@ body {
 
 /* Announcement Banner */
 .announcement-banner {
-  position: relative;
-  background-color: var(--primary-color);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background: linear-gradient(90deg, var(--primary-color), var(--primary-light));
   color: var(--white);
-  padding: var(--spacing-sm) var(--spacing-lg);
-  text-align: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: var(--spacing-sm);
-  z-index: 1001;
+  z-index: 1010;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
 .announcement-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px var(--spacing-lg);
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
-  font-weight: 500;
+  position: relative;
+}
+
+.announcement-icon-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  margin-right: var(--spacing-md);
+  flex-shrink: 0;
 }
 
 .announcement-icon {
-  font-size: 1.2rem;
+  font-size: 0.9rem;
+  color: var(--white);
+}
+
+.announcement-text {
+  flex: 1;
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.4;
 }
 
 .announcement-link {
   color: var(--white);
   text-decoration: underline;
   font-weight: 700;
-  transition: var(--transition);
+  white-space: nowrap;
+  margin-left: 4px;
+  transition: opacity 0.2s ease;
 }
 
 .announcement-link:hover {
-  color: rgba(255, 255, 255, 0.9);
+  opacity: 0.9;
 }
 
 .announcement-close {
-  background: none;
+  background: transparent;
   border: none;
   color: var(--white);
   font-size: 1rem;
   cursor: pointer;
-  padding: var(--spacing-xs);
-  border-radius: var(--radius-sm);
-  transition: var(--transition);
-  position: absolute;
-  right: var(--spacing-md);
-  top: 50%;
-  transform: translateY(-50%);
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-left: var(--spacing-md);
+  transition: background-color 0.2s ease;
+  opacity: 0.8;
+  flex-shrink: 0;
 }
 
 .announcement-close:hover {
   background-color: rgba(0, 0, 0, 0.1);
+  opacity: 1;
+}
+
+/* Adjust nav position when announcement is shown */
+.nav {
+  transition: top 0.3s ease;
+}
+
+.nav.with-announcement {
+  top: 56px; /* Height of announcement banner */
+}
+
+/* Animation for announcement banner */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.slide-down-enter-from {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+.slide-down-leave-to {
+  transform: translateY(-100%);
+  opacity: 0;
+}
+
+/* Adjust main content when announcement is shown */
+:deep(.main-content) {
+  transition: margin-top 0.3s ease;
+}
+
+.has-announcement :deep(.main-content) {
+  margin-top: 136px; /* 80px nav height + 56px announcement height */
 }
 
 @media (max-width: 768px) {
-  .announcement-banner {
-    padding: var(--spacing-sm) var(--spacing-lg) var(--spacing-sm) var(--spacing-sm);
+  .announcement-content {
+    padding: 10px var(--spacing-md);
   }
   
-  .announcement-content {
-    font-size: 0.9rem;
+  .announcement-text {
+    font-size: 0.85rem;
+  }
+  
+  .announcement-icon-container {
+    width: 28px;
+    height: 28px;
+    margin-right: var(--spacing-sm);
+  }
+  
+  .announcement-link {
+    display: inline;
   }
 }
 </style> 
