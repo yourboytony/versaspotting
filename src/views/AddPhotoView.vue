@@ -45,16 +45,17 @@
         </div>
 
         <div class="form-group">
-          <label for="image">Photo</label>
+          <label for="imageUrl">Postimages.org Direct Link</label>
           <input
-            type="file"
-            id="image"
-            accept="image/*"
-            @change="handleFileUpload"
+            type="url"
+            id="imageUrl"
+            v-model="photo.imageUrl"
+            placeholder="https://i.postimg.cc/XXXXXX/photo.jpg"
             required
           />
-          <div class="image-preview" v-if="photo.previewUrl">
-            <img :src="photo.previewUrl" alt="Preview" />
+          <p class="help-text">Upload your photo to <a href="https://postimages.org" target="_blank">postimages.org</a> and paste the direct link here</p>
+          <div class="image-preview" v-if="photo.imageUrl">
+            <img :src="photo.imageUrl" alt="Preview" />
           </div>
         </div>
 
@@ -79,8 +80,7 @@ export default {
       title: '',
       description: '',
       date: new Date().toISOString().split('T')[0],
-      file: null,
-      previewUrl: null
+      imageUrl: ''
     });
 
     const isFormValid = computed(() => {
@@ -88,33 +88,19 @@ export default {
         selectedPhotographer.value &&
         photo.value.title &&
         photo.value.date &&
-        photo.value.file
+        photo.value.imageUrl
       );
     });
-
-    const handleFileUpload = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        photo.value.file = file;
-        photo.value.previewUrl = URL.createObjectURL(file);
-      }
-    };
 
     const submitPhoto = async () => {
       if (!isFormValid.value) return;
 
       try {
-        const formData = new FormData();
-        formData.append('title', photo.value.title);
-        formData.append('description', photo.value.description);
-        formData.append('date', photo.value.date);
-        formData.append('image', photo.value.file);
-
         await addPhotoToProfile(selectedPhotographer.value, {
           title: photo.value.title,
           description: photo.value.description,
           date: photo.value.date,
-          imageUrl: URL.createObjectURL(photo.value.file)
+          imageUrl: photo.value.imageUrl
         });
 
         // Reset form
@@ -123,8 +109,7 @@ export default {
           title: '',
           description: '',
           date: new Date().toISOString().split('T')[0],
-          file: null,
-          previewUrl: null
+          imageUrl: ''
         };
 
         alert('Photo added successfully!');
@@ -143,7 +128,6 @@ export default {
       selectedPhotographer,
       photo,
       isFormValid,
-      handleFileUpload,
       submitPhoto
     };
   }
@@ -191,6 +175,21 @@ label {
   color: #fff;
   font-weight: 500;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.help-text {
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-top: 0.25rem;
+}
+
+.help-text a {
+  color: #4a90e2;
+  text-decoration: none;
+}
+
+.help-text a:hover {
+  text-decoration: underline;
 }
 
 input,
