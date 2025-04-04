@@ -86,6 +86,7 @@ onMounted(() => {
 .home {
   min-height: 100vh;
   background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.5) 100%);
+  animation: fadeIn 0.8s ease-out;
 }
 
 .hero {
@@ -98,9 +99,21 @@ onMounted(() => {
   padding: var(--spacing-xl);
 }
 
+.hero::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(132, 155, 85, 0.1) 0%, transparent 70%);
+  animation: pulse 4s infinite;
+}
+
 .hero-content {
   max-width: 800px;
   z-index: 2;
+  animation: slideUp 0.8s ease-out 0.2s backwards;
 }
 
 .typing-text {
@@ -135,12 +148,14 @@ onMounted(() => {
   margin-bottom: var(--spacing-xl);
   opacity: 0.9;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.8s ease-out 0.4s backwards;
 }
 
 .hero-buttons {
   display: flex;
   gap: var(--spacing-md);
   justify-content: center;
+  animation: fadeIn 0.8s ease-out 0.6s backwards;
 }
 
 .btn {
@@ -150,6 +165,26 @@ onMounted(() => {
   text-decoration: none;
   transition: var(--transition);
   display: inline-block;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  opacity: 0;
+  border-radius: 100%;
+  transform: scale(1, 1) translate(-50%);
+  transform-origin: 50% 50%;
+}
+
+.btn:focus:not(:active)::after {
+  animation: ripple 1s ease-out;
 }
 
 .btn-primary {
@@ -160,6 +195,7 @@ onMounted(() => {
 .btn-primary:hover {
   background-color: var(--primary-light);
   transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(132, 155, 85, 0.4);
 }
 
 .btn-secondary {
@@ -171,6 +207,7 @@ onMounted(() => {
   background-color: var(--white);
   color: var(--dark);
   transform: translateY(-2px);
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
 
 .floating-icons {
@@ -221,11 +258,13 @@ onMounted(() => {
 .features {
   padding: var(--spacing-xl) 0;
   background-color: rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.8s ease-out 0.8s backwards;
 }
 
 .section-header {
   text-align: center;
   margin-bottom: var(--spacing-xl);
+  animation: slideUp 0.8s ease-out 1s backwards;
 }
 
 .section-header h2 {
@@ -241,6 +280,7 @@ onMounted(() => {
   background-color: var(--primary-color);
   margin: 0 auto;
   border-radius: var(--radius-sm);
+  animation: scaleIn 0.8s ease-out 1.2s backwards;
 }
 
 .features-grid {
@@ -259,17 +299,38 @@ onMounted(() => {
   text-align: center;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition);
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.8s ease-out backwards;
+}
+
+.feature-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s ease;
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: var(--shadow-lg);
+  border-color: var(--primary-color);
+}
+
+.feature-card:hover::before {
+  transform: translateX(100%);
 }
 
 .feature-icon {
   font-size: 2.5rem;
   color: var(--primary-color);
   margin-bottom: var(--spacing-sm);
+  animation: float 3s ease-in-out infinite;
 }
 
 .feature-card h3 {
@@ -287,6 +348,7 @@ onMounted(() => {
   padding: var(--spacing-xl) 0;
   text-align: center;
   background: linear-gradient(135deg, rgba(132, 155, 85, 0.2), rgba(0, 0, 0, 0.4));
+  animation: fadeIn 0.8s ease-out 1.4s backwards;
 }
 
 .cta-content {
@@ -307,6 +369,60 @@ onMounted(() => {
   color: var(--white);
   margin-bottom: var(--spacing-xl);
   opacity: 0.9;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scaleX(0);
+  }
+  to {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.5;
+  }
+  50% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes ripple {
+  0% {
+    transform: scale(0, 0);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(20, 20);
+    opacity: 0;
+  }
 }
 
 @media (max-width: 768px) {
