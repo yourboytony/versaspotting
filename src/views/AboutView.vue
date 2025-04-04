@@ -63,7 +63,7 @@
 const teamMembers = [
   {
     name: 'Anthony Nigro',
-    role: 'Lead Photographer',
+    role: 'Lead Photographer & Web Master',
     bio: 'Passionate about aviation photography and capturing unique moments at YVR.',
     instagram: 'https://instagram.com/anthonynigro'
   },
