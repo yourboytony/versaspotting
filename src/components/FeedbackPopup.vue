@@ -14,18 +14,30 @@
           <font-awesome-icon :icon="['fas', 'star']" />
         </button>
       </div>
+      <div class="rating-text" v-if="selectedRating">
+        {{ getRatingText(selectedRating) }}
+      </div>
       <textarea
         v-if="selectedRating"
         v-model="feedbackText"
         placeholder="Tell us more about your experience..."
         rows="3"
       ></textarea>
+      <div v-if="showSuccess" class="success-message">
+        <font-awesome-icon :icon="['fas', 'check-circle']" />
+        <span>Thank you for your feedback!</span>
+      </div>
+      <div v-if="showError" class="error-message">
+        <font-awesome-icon :icon="['fas', 'exclamation-circle']" />
+        <span>Something went wrong. Please try again.</span>
+      </div>
       <button 
         class="submit-btn"
-        :disabled="!selectedRating"
+        :disabled="!selectedRating || isSubmitting"
         @click="submitFeedback"
       >
-        Submit Feedback
+        <span v-if="isSubmitting">Submitting...</span>
+        <span v-else>Submit Feedback</span>
       </button>
     </div>
   </div>
@@ -33,31 +45,75 @@
 
 <script setup>
 import { ref } from 'vue';
+import { saveFeedback } from '@/data/feedback';
+import { sendFeedbackToDiscord } from '@/utils/discord';
 
 const isVisible = ref(false);
 const selectedRating = ref(0);
 const feedbackText = ref('');
+const isSubmitting = ref(false);
+const showSuccess = ref(false);
+const showError = ref(false);
 
 // Show popup after 30 seconds of page load
 setTimeout(() => {
   isVisible.value = true;
 }, 30000);
 
+const getRatingText = (rating) => {
+  const texts = {
+    1: 'Poor',
+    2: 'Fair',
+    3: 'Good',
+    4: 'Very Good',
+    5: 'Excellent'
+  };
+  return texts[rating] || '';
+};
+
 const closePopup = () => {
   isVisible.value = false;
+  // Reset form after closing
+  setTimeout(() => {
+    selectedRating.value = 0;
+    feedbackText.value = '';
+    showSuccess.value = false;
+    showError.value = false;
+  }, 300);
 };
 
 const selectRating = (rating) => {
   selectedRating.value = rating;
 };
 
-const submitFeedback = () => {
-  // Here you would typically send the feedback to your backend
-  console.log('Feedback submitted:', {
-    rating: selectedRating.value,
-    text: feedbackText.value
-  });
-  closePopup();
+const submitFeedback = async () => {
+  if (!selectedRating.value) return;
+  
+  isSubmitting.value = true;
+  showError.value = false;
+  
+  try {
+    const feedback = {
+      rating: selectedRating.value,
+      text: feedbackText.value
+    };
+    
+    // Save to localStorage
+    await saveFeedback(feedback);
+    
+    // Send to Discord
+    await sendFeedbackToDiscord(feedback);
+    
+    showSuccess.value = true;
+    setTimeout(() => {
+      closePopup();
+    }, 2000);
+  } catch (error) {
+    console.error('Error submitting feedback:', error);
+    showError.value = true;
+  } finally {
+    isSubmitting.value = false;
+  }
 };
 </script>
 
@@ -112,7 +168,8 @@ h3 {
 .rating-buttons {
   display: flex;
   gap: var(--spacing-sm);
-  margin-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-sm);
+  justify-content: center;
 }
 
 .rating-btn {
@@ -135,6 +192,14 @@ h3 {
   opacity: 1;
 }
 
+.rating-text {
+  text-align: center;
+  color: var(--white);
+  margin-bottom: var(--spacing-md);
+  font-weight: 500;
+  font-size: 1.1rem;
+}
+
 textarea {
   width: 100%;
   padding: var(--spacing-sm);
@@ -151,6 +216,26 @@ textarea:focus {
   border-color: var(--primary-color);
 }
 
+.success-message,
+.error-message {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-md);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+}
+
+.success-message {
+  background: rgba(132, 155, 85, 0.2);
+  color: var(--primary-color);
+}
+
+.error-message {
+  background: rgba(255, 0, 0, 0.2);
+  color: #ff4444;
+}
+
 .submit-btn {
   width: 100%;
   padding: var(--spacing-sm);
@@ -162,7 +247,7 @@ textarea:focus {
   transition: all 0.2s;
 }
 
-.submit-btn:hover {
+.submit-btn:hover:not(:disabled) {
   background-color: var(--primary-light);
   transform: translateY(-2px);
 }
