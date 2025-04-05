@@ -1,117 +1,236 @@
+import { Redis } from '@upstash/redis'
+
+// Initialize Redis client with existing credentials
+const redis = new Redis({
+  url: 'https://safe-louse-62148.upstash.io',
+  token: 'AfLEAAIjcDE5NjFkMGI1NTYzMGI0NzhkYTZmOWUxZmI2NWM1NmFkY3AxMA',
+})
+
 // Initial profiles data
 const initialProfiles = [
   {
-    id: 1,
+    id: 'anthony',
     name: 'Anthony Nigro',
-    role: 'Lead Photographer',
-    bio: 'Passionate about aviation photography with a focus on unique angles and lighting. Specializes in capturing the perfect moment with exceptional attention to detail.',
-    instagram: 'https://instagram.com/anthonynigro',
+    role: 'Founder & Photographer',
+    bio: 'Aviation enthusiast and photographer based in New York.',
+    instagram: 'https://www.instagram.com/yourboytony/',
     photos: []
   },
   {
-    id: 2,
+    id: 'skyeler',
     name: 'Skyeler Kho',
     role: 'Photographer',
-    bio: 'Specializing in capturing the perfect moment with exceptional attention to detail. Known for unique perspectives and creative compositions.',
-    instagram: 'https://instagram.com/skyelerkho',
+    bio: 'Passionate about capturing the beauty of aviation.',
+    instagram: 'https://www.instagram.com/skyelerkho/',
     photos: []
   },
   {
-    id: 3,
+    id: 'spencer',
     name: 'Spencer Parkinson',
     role: 'Photographer',
-    bio: 'Expert in aircraft identification and aviation history. Brings technical knowledge and historical context to every shot.',
-    instagram: 'https://instagram.com/spencerparkinson',
+    bio: 'Dedicated to showcasing the art of flight.',
+    instagram: 'https://www.instagram.com/spencerparkinson/',
     photos: []
   },
   {
-    id: 4,
+    id: 'stefan',
     name: 'Stefan Tofan',
     role: 'Photographer',
-    bio: 'Focused on detailed aircraft photography and unique perspectives. Specializes in capturing the intricate details of modern aircraft.',
-    instagram: 'https://instagram.com/stefantofan',
+    bio: 'Bringing unique perspectives to aviation photography.',
+    instagram: 'https://www.instagram.com/stefantofan/',
     photos: []
   },
   {
-    id: 5,
+    id: 'jared',
     name: 'Jared Powers',
     role: 'Photographer',
-    bio: 'Specializing in capturing aircraft in motion with dynamic compositions. Expert in action shots and unique lighting conditions.',
-    instagram: 'https://instagram.com/jaredpowers',
+    bio: 'Capturing the essence of flight through my lens.',
+    instagram: 'https://www.instagram.com/jaredpowers/',
     photos: []
   }
-];
+]
 
-// Initialize profiles in localStorage if not already present
-const initializeProfiles = () => {
-  if (!localStorage.getItem('versaProfiles')) {
-    localStorage.setItem('versaProfiles', JSON.stringify(initialProfiles));
+// Initialize profiles if they don't exist
+export async function initializeProfiles() {
+  try {
+    const exists = await redis.exists('profiles')
+    if (!exists) {
+      await redis.set('profiles', JSON.stringify(initialProfiles))
+    }
+  } catch (error) {
+    console.error('Error initializing profiles:', error)
   }
-};
+}
 
 // Get all profiles
-export const getAllProfiles = () => {
-  initializeProfiles();
-  return JSON.parse(localStorage.getItem('versaProfiles'));
-};
+export async function getAllProfiles() {
+  try {
+    const profiles = await redis.get('profiles')
+    return profiles ? JSON.parse(profiles) : initialProfiles
+  } catch (error) {
+    console.error('Error getting profiles:', error)
+    return initialProfiles
+  }
+}
 
 // Get photos for a specific profile
-export const getProfilePhotos = (profileId) => {
-  const profiles = getAllProfiles();
-  const profile = profiles.find(p => p.id === profileId);
-  return profile ? profile.photos : [];
-};
+export async function getProfilePhotos(profileId) {
+  try {
+    const profiles = await getAllProfiles()
+    const profile = profiles.find(p => p.id === profileId)
+    return profile ? profile.photos : []
+  } catch (error) {
+    console.error('Error getting profile photos:', error)
+    return []
+  }
+}
 
 // Add a photo to a profile
-export const addPhotoToProfile = (profileId, photoData) => {
-  const profiles = getAllProfiles();
-  const profileIndex = profiles.findIndex(p => p.id === profileId);
-  
-  if (profileIndex !== -1) {
-    const newPhoto = {
-      id: Date.now(),
-      ...photoData
-    };
+export async function addPhotoToProfile(profileId, photoData) {
+  try {
+    const profiles = await getAllProfiles()
+    const profileIndex = profiles.findIndex(p => p.id === profileId)
     
-    profiles[profileIndex].photos.push(newPhoto);
-    localStorage.setItem('versaProfiles', JSON.stringify(profiles));
-    return newPhoto;
+    if (profileIndex !== -1) {
+      const newPhoto = {
+        id: Date.now().toString(),
+        ...photoData,
+        timestamp: new Date().toISOString()
+      }
+      
+      profiles[profileIndex].photos.unshift(newPhoto)
+      await redis.set('profiles', JSON.stringify(profiles))
+      return newPhoto
+    }
+    return null
+  } catch (error) {
+    console.error('Error adding photo to profile:', error)
+    return null
   }
-  
-  return null;
-};
-
-// Initialize contact form submissions in localStorage if not present
-if (!localStorage.getItem('contactSubmissions')) {
-  localStorage.setItem('contactSubmissions', JSON.stringify([]));
 }
 
-// Function to get all contact form submissions
-export function getAllContactSubmissions() {
-  const submissions = JSON.parse(localStorage.getItem('contactSubmissions') || '[]');
-  return submissions;
+// Store contact form submission
+export async function storeContactSubmission(formData) {
+  try {
+    const submissions = await redis.get('contact_submissions') || '[]'
+    const parsedSubmissions = JSON.parse(submissions)
+    
+    const newSubmission = {
+      id: Date.now().toString(),
+      ...formData,
+      timestamp: new Date().toISOString()
+    }
+    
+    parsedSubmissions.push(newSubmission)
+    await redis.set('contact_submissions', JSON.stringify(parsedSubmissions))
+    return newSubmission
+  } catch (error) {
+    console.error('Error storing contact submission:', error)
+    return null
+  }
 }
 
-// Function to add a new contact form submission
-export function addContactSubmission(submissionData) {
-  const submissions = getAllContactSubmissions();
-  const newSubmission = {
-    id: Date.now().toString(),
-    ...submissionData,
-    timestamp: new Date().toISOString()
-  };
-  submissions.push(newSubmission);
-  localStorage.setItem('contactSubmissions', JSON.stringify(submissions));
-  return newSubmission;
+// Get all contact submissions
+export async function getAllContactSubmissions() {
+  try {
+    const submissions = await redis.get('contact_submissions')
+    return submissions ? JSON.parse(submissions) : []
+  } catch (error) {
+    console.error('Error getting contact submissions:', error)
+    return []
+  }
 }
 
-// Function to delete a contact form submission
-export function deleteContactSubmission(id) {
-  const submissions = getAllContactSubmissions();
-  const filteredSubmissions = submissions.filter(submission => submission.id !== id);
-  localStorage.setItem('contactSubmissions', JSON.stringify(filteredSubmissions));
-  return true;
+// Delete contact submission
+export async function deleteContactSubmission(id) {
+  try {
+    const submissions = await getAllContactSubmissions()
+    const filteredSubmissions = submissions.filter(s => s.id !== id)
+    await redis.set('contact_submissions', JSON.stringify(filteredSubmissions))
+    return true
+  } catch (error) {
+    console.error('Error deleting contact submission:', error)
+    return false
+  }
 }
 
-// Initialize the database
-initializeProfiles(); 
+// Store team application
+export async function storeTeamApplication(formData) {
+  try {
+    const applications = await redis.get('team_applications') || '[]'
+    const parsedApplications = JSON.parse(applications)
+    
+    const newApplication = {
+      id: Date.now().toString(),
+      ...formData,
+      timestamp: new Date().toISOString()
+    }
+    
+    parsedApplications.push(newApplication)
+    await redis.set('team_applications', JSON.stringify(parsedApplications))
+    return newApplication
+  } catch (error) {
+    console.error('Error storing team application:', error)
+    return null
+  }
+}
+
+// Get all team applications
+export async function getAllTeamApplications() {
+  try {
+    const applications = await redis.get('team_applications')
+    return applications ? JSON.parse(applications) : []
+  } catch (error) {
+    console.error('Error getting team applications:', error)
+    return []
+  }
+}
+
+// Delete team application
+export async function deleteTeamApplication(id) {
+  try {
+    const applications = await getAllTeamApplications()
+    const filteredApplications = applications.filter(a => a.id !== id)
+    await redis.set('team_applications', JSON.stringify(filteredApplications))
+    return true
+  } catch (error) {
+    console.error('Error deleting team application:', error)
+    return false
+  }
+}
+
+// Get all photos
+export async function getAllPhotos() {
+  try {
+    const profiles = await getAllProfiles()
+    const allPhotos = profiles.flatMap(profile => 
+      profile.photos.map(photo => ({
+        ...photo,
+        profileName: profile.name,
+        profileId: profile.id
+      }))
+    )
+    return allPhotos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+  } catch (error) {
+    console.error('Error getting all photos:', error)
+    return []
+  }
+}
+
+// Delete photo
+export async function deletePhoto(profileId, photoId) {
+  try {
+    const profiles = await getAllProfiles()
+    const profileIndex = profiles.findIndex(p => p.id === profileId)
+    
+    if (profileIndex !== -1) {
+      profiles[profileIndex].photos = profiles[profileIndex].photos.filter(p => p.id !== photoId)
+      await redis.set('profiles', JSON.stringify(profiles))
+      return true
+    }
+    return false
+  } catch (error) {
+    console.error('Error deleting photo:', error)
+    return false
+  }
+} 
