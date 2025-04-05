@@ -126,13 +126,31 @@ export default {
         error.value = ''
         success.value = ''
         
+        // Validate all fields
+        if (!newProfile.value.name || !newProfile.value.role || !newProfile.value.bio || !newProfile.value.instagram) {
+          error.value = 'Please fill in all fields'
+          return
+        }
+
         // Validate Instagram URL
         if (!newProfile.value.instagram.startsWith('https://www.instagram.com/')) {
           error.value = 'Please enter a valid Instagram URL starting with https://www.instagram.com/'
           return
         }
 
-        await addProfile(newProfile.value)
+        // Format the profile data
+        const profileData = {
+          name: newProfile.value.name.trim(),
+          role: newProfile.value.role.trim(),
+          bio: newProfile.value.bio.trim(),
+          instagram: newProfile.value.instagram.trim()
+        }
+
+        console.log('Adding profile with data:', profileData)
+
+        const result = await addProfile(profileData)
+        console.log('Profile added successfully:', result)
+
         success.value = 'Profile added successfully'
         
         // Reset form
@@ -147,7 +165,7 @@ export default {
         await loadProfiles()
       } catch (err) {
         console.error('Error adding profile:', err)
-        error.value = 'Failed to add profile'
+        error.value = err.message || 'Failed to add profile'
       }
     }
 

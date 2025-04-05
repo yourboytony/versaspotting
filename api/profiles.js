@@ -13,17 +13,31 @@ export default async function handler(req, res) {
         break
 
       case 'POST':
-        if (!req.body.name || !req.body.role || !req.body.bio || !req.body.instagram) {
-          return res.status(400).json({ error: 'Missing required fields' })
+        console.log('Received profile data:', req.body)
+
+        // Validate required fields
+        const requiredFields = ['name', 'role', 'bio', 'instagram']
+        const missingFields = requiredFields.filter(field => !req.body[field])
+        
+        if (missingFields.length > 0) {
+          return res.status(400).json({ 
+            error: 'Missing required fields',
+            fields: missingFields
+          })
         }
 
+        // Create new profile
         const newProfile = {
           ...req.body,
           id: req.body.name.toLowerCase().replace(/\s+/g, '-'),
           photos: []
         }
 
+        console.log('Creating profile:', newProfile)
+
         const result = await profilesCollection.insertOne(newProfile)
+        console.log('Insert result:', result)
+
         if (!result.acknowledged) {
           throw new Error('Failed to insert profile')
         }
