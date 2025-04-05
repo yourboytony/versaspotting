@@ -52,6 +52,18 @@ export function initializeProfiles() {
   }
 }
 
+// Initialize database
+export async function initializeDatabase() {
+  try {
+    const response = await fetch(`${API_BASE}/init`)
+    if (!response.ok) throw new Error('Failed to initialize database')
+    return await response.json()
+  } catch (error) {
+    console.error('Error initializing database:', error)
+    return null
+  }
+}
+
 // Get all profiles
 export async function getAllProfiles() {
   try {
