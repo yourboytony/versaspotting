@@ -8,6 +8,7 @@ import AddPhotoView from '../views/AddPhotoView.vue'
 import ContactAdminView from '@/views/ContactAdminView.vue'
 import ApplicationAdminView from '../views/ApplicationAdminView.vue'
 import AdminView from '../views/AdminView.vue'
+import AdminLogin from '../views/AdminLogin.vue'
 
 const routes = [
   {
@@ -75,6 +76,14 @@ const routes = [
     }
   },
   {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: AdminLogin,
+    meta: {
+      title: 'Admin Login - VERSA Spotting'
+    }
+  },
+  {
     path: '/admin',
     name: 'admin',
     component: AdminView,
@@ -121,7 +130,7 @@ router.beforeEach((to, from, next) => {
     if (!checkAuth()) {
       // Store the attempted URL for redirect after login
       localStorage.setItem('redirectAfterLogin', to.fullPath)
-      next('/')
+      next('/admin/login')
     } else {
       next()
     }
