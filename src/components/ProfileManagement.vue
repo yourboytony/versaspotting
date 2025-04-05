@@ -2,6 +2,16 @@
   <div class="profile-management">
     <h2>Profile Management</h2>
     
+    <!-- Success Message -->
+    <div v-if="success" class="success-message">
+      {{ success }}
+    </div>
+
+    <!-- Error Message -->
+    <div v-if="error" class="error-message">
+      {{ error }}
+    </div>
+    
     <!-- Add New Profile Form -->
     <div class="add-profile-form">
       <h3>Add New Profile</h3>
@@ -20,7 +30,7 @@
         </div>
         <div class="form-group">
           <label for="instagram">Instagram Link</label>
-          <input type="url" id="instagram" v-model="newProfile.instagram" required>
+          <input type="url" id="instagram" v-model="newProfile.instagram" required placeholder="https://www.instagram.com/username">
         </div>
         <button type="submit" class="btn-primary">Add Profile</button>
       </form>
@@ -71,7 +81,7 @@
           </div>
           <div class="form-group">
             <label for="edit-instagram">Instagram Link</label>
-            <input type="url" id="edit-instagram" v-model="editingProfile.instagram" required>
+            <input type="url" id="edit-instagram" v-model="editingProfile.instagram" required placeholder="https://www.instagram.com/username">
           </div>
           <div class="modal-actions">
             <button type="submit" class="btn-primary">Save Changes</button>
@@ -79,11 +89,6 @@
           </div>
         </form>
       </div>
-    </div>
-
-    <!-- Error Message -->
-    <div v-if="error" class="error-message">
-      {{ error }}
     </div>
   </div>
 </template>
@@ -104,10 +109,12 @@ export default {
     })
     const editingProfile = ref(null)
     const error = ref('')
+    const success = ref('')
 
     const loadProfiles = async () => {
       try {
         profiles.value = await getAllProfiles()
+        error.value = ''
       } catch (err) {
         console.error('Error loading profiles:', err)
         error.value = 'Failed to load profiles'
@@ -117,13 +124,26 @@ export default {
     const addNewProfile = async () => {
       try {
         error.value = ''
+        success.value = ''
+        
+        // Validate Instagram URL
+        if (!newProfile.value.instagram.startsWith('https://www.instagram.com/')) {
+          error.value = 'Please enter a valid Instagram URL starting with https://www.instagram.com/'
+          return
+        }
+
         await addProfile(newProfile.value)
+        success.value = 'Profile added successfully'
+        
+        // Reset form
         newProfile.value = {
           name: '',
           role: '',
           bio: '',
           instagram: ''
         }
+        
+        // Reload profiles
         await loadProfiles()
       } catch (err) {
         console.error('Error adding profile:', err)
@@ -138,7 +158,16 @@ export default {
     const updateExistingProfile = async () => {
       try {
         error.value = ''
+        success.value = ''
+        
+        // Validate Instagram URL
+        if (!editingProfile.value.instagram.startsWith('https://www.instagram.com/')) {
+          error.value = 'Please enter a valid Instagram URL starting with https://www.instagram.com/'
+          return
+        }
+
         await updateProfile(editingProfile.value)
+        success.value = 'Profile updated successfully'
         editingProfile.value = null
         await loadProfiles()
       } catch (err) {
@@ -151,7 +180,9 @@ export default {
       if (confirm('Are you sure you want to delete this profile?')) {
         try {
           error.value = ''
+          success.value = ''
           await deleteProfile(id)
+          success.value = 'Profile deleted successfully'
           await loadProfiles()
         } catch (err) {
           console.error('Error deleting profile:', err)
@@ -162,6 +193,7 @@ export default {
 
     const cancelEdit = () => {
       editingProfile.value = null
+      error.value = ''
     }
 
     onMounted(() => {
@@ -173,6 +205,7 @@ export default {
       newProfile,
       editingProfile,
       error,
+      success,
       addNewProfile,
       editProfile,
       updateProfile: updateExistingProfile,
@@ -346,9 +379,35 @@ export default {
   text-decoration: underline;
 }
 
-.error-message {
-  color: #dc3545;
-  margin-top: 1rem;
+.success-message {
+  background: rgba(40, 167, 69, 0.2);
+  color: #28a745;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
   text-align: center;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.error-message {
+  background: rgba(220, 53, 69, 0.2);
+  color: #dc3545;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1rem;
+  text-align: center;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+}
+
+.role {
+  color: #ccc;
+  font-style: italic;
+  margin-bottom: 0.5rem;
+}
+
+.bio {
+  color: #fff;
+  margin-bottom: 1rem;
+  line-height: 1.5;
 }
 </style> 
