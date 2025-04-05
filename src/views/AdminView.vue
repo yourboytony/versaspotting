@@ -34,8 +34,10 @@
         <button @click="handleLogout" class="logout-button">Logout</button>
       </header>
 
-      <div class="admin-content">
-        <section class="admin-section">
+      <div class="admin-sections">
+        <ProfileManagement />
+        
+        <div class="section">
           <h2>Contact Form Submissions</h2>
           <div v-if="submissions.length === 0" class="no-data">
             No submissions yet
@@ -55,9 +57,9 @@
               </button>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="admin-section">
+        <div class="section">
           <h2>Team Applications</h2>
           <div v-if="applications.length === 0" class="no-data">
             No applications yet
@@ -81,9 +83,9 @@
               </button>
             </div>
           </div>
-        </section>
+        </div>
 
-        <section class="admin-section">
+        <div class="section">
           <h2>Uploaded Photos</h2>
           <div v-if="photos.length === 0" class="no-data">
             No photos uploaded yet
@@ -102,7 +104,7 @@
               </button>
             </div>
           </div>
-        </section>
+        </div>
       </div>
     </div>
   </div>
@@ -111,6 +113,9 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
+import { faTrash, faEdit } from '@fortawesome/free-solid-svg-icons'
+import ProfileManagement from '@/components/ProfileManagement.vue'
 import { 
   getAllContactSubmissions, 
   deleteContactSubmission,
@@ -280,16 +285,17 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.admin-content {
+.admin-sections {
   display: grid;
   gap: 2rem;
+  margin-top: 2rem;
 }
 
-.admin-section {
-  background: rgba(255, 255, 255, 0.1);
-  padding: 1.5rem;
-  border-radius: 1rem;
-  backdrop-filter: blur(10px);
+.section {
+  background: #fff;
+  padding: 2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .submissions-list,

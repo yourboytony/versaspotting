@@ -108,9 +108,7 @@ const router = createRouter({
 
 // Authentication check function
 const checkAuth = () => {
-  const username = localStorage.getItem('adminUsername')
-  const password = localStorage.getItem('adminPassword')
-  return username === 'VERSAadmin' && password === 'adminw8492$@'
+  return localStorage.getItem('adminAuth') === 'true'
 }
 
 // Update document title and handle authentication

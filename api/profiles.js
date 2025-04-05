@@ -10,35 +10,45 @@ export default async function handler(req, res) {
   try {
     await client.connect()
     const db = client.db('versaspotting')
+    const profilesCollection = db.collection('profiles')
 
     switch (req.method) {
       case 'GET':
-        const profiles = await db.collection('profiles').find().toArray()
+        const profiles = await profilesCollection.find({}).toArray()
         res.status(200).json(profiles)
         break
+
       case 'POST':
-        const { profileId, photoData } = req.body
-        const newPhoto = {
-          id: Date.now().toString(),
-          ...photoData,
-          timestamp: new Date().toISOString()
+        const newProfile = {
+          ...req.body,
+          id: req.body.name.toLowerCase().replace(/\s+/g, '-'),
+          photos: []
         }
-        await db.collection('profiles').updateOne(
-          { id: profileId },
-          { $push: { photos: newPhoto } }
-        )
-        res.status(200).json(newPhoto)
+        await profilesCollection.insertOne(newProfile)
+        res.status(201).json(newProfile)
         break
+
+      case 'PUT':
+        const { id } = req.query
+        const updatedProfile = {
+          ...req.body,
+          id: id
+        }
+        await profilesCollection.updateOne(
+          { id: id },
+          { $set: updatedProfile }
+        )
+        res.status(200).json(updatedProfile)
+        break
+
       case 'DELETE':
-        const { profileId: deleteProfileId, photoId } = req.query
-        await db.collection('profiles').updateOne(
-          { id: deleteProfileId },
-          { $pull: { photos: { id: photoId } } }
-        )
-        res.status(200).json({ success: true })
+        const profileId = req.query.id
+        await profilesCollection.deleteOne({ id: profileId })
+        res.status(200).json({ message: 'Profile deleted successfully' })
         break
+
       default:
-        res.setHeader('Allow', ['GET', 'POST', 'DELETE'])
+        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
         res.status(405).end(`Method ${req.method} Not Allowed`)
     }
   } catch (error) {
