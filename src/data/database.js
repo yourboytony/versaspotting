@@ -79,12 +79,12 @@ export async function getProfilePhotos(profileId) {
 // Add a photo to a profile
 export async function addPhotoToProfile(profileId, photoData) {
   try {
-    const response = await fetch(`${API_BASE}/profiles?profileId=${profileId}`, {
+    const response = await fetch(`${API_BASE}/profiles`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(photoData)
+      body: JSON.stringify({ profileId, photoData })
     })
     if (!response.ok) throw new Error('Failed to add photo')
     return await response.json()
@@ -131,8 +131,7 @@ export async function deleteContactSubmission(id) {
       method: 'DELETE'
     })
     if (!response.ok) throw new Error('Failed to delete contact submission')
-    const data = await response.json()
-    return data.success
+    return true
   } catch (error) {
     console.error('Error deleting contact submission:', error)
     return false
@@ -176,8 +175,7 @@ export async function deleteTeamApplication(id) {
       method: 'DELETE'
     })
     if (!response.ok) throw new Error('Failed to delete team application')
-    const data = await response.json()
-    return data.success
+    return true
   } catch (error) {
     console.error('Error deleting team application:', error)
     return false
@@ -209,8 +207,7 @@ export async function deletePhoto(profileId, photoId) {
       method: 'DELETE'
     })
     if (!response.ok) throw new Error('Failed to delete photo')
-    const data = await response.json()
-    return data.success
+    return true
   } catch (error) {
     console.error('Error deleting photo:', error)
     return false

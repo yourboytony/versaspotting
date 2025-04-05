@@ -1,39 +1,50 @@
-import { getAllProfiles, getProfilePhotos, addPhotoToProfile, deletePhoto } from './mongodb'
+import { MongoClient } from 'mongodb'
+
+const uri = process.env.MONGODB_URI || 'mongodb+srv://VERSAadmin:adminw8492%24%40@versaspotting.qrtcdft.mongodb.net/?retryWrites=true&w=majority&appName=versaspotting'
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
 export default async function handler(req, res) {
-  const { method, query, body } = req
-
   try {
-    switch (method) {
+    await client.connect()
+    const db = client.db('versaspotting')
+
+    switch (req.method) {
       case 'GET':
-        if (query.profileId) {
-          const photos = await getProfilePhotos(query.profileId)
-          return res.status(200).json(photos)
-        } else {
-          const profiles = await getAllProfiles()
-          return res.status(200).json(profiles)
-        }
-      
+        const profiles = await db.collection('profiles').find().toArray()
+        res.status(200).json(profiles)
+        break
       case 'POST':
-        if (query.profileId && body) {
-          const newPhoto = await addPhotoToProfile(query.profileId, body)
-          return res.status(201).json(newPhoto)
+        const { profileId, photoData } = req.body
+        const newPhoto = {
+          id: Date.now().toString(),
+          ...photoData,
+          timestamp: new Date().toISOString()
         }
-        return res.status(400).json({ error: 'Missing profileId or photo data' })
-      
+        await db.collection('profiles').updateOne(
+          { id: profileId },
+          { $push: { photos: newPhoto } }
+        )
+        res.status(200).json(newPhoto)
+        break
       case 'DELETE':
-        if (query.profileId && query.photoId) {
-          const success = await deletePhoto(query.profileId, query.photoId)
-          return res.status(200).json({ success })
-        }
-        return res.status(400).json({ error: 'Missing profileId or photoId' })
-      
+        const { profileId: deleteProfileId, photoId } = req.query
+        await db.collection('profiles').updateOne(
+          { id: deleteProfileId },
+          { $pull: { photos: { id: photoId } } }
+        )
+        res.status(200).json({ success: true })
+        break
       default:
         res.setHeader('Allow', ['GET', 'POST', 'DELETE'])
-        return res.status(405).end(`Method ${method} Not Allowed`)
+        res.status(405).end(`Method ${req.method} Not Allowed`)
     }
   } catch (error) {
-    console.error('API Error:', error)
-    return res.status(500).json({ error: 'Internal Server Error' })
+    console.error('Error in profiles API:', error)
+    res.status(500).json({ error: 'Internal Server Error' })
+  } finally {
+    await client.close()
   }
 } 

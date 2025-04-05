@@ -2,7 +2,6 @@ import { createApp } from 'vue'
 import App from './App.vue'
 import router from './router'
 import './assets/main.css'
-import { initializeDatabase } from './data/mongodb'
 
 // Import Font Awesome
 import { library } from '@fortawesome/fontawesome-svg-core'
@@ -42,9 +41,6 @@ library.add(
   faTwitter,
   faFacebook
 )
-
-// Initialize database
-initializeDatabase()
 
 // Create and mount the app
 const app = createApp(App)
