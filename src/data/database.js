@@ -279,14 +279,15 @@ export async function addProfile(profileData) {
       const errorText = await response.text()
       console.error('Error response:', errorText)
       
-      let errorData
+      let errorMessage
       try {
-        errorData = JSON.parse(errorText)
+        const errorData = JSON.parse(errorText)
+        errorMessage = errorData.error || errorData.message || 'Failed to add profile'
       } catch (e) {
-        errorData = { error: 'Failed to parse error response', message: errorText }
+        errorMessage = errorText || 'Failed to add profile'
       }
       
-      throw new Error(errorData.error || errorData.message || 'Failed to add profile')
+      throw new Error(errorMessage)
     }
 
     const data = await response.json()
@@ -294,7 +295,7 @@ export async function addProfile(profileData) {
     return data
   } catch (error) {
     console.error('Error in addProfile:', error)
-    throw error
+    throw new Error(error.message || 'Failed to add profile')
   }
 }
 

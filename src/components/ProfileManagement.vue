@@ -169,7 +169,7 @@ export default {
         await loadProfiles()
       } catch (err) {
         console.error('Error adding profile:', err)
-        error.value = err.message || 'Failed to add profile'
+        error.value = typeof err === 'string' ? err : (err.message || 'Failed to add profile')
       }
     }
 
