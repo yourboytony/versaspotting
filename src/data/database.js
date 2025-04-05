@@ -68,11 +68,14 @@ export async function initializeDatabase() {
 export async function getAllProfiles() {
   try {
     const response = await fetch(`${API_BASE}/profiles`)
-    if (!response.ok) throw new Error('Failed to fetch profiles')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch profiles')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error getting profiles:', error)
-    return []
+    throw error
   }
 }
 
@@ -80,11 +83,14 @@ export async function getAllProfiles() {
 export async function getProfilePhotos(profileId) {
   try {
     const response = await fetch(`${API_BASE}/profiles?profileId=${profileId}`)
-    if (!response.ok) throw new Error('Failed to fetch profile photos')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch profile photos')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error getting profile photos:', error)
-    return []
+    throw error
   }
 }
 
@@ -98,11 +104,14 @@ export async function addPhotoToProfile(profileId, photoData) {
       },
       body: JSON.stringify({ profileId, photoData })
     })
-    if (!response.ok) throw new Error('Failed to add photo')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to add photo')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error adding photo to profile:', error)
-    return null
+    throw error
   }
 }
 
@@ -116,11 +125,14 @@ export async function storeContactSubmission(formData) {
       },
       body: JSON.stringify(formData)
     })
-    if (!response.ok) throw new Error('Failed to store contact submission')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to store contact submission')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error storing contact submission:', error)
-    return null
+    throw error
   }
 }
 
@@ -128,11 +140,14 @@ export async function storeContactSubmission(formData) {
 export async function getAllContactSubmissions() {
   try {
     const response = await fetch(`${API_BASE}/contact`)
-    if (!response.ok) throw new Error('Failed to fetch contact submissions')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch contact submissions')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error getting contact submissions:', error)
-    return []
+    throw error
   }
 }
 
@@ -142,11 +157,14 @@ export async function deleteContactSubmission(id) {
     const response = await fetch(`${API_BASE}/contact?id=${id}`, {
       method: 'DELETE'
     })
-    if (!response.ok) throw new Error('Failed to delete contact submission')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to delete contact submission')
+    }
     return true
   } catch (error) {
     console.error('Error deleting contact submission:', error)
-    return false
+    throw error
   }
 }
 
@@ -160,11 +178,14 @@ export async function storeTeamApplication(formData) {
       },
       body: JSON.stringify(formData)
     })
-    if (!response.ok) throw new Error('Failed to store team application')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to store team application')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error storing team application:', error)
-    return null
+    throw error
   }
 }
 
@@ -172,11 +193,14 @@ export async function storeTeamApplication(formData) {
 export async function getAllTeamApplications() {
   try {
     const response = await fetch(`${API_BASE}/applications`)
-    if (!response.ok) throw new Error('Failed to fetch team applications')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to fetch team applications')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error getting team applications:', error)
-    return []
+    throw error
   }
 }
 
@@ -186,11 +210,14 @@ export async function deleteTeamApplication(id) {
     const response = await fetch(`${API_BASE}/applications?id=${id}`, {
       method: 'DELETE'
     })
-    if (!response.ok) throw new Error('Failed to delete team application')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to delete team application')
+    }
     return true
   } catch (error) {
     console.error('Error deleting team application:', error)
-    return false
+    throw error
   }
 }
 
@@ -198,31 +225,33 @@ export async function deleteTeamApplication(id) {
 export async function getAllPhotos() {
   try {
     const profiles = await getAllProfiles()
-    const allPhotos = profiles.flatMap(profile => 
+    return profiles.flatMap(profile => 
       profile.photos.map(photo => ({
         ...photo,
         profileName: profile.name,
         profileId: profile.id
       }))
-    )
-    return allPhotos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
+    ).sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
   } catch (error) {
     console.error('Error getting all photos:', error)
-    return []
+    throw error
   }
 }
 
 // Delete photo
 export async function deletePhoto(profileId, photoId) {
   try {
-    const response = await fetch(`${API_BASE}/profiles?profileId=${profileId}&photoId=${photoId}`, {
+    const response = await fetch(`${API_BASE}/profiles?id=${profileId}&photoId=${photoId}`, {
       method: 'DELETE'
     })
-    if (!response.ok) throw new Error('Failed to delete photo')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to delete photo')
+    }
     return true
   } catch (error) {
     console.error('Error deleting photo:', error)
-    return false
+    throw error
   }
 }
 
@@ -247,17 +276,20 @@ export async function addProfile(profileData) {
   }
 }
 
-// Update an existing profile
+// Update a profile
 export async function updateProfile(profileData) {
   try {
-    const response = await fetch(`${API_BASE}/profiles/${profileData.id}`, {
+    const response = await fetch(`${API_BASE}/profiles?id=${profileData.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify(profileData)
     })
-    if (!response.ok) throw new Error('Failed to update profile')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to update profile')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error updating profile:', error)
@@ -266,13 +298,16 @@ export async function updateProfile(profileData) {
 }
 
 // Delete a profile
-export async function deleteProfile(profileId) {
+export async function deleteProfile(id) {
   try {
-    const response = await fetch(`${API_BASE}/profiles/${profileId}`, {
+    const response = await fetch(`${API_BASE}/profiles?id=${id}`, {
       method: 'DELETE'
     })
-    if (!response.ok) throw new Error('Failed to delete profile')
-    return true
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to delete profile')
+    }
+    return await response.json()
   } catch (error) {
     console.error('Error deleting profile:', error)
     throw error
