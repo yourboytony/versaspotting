@@ -208,21 +208,23 @@ export default {
 <style scoped>
 .admin-dashboard {
   min-height: 100vh;
-  background: #f8f9fa;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+  color: #fff;
 }
 
 .admin-header {
-  background: #fff;
+  background: rgba(0, 0, 0, 0.3);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .admin-header h1 {
   margin: 0;
-  color: #333;
+  color: #fff;
   font-size: 1.5rem;
 }
 
@@ -250,9 +252,10 @@ export default {
 
 .admin-nav {
   width: 250px;
-  background: #fff;
+  background: rgba(0, 0, 0, 0.3);
   padding: 1rem;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .nav-btn {
@@ -265,14 +268,14 @@ export default {
   background: none;
   border: none;
   border-radius: 0.5rem;
-  color: #666;
+  color: #ccc;
   cursor: pointer;
   transition: all 0.3s;
 }
 
 .nav-btn:hover {
-  background: #f8f9fa;
-  color: #333;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
 }
 
 .nav-btn.active {
@@ -287,22 +290,23 @@ export default {
 }
 
 .tab-content {
-  background: #fff;
+  background: rgba(0, 0, 0, 0.3);
   padding: 2rem;
   border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
 }
 
 .tab-content h2 {
   margin-top: 0;
-  color: #333;
+  color: #fff;
   font-size: 1.5rem;
 }
 
 .no-data {
   text-align: center;
   padding: 2rem;
-  color: #666;
+  color: #ccc;
 }
 
 .submissions-list,
@@ -313,9 +317,10 @@ export default {
 
 .submission-card,
 .application-card {
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.05);
   padding: 1.5rem;
   border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   position: relative;
 }
 
@@ -328,13 +333,13 @@ export default {
 }
 
 .timestamp {
-  color: #666;
+  color: #ccc;
   font-size: 0.875rem;
 }
 
 .submission-details,
 .application-details {
-  color: #333;
+  color: #fff;
 }
 
 .submission-details p,
@@ -349,8 +354,9 @@ export default {
 }
 
 .photo-card {
-  background: #f8f9fa;
+  background: rgba(255, 255, 255, 0.05);
   border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
   position: relative;
 }
@@ -368,11 +374,12 @@ export default {
 .photo-description {
   font-weight: 500;
   margin-bottom: 0.5rem;
+  color: #fff;
 }
 
 .photo-profile,
 .photo-date {
-  color: #666;
+  color: #ccc;
   font-size: 0.875rem;
   margin: 0.25rem 0;
 }
