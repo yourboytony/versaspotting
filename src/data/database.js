@@ -236,7 +236,10 @@ export async function addProfile(profileData) {
       },
       body: JSON.stringify(profileData)
     })
-    if (!response.ok) throw new Error('Failed to add profile')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to add profile')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error adding profile:', error)
