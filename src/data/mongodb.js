@@ -1,8 +1,11 @@
 import { MongoClient } from 'mongodb'
 
-// MongoDB connection string - you'll need to replace this with your actual connection string
-const uri = process.env.MONGODB_URI || 'mongodb+srv://your-connection-string'
-const client = new MongoClient(uri)
+// MongoDB connection string - properly encoded
+const uri = process.env.MONGODB_URI || 'mongodb+srv://VERSAadmin:adminw8492%24%40@versaspotting.qrtcdft.mongodb.net/?retryWrites=true&w=majority&appName=versaspotting'
+const client = new MongoClient(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
 
 // Initial profiles data
 const initialProfiles = [
