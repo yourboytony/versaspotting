@@ -24,12 +24,33 @@
       <div class="admin-main">
         <!-- Profile Management -->
         <div v-if="currentTab === 'profiles'" class="tab-content">
+          <div class="section-instructions">
+            <h2>Profile Management</h2>
+            <p>Manage team member profiles here. Each profile should include:</p>
+            <ul>
+              <li>Name</li>
+              <li>Role (e.g., Photographer, Videographer)</li>
+              <li>Bio (short description)</li>
+              <li>Instagram handle</li>
+              <li>Profile photos</li>
+            </ul>
+          </div>
           <ProfileManagement />
         </div>
 
         <!-- Contact Form Submissions -->
         <div v-if="currentTab === 'contact'" class="tab-content">
-          <h2>Contact Form Submissions</h2>
+          <div class="section-instructions">
+            <h2>Contact Form Submissions</h2>
+            <p>Review and manage contact form submissions. Each submission includes:</p>
+            <ul>
+              <li>Name</li>
+              <li>Email</li>
+              <li>Subject</li>
+              <li>Message</li>
+              <li>Timestamp</li>
+            </ul>
+          </div>
           <div v-if="submissions.length === 0" class="no-data">
             <p>No submissions yet</p>
           </div>
@@ -53,7 +74,18 @@
 
         <!-- Team Applications -->
         <div v-if="currentTab === 'applications'" class="tab-content">
-          <h2>Team Applications</h2>
+          <div class="section-instructions">
+            <h2>Team Applications</h2>
+            <p>Review and manage team applications. Each application includes:</p>
+            <ul>
+              <li>Name</li>
+              <li>Email</li>
+              <li>Instagram handle</li>
+              <li>Experience level</li>
+              <li>Reason for joining</li>
+              <li>Timestamp</li>
+            </ul>
+          </div>
           <div v-if="applications.length === 0" class="no-data">
             <p>No applications yet</p>
           </div>
@@ -78,7 +110,16 @@
 
         <!-- Uploaded Photos -->
         <div v-if="currentTab === 'photos'" class="tab-content">
-          <h2>Uploaded Photos</h2>
+          <div class="section-instructions">
+            <h2>Uploaded Photos</h2>
+            <p>Manage team member photos. Each photo entry includes:</p>
+            <ul>
+              <li>Photo preview</li>
+              <li>Description/caption</li>
+              <li>Associated profile</li>
+              <li>Upload date</li>
+            </ul>
+          </div>
           <div v-if="photos.length === 0" class="no-data">
             <p>No photos uploaded yet</p>
           </div>
@@ -213,7 +254,7 @@ export default {
 }
 
 .admin-header {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
@@ -252,7 +293,7 @@ export default {
 
 .admin-nav {
   width: 250px;
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   padding: 1rem;
   box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
@@ -290,11 +331,40 @@ export default {
 }
 
 .tab-content {
-  background: rgba(0, 0, 0, 0.3);
+  background: rgba(0, 0, 0, 0.5);
   padding: 2rem;
   border-radius: 0.5rem;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   backdrop-filter: blur(10px);
+}
+
+.section-instructions {
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: rgba(0, 0, 0, 0.3);
+  border-radius: 0.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.section-instructions h2 {
+  margin-top: 0;
+  color: #fff;
+  font-size: 1.5rem;
+}
+
+.section-instructions p {
+  color: #ccc;
+  margin-bottom: 1rem;
+}
+
+.section-instructions ul {
+  color: #ccc;
+  padding-left: 1.5rem;
+  margin: 0;
+}
+
+.section-instructions li {
+  margin-bottom: 0.5rem;
 }
 
 .tab-content h2 {
@@ -317,7 +387,7 @@ export default {
 
 .submission-card,
 .application-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.3);
   padding: 1.5rem;
   border-radius: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -354,7 +424,7 @@ export default {
 }
 
 .photo-card {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
