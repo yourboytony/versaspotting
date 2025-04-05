@@ -224,4 +224,54 @@ export async function deletePhoto(profileId, photoId) {
     console.error('Error deleting photo:', error)
     return false
   }
+}
+
+// Add a new profile
+export async function addProfile(profileData) {
+  try {
+    const response = await fetch(`${API_BASE}/profiles`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(profileData)
+    })
+    if (!response.ok) throw new Error('Failed to add profile')
+    return await response.json()
+  } catch (error) {
+    console.error('Error adding profile:', error)
+    throw error
+  }
+}
+
+// Update an existing profile
+export async function updateProfile(profileData) {
+  try {
+    const response = await fetch(`${API_BASE}/profiles/${profileData.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(profileData)
+    })
+    if (!response.ok) throw new Error('Failed to update profile')
+    return await response.json()
+  } catch (error) {
+    console.error('Error updating profile:', error)
+    throw error
+  }
+}
+
+// Delete a profile
+export async function deleteProfile(profileId) {
+  try {
+    const response = await fetch(`${API_BASE}/profiles/${profileId}`, {
+      method: 'DELETE'
+    })
+    if (!response.ok) throw new Error('Failed to delete profile')
+    return true
+  } catch (error) {
+    console.error('Error deleting profile:', error)
+    throw error
+  }
 } 
