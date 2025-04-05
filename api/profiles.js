@@ -1,14 +1,8 @@
-import { MongoClient } from 'mongodb'
-
-const uri = process.env.MONGODB_URI || 'mongodb+srv://VERSAadmin:adminw8492%24%40@versaspotting.qrtcdft.mongodb.net/?retryWrites=true&w=majority&appName=versaspotting'
-const client = new MongoClient(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
-})
+import clientPromise from './mongodb'
 
 export default async function handler(req, res) {
   try {
-    await client.connect()
+    const client = await clientPromise
     const db = client.db('versaspotting')
     const profilesCollection = db.collection('profiles')
 
@@ -19,31 +13,58 @@ export default async function handler(req, res) {
         break
 
       case 'POST':
+        if (!req.body.name || !req.body.role || !req.body.bio || !req.body.instagram) {
+          return res.status(400).json({ error: 'Missing required fields' })
+        }
+
         const newProfile = {
           ...req.body,
           id: req.body.name.toLowerCase().replace(/\s+/g, '-'),
           photos: []
         }
-        await profilesCollection.insertOne(newProfile)
+
+        const result = await profilesCollection.insertOne(newProfile)
+        if (!result.acknowledged) {
+          throw new Error('Failed to insert profile')
+        }
+
         res.status(201).json(newProfile)
         break
 
       case 'PUT':
         const { id } = req.query
+        if (!id) {
+          return res.status(400).json({ error: 'Profile ID is required' })
+        }
+
         const updatedProfile = {
           ...req.body,
           id: id
         }
-        await profilesCollection.updateOne(
+
+        const updateResult = await profilesCollection.updateOne(
           { id: id },
           { $set: updatedProfile }
         )
+
+        if (updateResult.matchedCount === 0) {
+          return res.status(404).json({ error: 'Profile not found' })
+        }
+
         res.status(200).json(updatedProfile)
         break
 
       case 'DELETE':
         const profileId = req.query.id
-        await profilesCollection.deleteOne({ id: profileId })
+        if (!profileId) {
+          return res.status(400).json({ error: 'Profile ID is required' })
+        }
+
+        const deleteResult = await profilesCollection.deleteOne({ id: profileId })
+        if (deleteResult.deletedCount === 0) {
+          return res.status(404).json({ error: 'Profile not found' })
+        }
+
         res.status(200).json({ message: 'Profile deleted successfully' })
         break
 
@@ -53,8 +74,9 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Error in profiles API:', error)
-    res.status(500).json({ error: 'Internal Server Error' })
-  } finally {
-    await client.close()
+    res.status(500).json({ 
+      error: 'Internal Server Error',
+      message: error.message
+    })
   }
 } 
