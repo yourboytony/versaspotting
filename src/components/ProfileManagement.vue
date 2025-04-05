@@ -151,6 +151,10 @@ export default {
         const result = await addProfile(profileData)
         console.log('Profile added successfully:', result)
 
+        if (result && result.error) {
+          throw new Error(result.error)
+        }
+
         success.value = 'Profile added successfully'
         
         // Reset form
