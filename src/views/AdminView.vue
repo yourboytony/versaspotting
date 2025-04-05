@@ -97,7 +97,7 @@
                 <p><strong>Location:</strong> {{ photo.location }}</p>
                 <p><strong>Date:</strong> {{ formatDate(photo.timestamp) }}</p>
               </div>
-              <button @click="deletePhoto(photo.profileId, photo.id)" class="delete-button">
+              <button @click="handleDeletePhoto(photo.profileId, photo.id)" class="delete-button">
                 Delete
               </button>
             </div>
@@ -179,7 +179,7 @@ const deleteApplication = async (id) => {
   }
 }
 
-const deletePhoto = async (profileId, photoId) => {
+const handleDeletePhoto = async (profileId, photoId) => {
   try {
     await deletePhoto(profileId, photoId)
     photos.value = photos.value.filter(p => p.id !== photoId)
