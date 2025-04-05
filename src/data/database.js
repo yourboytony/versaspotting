@@ -56,11 +56,14 @@ export function initializeProfiles() {
 export async function initializeDatabase() {
   try {
     const response = await fetch(`${API_BASE}/init`)
-    if (!response.ok) throw new Error('Failed to initialize database')
+    if (!response.ok) {
+      const errorData = await response.json()
+      throw new Error(errorData.error || 'Failed to initialize database')
+    }
     return await response.json()
   } catch (error) {
     console.error('Error initializing database:', error)
-    return null
+    throw error
   }
 }
 
@@ -72,10 +75,11 @@ export async function getAllProfiles() {
       const errorData = await response.json()
       throw new Error(errorData.error || 'Failed to fetch profiles')
     }
-    return await response.json()
+    const data = await response.json()
+    return Array.isArray(data) ? data : []
   } catch (error) {
     console.error('Error getting profiles:', error)
-    throw error
+    return []
   }
 }
 

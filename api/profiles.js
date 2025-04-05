@@ -9,7 +9,7 @@ export default async function handler(req, res) {
     switch (req.method) {
       case 'GET':
         const profiles = await profilesCollection.find({}).toArray()
-        res.status(200).json(profiles)
+        res.status(200).json(profiles || [])
         break
 
       case 'POST':
