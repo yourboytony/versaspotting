@@ -11,7 +11,13 @@ export default defineConfig({
   },
   server: {
     port: 3000,
-    open: true
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:3000',
+        changeOrigin: true
+      }
+    }
   },
   base: '/',
   build: {
@@ -19,10 +25,10 @@ export default defineConfig({
     assetsDir: 'assets',
     emptyOutDir: true,
     rollupOptions: {
-      external: ['@upstash/redis']
+      external: ['@upstash/redis', 'mongodb']
     }
   },
   optimizeDeps: {
-    exclude: ['@upstash/redis']
+    exclude: ['@upstash/redis', 'mongodb']
   }
 }) 

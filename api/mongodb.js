@@ -1,5 +1,7 @@
-// API endpoints
-const API_BASE = '/api'
+import { MongoClient } from 'mongodb'
+
+const uri = process.env.MONGODB_URI
+const client = new MongoClient(uri)
 
 // Initial profiles data
 const initialProfiles = [
@@ -45,149 +47,159 @@ const initialProfiles = [
   }
 ]
 
-// Initialize profiles if they don't exist
-export function initializeProfiles() {
-  if (!localStorage.getItem('profiles')) {
-    localStorage.setItem('profiles', JSON.stringify(initialProfiles))
+export async function initializeDatabase() {
+  try {
+    await client.connect()
+    const db = client.db('versaspotting')
+    
+    // Initialize profiles if they don't exist
+    const profilesCollection = db.collection('profiles')
+    const profilesCount = await profilesCollection.countDocuments()
+    if (profilesCount === 0) {
+      await profilesCollection.insertMany(initialProfiles)
+    }
+    
+    // Initialize other collections
+    await db.collection('contact_submissions').createIndex({ timestamp: -1 })
+    await db.collection('team_applications').createIndex({ timestamp: -1 })
+    
+    console.log('Database initialized successfully')
+  } catch (error) {
+    console.error('Error initializing database:', error)
   }
 }
 
-// Get all profiles
 export async function getAllProfiles() {
   try {
-    const response = await fetch(`${API_BASE}/profiles`)
-    if (!response.ok) throw new Error('Failed to fetch profiles')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const profiles = await db.collection('profiles').find().toArray()
+    return profiles
   } catch (error) {
     console.error('Error getting profiles:', error)
     return []
   }
 }
 
-// Get photos for a specific profile
 export async function getProfilePhotos(profileId) {
   try {
-    const response = await fetch(`${API_BASE}/profiles?profileId=${profileId}`)
-    if (!response.ok) throw new Error('Failed to fetch profile photos')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const profile = await db.collection('profiles').findOne({ id: profileId })
+    return profile ? profile.photos : []
   } catch (error) {
     console.error('Error getting profile photos:', error)
     return []
   }
 }
 
-// Add a photo to a profile
 export async function addPhotoToProfile(profileId, photoData) {
   try {
-    const response = await fetch(`${API_BASE}/profiles?profileId=${profileId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(photoData)
-    })
-    if (!response.ok) throw new Error('Failed to add photo')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const newPhoto = {
+      id: Date.now().toString(),
+      ...photoData,
+      timestamp: new Date().toISOString()
+    }
+    
+    await db.collection('profiles').updateOne(
+      { id: profileId },
+      { $push: { photos: newPhoto } }
+    )
+    
+    return newPhoto
   } catch (error) {
     console.error('Error adding photo to profile:', error)
     return null
   }
 }
 
-// Store contact form submission
 export async function storeContactSubmission(formData) {
   try {
-    const response = await fetch(`${API_BASE}/contact`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    if (!response.ok) throw new Error('Failed to store contact submission')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const newSubmission = {
+      id: Date.now().toString(),
+      ...formData,
+      timestamp: new Date().toISOString()
+    }
+    
+    await db.collection('contact_submissions').insertOne(newSubmission)
+    return newSubmission
   } catch (error) {
     console.error('Error storing contact submission:', error)
     return null
   }
 }
 
-// Get all contact submissions
 export async function getAllContactSubmissions() {
   try {
-    const response = await fetch(`${API_BASE}/contact`)
-    if (!response.ok) throw new Error('Failed to fetch contact submissions')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const submissions = await db.collection('contact_submissions')
+      .find()
+      .sort({ timestamp: -1 })
+      .toArray()
+    return submissions
   } catch (error) {
     console.error('Error getting contact submissions:', error)
     return []
   }
 }
 
-// Delete contact submission
 export async function deleteContactSubmission(id) {
   try {
-    const response = await fetch(`${API_BASE}/contact?id=${id}`, {
-      method: 'DELETE'
-    })
-    if (!response.ok) throw new Error('Failed to delete contact submission')
-    const data = await response.json()
-    return data.success
+    const db = client.db('versaspotting')
+    await db.collection('contact_submissions').deleteOne({ id })
+    return true
   } catch (error) {
     console.error('Error deleting contact submission:', error)
     return false
   }
 }
 
-// Store team application
 export async function storeTeamApplication(formData) {
   try {
-    const response = await fetch(`${API_BASE}/applications`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(formData)
-    })
-    if (!response.ok) throw new Error('Failed to store team application')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const newApplication = {
+      id: Date.now().toString(),
+      ...formData,
+      timestamp: new Date().toISOString()
+    }
+    
+    await db.collection('team_applications').insertOne(newApplication)
+    return newApplication
   } catch (error) {
     console.error('Error storing team application:', error)
     return null
   }
 }
 
-// Get all team applications
 export async function getAllTeamApplications() {
   try {
-    const response = await fetch(`${API_BASE}/applications`)
-    if (!response.ok) throw new Error('Failed to fetch team applications')
-    return await response.json()
+    const db = client.db('versaspotting')
+    const applications = await db.collection('team_applications')
+      .find()
+      .sort({ timestamp: -1 })
+      .toArray()
+    return applications
   } catch (error) {
     console.error('Error getting team applications:', error)
     return []
   }
 }
 
-// Delete team application
 export async function deleteTeamApplication(id) {
   try {
-    const response = await fetch(`${API_BASE}/applications?id=${id}`, {
-      method: 'DELETE'
-    })
-    if (!response.ok) throw new Error('Failed to delete team application')
-    const data = await response.json()
-    return data.success
+    const db = client.db('versaspotting')
+    await db.collection('team_applications').deleteOne({ id })
+    return true
   } catch (error) {
     console.error('Error deleting team application:', error)
     return false
   }
 }
 
-// Get all photos
 export async function getAllPhotos() {
   try {
-    const profiles = await getAllProfiles()
+    const db = client.db('versaspotting')
+    const profiles = await db.collection('profiles').find().toArray()
     const allPhotos = profiles.flatMap(profile => 
       profile.photos.map(photo => ({
         ...photo,
@@ -202,15 +214,14 @@ export async function getAllPhotos() {
   }
 }
 
-// Delete photo
 export async function deletePhoto(profileId, photoId) {
   try {
-    const response = await fetch(`${API_BASE}/profiles?profileId=${profileId}&photoId=${photoId}`, {
-      method: 'DELETE'
-    })
-    if (!response.ok) throw new Error('Failed to delete photo')
-    const data = await response.json()
-    return data.success
+    const db = client.db('versaspotting')
+    await db.collection('profiles').updateOne(
+      { id: profileId },
+      { $pull: { photos: { id: photoId } } }
+    )
+    return true
   } catch (error) {
     console.error('Error deleting photo:', error)
     return false
