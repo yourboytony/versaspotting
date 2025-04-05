@@ -5,7 +5,12 @@
       <p>Explore our collection of aviation photography</p>
     </section>
 
-    <section class="portfolio-grid">
+    <div v-if="isLoading" class="loading">
+      <div class="spinner"></div>
+      <p>Loading profiles...</p>
+    </div>
+
+    <section v-else class="portfolio-grid">
       <div v-for="profile in profiles" :key="profile.id" class="profile-card" @click="openModal(profile)">
         <div class="profile-icon">
           <font-awesome-icon :icon="['fas', 'user']" />
@@ -13,7 +18,7 @@
         <h3>{{ profile.name }}</h3>
         <p>{{ profile.role }}</p>
         <div class="profile-stats">
-          <span>{{ profile.photos.length }} Photos</span>
+          <span>{{ profile.photos?.length || 0 }} Photos</span>
         </div>
       </div>
     </section>
@@ -28,17 +33,17 @@
           </button>
         </div>
         <div class="modal-body">
-          <div v-if="selectedProfile.photos.length === 0" class="no-photos">
+          <div v-if="!selectedProfile.photos?.length" class="no-photos">
             <font-awesome-icon :icon="['fas', 'camera']" />
             <p>No photos available yet</p>
           </div>
           <div v-else class="photos-grid">
             <div v-for="photo in selectedProfile.photos" :key="photo.id" class="photo-item">
-              <img :src="photo.imageUrl" :alt="photo.title" @click="openPhoto(photo)" />
+              <img :src="photo.imageUrl" :alt="photo.caption" @click="openPhoto(photo)" />
               <div class="photo-info">
-                <h3>{{ photo.title }}</h3>
-                <p>{{ photo.description }}</p>
-                <span class="photo-date">{{ formatDate(photo.date) }}</span>
+                <h3>{{ photo.caption }}</h3>
+                <p>{{ photo.location }}</p>
+                <span class="photo-date">{{ formatDate(photo.timestamp) }}</span>
               </div>
             </div>
           </div>
@@ -46,17 +51,16 @@
       </div>
     </div>
 
-    <!-- Add a new modal for full-size photo view -->
     <div class="photo-modal" v-if="selectedPhoto" @click.self="closePhotoModal">
       <div class="photo-modal-content">
         <button class="close-btn" @click="closePhotoModal">
           <font-awesome-icon :icon="['fas', 'times']" />
         </button>
-        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title" />
+        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.caption" />
         <div class="photo-details">
-          <h3>{{ selectedPhoto.title }}</h3>
-          <p>{{ selectedPhoto.description }}</p>
-          <span class="photo-date">{{ formatDate(selectedPhoto.date) }}</span>
+          <h3>{{ selectedPhoto.caption }}</h3>
+          <p>{{ selectedPhoto.location }}</p>
+          <span class="photo-date">{{ formatDate(selectedPhoto.timestamp) }}</span>
         </div>
       </div>
     </div>
@@ -64,12 +68,23 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { getAllProfiles } from '@/data/database';
 
-const profiles = ref(getAllProfiles());
+const profiles = ref([]);
 const selectedProfile = ref(null);
 const selectedPhoto = ref(null);
+const isLoading = ref(true);
+
+onMounted(async () => {
+  try {
+    profiles.value = await getAllProfiles();
+  } catch (error) {
+    console.error('Error loading profiles:', error);
+  } finally {
+    isLoading.value = false;
+  }
+});
 
 const openModal = (profile) => {
   selectedProfile.value = profile;
@@ -286,26 +301,35 @@ const formatDate = (dateString) => {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.photo-item img:hover {
+  transform: scale(1.02);
 }
 
 .photo-info {
   padding: var(--spacing-md);
+  background: rgba(0, 0, 0, 0.6);
+  border-radius: 0 0 var(--radius-md) var(--radius-md);
 }
 
 .photo-info h3 {
-  font-size: 1.2rem;
-  margin-bottom: var(--spacing-sm);
+  color: var(--white);
+  margin-bottom: var(--spacing-xs);
 }
 
 .photo-info p {
-  font-size: 0.9rem;
-  opacity: 0.9;
-  margin-bottom: var(--spacing-sm);
+  color: var(--white);
+  opacity: 0.8;
+  margin-bottom: var(--spacing-xs);
 }
 
-.photo-info .photo-date {
-  font-size: 0.8rem;
-  opacity: 0.7;
+.photo-date {
+  color: var(--primary-color);
+  font-size: 0.9rem;
 }
 
 @keyframes fadeIn {
@@ -343,55 +367,76 @@ const formatDate = (dateString) => {
   }
 }
 
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  gap: var(--spacing-md);
+}
+
+.spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-left-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .photo-modal {
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
+  z-index: 1001;
 }
 
 .photo-modal-content {
   position: relative;
-  max-width: 90vw;
+  max-width: 90%;
   max-height: 90vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 .photo-modal-content img {
   max-width: 100%;
   max-height: 80vh;
   object-fit: contain;
-  border-radius: var(--radius-md);
 }
 
 .photo-details {
-  margin-top: var(--spacing-md);
-  text-align: center;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.8);
+  padding: var(--spacing-md);
   color: var(--white);
-  max-width: 600px;
 }
 
 .photo-details h3 {
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
 }
 
 .photo-details p {
-  margin-bottom: var(--spacing-sm);
-  opacity: 0.9;
+  opacity: 0.8;
+  margin-bottom: var(--spacing-xs);
 }
 
 .photo-details .photo-date {
-  font-size: 0.9rem;
-  opacity: 0.7;
+  color: var(--primary-color);
 }
 
 .photo-modal-content .close-btn {
