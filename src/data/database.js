@@ -1,11 +1,3 @@
-import { Redis } from '@upstash/redis'
-
-// Initialize Redis client with existing credentials
-const redis = new Redis({
-  url: 'https://safe-louse-62148.upstash.io',
-  token: 'AfLEAAIjcDE5NjFkMGI1NTYzMGI0NzhkYTZmOWUxZmI2NWM1NmFkY3AxMA',
-})
-
 // Initial profiles data
 const initialProfiles = [
   {
@@ -51,186 +43,122 @@ const initialProfiles = [
 ]
 
 // Initialize profiles if they don't exist
-export async function initializeProfiles() {
-  try {
-    const exists = await redis.exists('profiles')
-    if (!exists) {
-      await redis.set('profiles', JSON.stringify(initialProfiles))
-    }
-  } catch (error) {
-    console.error('Error initializing profiles:', error)
+export function initializeProfiles() {
+  if (!localStorage.getItem('profiles')) {
+    localStorage.setItem('profiles', JSON.stringify(initialProfiles))
   }
 }
 
 // Get all profiles
-export async function getAllProfiles() {
-  try {
-    const profiles = await redis.get('profiles')
-    return profiles ? JSON.parse(profiles) : initialProfiles
-  } catch (error) {
-    console.error('Error getting profiles:', error)
-    return initialProfiles
-  }
+export function getAllProfiles() {
+  initializeProfiles()
+  return JSON.parse(localStorage.getItem('profiles'))
 }
 
 // Get photos for a specific profile
-export async function getProfilePhotos(profileId) {
-  try {
-    const profiles = await getAllProfiles()
-    const profile = profiles.find(p => p.id === profileId)
-    return profile ? profile.photos : []
-  } catch (error) {
-    console.error('Error getting profile photos:', error)
-    return []
-  }
+export function getProfilePhotos(profileId) {
+  const profiles = getAllProfiles()
+  const profile = profiles.find(p => p.id === profileId)
+  return profile ? profile.photos : []
 }
 
 // Add a photo to a profile
-export async function addPhotoToProfile(profileId, photoData) {
-  try {
-    const profiles = await getAllProfiles()
-    const profileIndex = profiles.findIndex(p => p.id === profileId)
-    
-    if (profileIndex !== -1) {
-      const newPhoto = {
-        id: Date.now().toString(),
-        ...photoData,
-        timestamp: new Date().toISOString()
-      }
-      
-      profiles[profileIndex].photos.unshift(newPhoto)
-      await redis.set('profiles', JSON.stringify(profiles))
-      return newPhoto
+export function addPhotoToProfile(profileId, photoData) {
+  const profiles = getAllProfiles()
+  const profileIndex = profiles.findIndex(p => p.id === profileId)
+  
+  if (profileIndex !== -1) {
+    const newPhoto = {
+      id: Date.now().toString(),
+      ...photoData,
+      timestamp: new Date().toISOString()
     }
-    return null
-  } catch (error) {
-    console.error('Error adding photo to profile:', error)
-    return null
+    
+    profiles[profileIndex].photos.unshift(newPhoto)
+    localStorage.setItem('profiles', JSON.stringify(profiles))
+    return newPhoto
   }
+  return null
 }
 
 // Store contact form submission
-export async function storeContactSubmission(formData) {
-  try {
-    const submissions = await redis.get('contact_submissions') || '[]'
-    const parsedSubmissions = JSON.parse(submissions)
-    
-    const newSubmission = {
-      id: Date.now().toString(),
-      ...formData,
-      timestamp: new Date().toISOString()
-    }
-    
-    parsedSubmissions.push(newSubmission)
-    await redis.set('contact_submissions', JSON.stringify(parsedSubmissions))
-    return newSubmission
-  } catch (error) {
-    console.error('Error storing contact submission:', error)
-    return null
+export function storeContactSubmission(formData) {
+  const submissions = JSON.parse(localStorage.getItem('contact_submissions') || '[]')
+  
+  const newSubmission = {
+    id: Date.now().toString(),
+    ...formData,
+    timestamp: new Date().toISOString()
   }
+  
+  submissions.push(newSubmission)
+  localStorage.setItem('contact_submissions', JSON.stringify(submissions))
+  return newSubmission
 }
 
 // Get all contact submissions
-export async function getAllContactSubmissions() {
-  try {
-    const submissions = await redis.get('contact_submissions')
-    return submissions ? JSON.parse(submissions) : []
-  } catch (error) {
-    console.error('Error getting contact submissions:', error)
-    return []
-  }
+export function getAllContactSubmissions() {
+  return JSON.parse(localStorage.getItem('contact_submissions') || '[]')
 }
 
 // Delete contact submission
-export async function deleteContactSubmission(id) {
-  try {
-    const submissions = await getAllContactSubmissions()
-    const filteredSubmissions = submissions.filter(s => s.id !== id)
-    await redis.set('contact_submissions', JSON.stringify(filteredSubmissions))
-    return true
-  } catch (error) {
-    console.error('Error deleting contact submission:', error)
-    return false
-  }
+export function deleteContactSubmission(id) {
+  const submissions = getAllContactSubmissions()
+  const filteredSubmissions = submissions.filter(s => s.id !== id)
+  localStorage.setItem('contact_submissions', JSON.stringify(filteredSubmissions))
+  return true
 }
 
 // Store team application
-export async function storeTeamApplication(formData) {
-  try {
-    const applications = await redis.get('team_applications') || '[]'
-    const parsedApplications = JSON.parse(applications)
-    
-    const newApplication = {
-      id: Date.now().toString(),
-      ...formData,
-      timestamp: new Date().toISOString()
-    }
-    
-    parsedApplications.push(newApplication)
-    await redis.set('team_applications', JSON.stringify(parsedApplications))
-    return newApplication
-  } catch (error) {
-    console.error('Error storing team application:', error)
-    return null
+export function storeTeamApplication(formData) {
+  const applications = JSON.parse(localStorage.getItem('team_applications') || '[]')
+  
+  const newApplication = {
+    id: Date.now().toString(),
+    ...formData,
+    timestamp: new Date().toISOString()
   }
+  
+  applications.push(newApplication)
+  localStorage.setItem('team_applications', JSON.stringify(applications))
+  return newApplication
 }
 
 // Get all team applications
-export async function getAllTeamApplications() {
-  try {
-    const applications = await redis.get('team_applications')
-    return applications ? JSON.parse(applications) : []
-  } catch (error) {
-    console.error('Error getting team applications:', error)
-    return []
-  }
+export function getAllTeamApplications() {
+  return JSON.parse(localStorage.getItem('team_applications') || '[]')
 }
 
 // Delete team application
-export async function deleteTeamApplication(id) {
-  try {
-    const applications = await getAllTeamApplications()
-    const filteredApplications = applications.filter(a => a.id !== id)
-    await redis.set('team_applications', JSON.stringify(filteredApplications))
-    return true
-  } catch (error) {
-    console.error('Error deleting team application:', error)
-    return false
-  }
+export function deleteTeamApplication(id) {
+  const applications = getAllTeamApplications()
+  const filteredApplications = applications.filter(a => a.id !== id)
+  localStorage.setItem('team_applications', JSON.stringify(filteredApplications))
+  return true
 }
 
 // Get all photos
-export async function getAllPhotos() {
-  try {
-    const profiles = await getAllProfiles()
-    const allPhotos = profiles.flatMap(profile => 
-      profile.photos.map(photo => ({
-        ...photo,
-        profileName: profile.name,
-        profileId: profile.id
-      }))
-    )
-    return allPhotos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-  } catch (error) {
-    console.error('Error getting all photos:', error)
-    return []
-  }
+export function getAllPhotos() {
+  const profiles = getAllProfiles()
+  const allPhotos = profiles.flatMap(profile => 
+    profile.photos.map(photo => ({
+      ...photo,
+      profileName: profile.name,
+      profileId: profile.id
+    }))
+  )
+  return allPhotos.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
 }
 
 // Delete photo
-export async function deletePhoto(profileId, photoId) {
-  try {
-    const profiles = await getAllProfiles()
-    const profileIndex = profiles.findIndex(p => p.id === profileId)
-    
-    if (profileIndex !== -1) {
-      profiles[profileIndex].photos = profiles[profileIndex].photos.filter(p => p.id !== photoId)
-      await redis.set('profiles', JSON.stringify(profiles))
-      return true
-    }
-    return false
-  } catch (error) {
-    console.error('Error deleting photo:', error)
-    return false
+export function deletePhoto(profileId, photoId) {
+  const profiles = getAllProfiles()
+  const profileIndex = profiles.findIndex(p => p.id === profileId)
+  
+  if (profileIndex !== -1) {
+    profiles[profileIndex].photos = profiles[profileIndex].photos.filter(p => p.id !== photoId)
+    localStorage.setItem('profiles', JSON.stringify(profiles))
+    return true
   }
+  return false
 } 
