@@ -100,6 +100,10 @@ const closePhotoModal = () => {
 
 const loadPhotographerData = async (id) => {
   try {
+    if (!store.isInitialized) {
+      await store.initializeData()
+    }
+
     // Get photographer data
     const photographerData = store.photographers.find(p => p.id === id)
     if (!photographerData) {

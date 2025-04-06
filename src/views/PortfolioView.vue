@@ -1,56 +1,63 @@
 <template>
   <div class="portfolio">
-    <div class="portfolio-header">
-      <h1>Photographer Portfolios</h1>
-      <div class="search-bar">
-        <input 
-          type="text" 
-          v-model="searchQuery" 
-          placeholder="Search photographers..."
-          @input="filterPhotographers"
-        >
-        <div class="search-icon">
-          <i class="fas fa-search"></i>
-        </div>
-      </div>
+    <div v-if="!store.isInitialized" class="loading-state">
+      <i class="fas fa-spinner fa-spin"></i>
+      <p>Loading photographers...</p>
     </div>
 
-    <div class="photographers-grid" v-if="filteredPhotographers.length > 0">
-      <div 
-        v-for="photographer in filteredPhotographers" 
-        :key="photographer.id" 
-        class="photographer-card"
-        @click="viewPortfolio(photographer.id)"
-      >
-        <div class="card-image">
-          <img :src="photographer.coverImage || '/placeholder.jpg'" :alt="photographer.name">
-          <div class="card-overlay">
-            <div class="photographer-stats">
-              <span><i class="fas fa-camera"></i> {{ photographer.photoCount }} Photos</span>
-              <span><i class="fas fa-map-marker-alt"></i> {{ photographer.location }}</span>
+    <template v-else>
+      <div class="portfolio-header">
+        <h1>Photographer Portfolios</h1>
+        <div class="search-bar">
+          <input 
+            type="text" 
+            v-model="searchQuery" 
+            placeholder="Search photographers..."
+            @input="filterPhotographers"
+          >
+          <div class="search-icon">
+            <i class="fas fa-search"></i>
+          </div>
+        </div>
+      </div>
+
+      <div class="photographers-grid" v-if="filteredPhotographers.length > 0">
+        <div 
+          v-for="photographer in filteredPhotographers" 
+          :key="photographer.id" 
+          class="photographer-card"
+          @click="viewPortfolio(photographer.id)"
+        >
+          <div class="card-image">
+            <img :src="photographer.coverImage || '/placeholder.jpg'" :alt="photographer.name">
+            <div class="card-overlay">
+              <div class="photographer-stats">
+                <span><i class="fas fa-camera"></i> {{ photographer.photoCount }} Photos</span>
+                <span><i class="fas fa-map-marker-alt"></i> {{ photographer.location }}</span>
+              </div>
+            </div>
+          </div>
+          <div class="card-content">
+            <div class="photographer-avatar">
+              <img :src="photographer.avatar || '/default-avatar.jpg'" :alt="photographer.name">
+            </div>
+            <h3>{{ photographer.name }}</h3>
+            <p class="photographer-specialty">{{ photographer.specialty }}</p>
+            <div class="photographer-tags">
+              <span v-for="tag in photographer.tags" :key="tag" class="tag">
+                {{ tag }}
+              </span>
             </div>
           </div>
         </div>
-        <div class="card-content">
-          <div class="photographer-avatar">
-            <img :src="photographer.avatar || '/default-avatar.jpg'" :alt="photographer.name">
-          </div>
-          <h3>{{ photographer.name }}</h3>
-          <p class="photographer-specialty">{{ photographer.specialty }}</p>
-          <div class="photographer-tags">
-            <span v-for="tag in photographer.tags" :key="tag" class="tag">
-              {{ tag }}
-            </span>
-          </div>
-        </div>
       </div>
-    </div>
 
-    <div v-else class="no-results">
-      <i class="fas fa-search"></i>
-      <p>No photographers found matching your search.</p>
-      <button @click="clearSearch" class="clear-search">Clear Search</button>
-    </div>
+      <div v-else class="no-results">
+        <i class="fas fa-search"></i>
+        <p>No photographers found matching your search.</p>
+        <button @click="clearSearch" class="clear-search">Clear Search</button>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -303,5 +310,23 @@ onMounted(async () => {
   .photographer-card:hover {
     transform: none;
   }
+}
+
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-state i {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+}
+
+.loading-state p {
+  font-size: 1.2rem;
 }
 </style> 

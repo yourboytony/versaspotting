@@ -5,43 +5,13 @@ import { getLatestData, syncData, initApiService } from '../services/apiService'
 initApiService()
 
 export const useDataStore = defineStore('data', {
-  state: () => {
-    // Default values for each data type
-    const defaults = {
-      photographers: [
-        {
-          id: '1',
-          name: 'Anthony Nigro',
-          specialty: 'Aviation Photography',
-          location: 'YVR',
-          avatar: 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png',
-          joinDate: '2025-04-01',
-          bio: 'Founder of VERSA Spotting Group. Passionate about capturing the beauty of aviation at YVR.',
-          status: 'active',
-          photoCount: 0
-        }
-      ],
-      photos: [],
-      applications: [],
-      announcements: [
-        {
-          id: '1',
-          title: 'Welcome to VERSA',
-          content: 'Welcome to the VERSA Spotting Group website! We are excited to share our passion for aviation photography with you.',
-          date: '2025-04-01',
-          category: 'general',
-          readTime: '2 min'
-        }
-      ]
-    }
-
-    return {
-      photographers: defaults.photographers,
-      photos: defaults.photos,
-      applications: defaults.applications,
-      announcements: defaults.announcements
-    }
-  },
+  state: () => ({
+    photographers: [],
+    photos: [],
+    applications: [],
+    announcements: [],
+    isInitialized: false
+  }),
 
   actions: {
     // Initialize data from IndexedDB
@@ -54,10 +24,45 @@ export const useDataStore = defineStore('data', {
           getLatestData('announcements')
         ])
 
-        this.photos = photos.length > 0 ? photos : this.photos
-        this.photographers = photographers.length > 0 ? photographers : this.photographers
-        this.applications = applications.length > 0 ? applications : this.applications
-        this.announcements = announcements.length > 0 ? announcements : this.announcements
+        // Only use defaults if we have no data in storage
+        if (photographers.length === 0) {
+          this.photographers = [
+            {
+              id: '1',
+              name: 'Anthony Nigro',
+              specialty: 'Aviation Photography',
+              location: 'YVR',
+              avatar: 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png',
+              joinDate: '2025-04-01',
+              bio: 'Founder of VERSA Spotting Group. Passionate about capturing the beauty of aviation at YVR.',
+              status: 'active',
+              photoCount: 0
+            }
+          ]
+          await this.saveToStorage('photographers')
+        } else {
+          this.photographers = photographers
+        }
+
+        if (announcements.length === 0) {
+          this.announcements = [
+            {
+              id: '1',
+              title: 'Welcome to VERSA',
+              content: 'Welcome to the VERSA Spotting Group website! We are excited to share our passion for aviation photography with you.',
+              date: '2025-04-01',
+              category: 'general',
+              readTime: '2 min'
+            }
+          ]
+          await this.saveToStorage('announcements')
+        } else {
+          this.announcements = announcements
+        }
+
+        this.photos = photos
+        this.applications = applications
+        this.isInitialized = true
       } catch (error) {
         console.error('Error initializing data:', error)
       }
