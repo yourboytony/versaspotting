@@ -160,19 +160,27 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue'
 import gsap from 'gsap'
+import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useDataStore } from '../stores/dataStore'
+
+gsap.registerPlugin(ScrollTrigger)
 
 const dataStore = useDataStore()
 const currentBackgroundIndex = ref(0)
 const backgroundInterval = ref(null)
 const selectedPhoto = ref(null)
 
-// Get recent photos for background
+// Get recent photos for background with error handling
 const backgroundPhotos = computed(() => {
-  return [...dataStore.photos]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 5)
-    .map(photo => parseImageUrl(photo.imageUrl))
+  try {
+    return [...dataStore.photos]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 5)
+      .map(photo => parseImageUrl(photo.imageUrl))
+  } catch (error) {
+    console.error('Error loading background photos:', error)
+    return []
+  }
 })
 
 // Current background image
@@ -187,16 +195,21 @@ const startBackgroundRotation = () => {
   }, 5000)
 }
 
-// Recent photos with URL parsing
+// Recent photos with URL parsing and error handling
 const recentPhotos = computed(() => {
-  return [...dataStore.photos]
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 6)
-    .map(photo => ({
-      ...photo,
-      imageUrl: parseImageUrl(photo.imageUrl),
-      photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
-    }))
+  try {
+    return [...dataStore.photos]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 6)
+      .map(photo => ({
+        ...photo,
+        imageUrl: parseImageUrl(photo.imageUrl),
+        photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
+      }))
+  } catch (error) {
+    console.error('Error loading recent photos:', error)
+    return []
+  }
 })
 
 // URL parsing function
@@ -241,120 +254,128 @@ const totalLocations = ref(8)
 onMounted(() => {
   startBackgroundRotation()
   
-  // Hero animations
+  // Hero animations with enhanced timing
   gsap.from('.hero-content', {
-    duration: 1.5,
-    y: 50,
+    duration: 1.8,
+    y: 60,
     opacity: 0,
-    ease: 'power2.out'
+    ease: 'power3.out'
   })
 
-  // Recent uploads animations
+  // Recent uploads animations with better stagger
   gsap.from('.photo-card', {
     scrollTrigger: {
       trigger: '.recent-uploads',
       start: 'top 80%',
-      toggleActions: 'play none none none'
+      toggleActions: 'play none none reset'
     },
-    duration: 0.8,
-    y: 50,
+    duration: 1,
+    y: 60,
     opacity: 0,
-    stagger: 0.1,
-    ease: 'power2.out'
+    stagger: {
+      amount: 0.6,
+      ease: 'power2.out'
+    }
   })
 
-  // About section animations
-  gsap.from('.about-title', {
+  // Section headers animation
+  gsap.utils.toArray('.section-header').forEach(header => {
+    gsap.from(header, {
+      scrollTrigger: {
+        trigger: header,
+        start: 'top 85%',
+        toggleActions: 'play none none reset'
+      },
+      duration: 1,
+      y: 40,
+      opacity: 0,
+      ease: 'power2.out'
+    })
+  })
+
+  // About section enhanced animations
+  const aboutTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: '.about',
-      start: 'top 80%'
-    },
-    y: 30,
-    opacity: 0,
-    duration: 0.8,
-    ease: 'power2.out'
+      start: 'top 80%',
+      toggleActions: 'play none none reset'
+    }
   })
 
-  gsap.from('.about-subtitle', {
-    scrollTrigger: {
-      trigger: '.about',
-      start: 'top 80%'
-    },
-    y: 20,
-    opacity: 0,
-    duration: 0.8,
-    delay: 0.2,
-    ease: 'power2.out'
-  })
+  aboutTimeline
+    .from('.about-title', {
+      y: 40,
+      opacity: 0,
+      duration: 1,
+      ease: 'power2.out'
+    })
+    .from('.about-subtitle', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.out'
+    }, '-=0.6')
+    .from('.about-text p', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power2.out'
+    }, '-=0.4')
+    .from('.stat-box', {
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      stagger: 0.2,
+      ease: 'power2.out'
+    }, '-=0.4')
 
-  gsap.from('.about-text', {
-    scrollTrigger: {
-      trigger: '.about-content',
-      start: 'top 80%'
-    },
-    y: 30,
-    opacity: 0,
-    duration: 0.8,
-    ease: 'power2.out'
-  })
-
-  gsap.from('.stat-box', {
-    scrollTrigger: {
-      trigger: '.about-stats',
-      start: 'top 80%'
-    },
-    y: 20,
-    opacity: 0,
-    duration: 0.6,
-    stagger: 0.2,
-    ease: 'power2.out'
-  })
-
-  // Simpler Features animations
+  // Features animation with bounce
   gsap.from('.feature-card', {
     scrollTrigger: {
       trigger: '.features',
       start: 'top 80%',
-      toggleActions: 'play none none none'
+      toggleActions: 'play none none reset'
     },
-    y: 30,
+    duration: 1,
+    y: 40,
     opacity: 0,
-    duration: 0.8,
     stagger: 0.2,
-    ease: 'power2.out'
+    ease: 'back.out(1.2)'
   })
 
-  // Announcements animations
+  // Announcements animation with slide
   gsap.from('.announcement-card', {
     scrollTrigger: {
       trigger: '.announcements',
       start: 'top 80%',
-      toggleActions: 'play none none none'
+      toggleActions: 'play none none reset'
     },
-    duration: 0.6,
-    y: 30,
+    duration: 1,
+    x: -40,
     opacity: 0,
-    stagger: 0.1,
+    stagger: 0.2,
     ease: 'power2.out'
   })
 
-  // CTA animation
+  // CTA animation with scale
   gsap.from('.cta-content', {
     scrollTrigger: {
       trigger: '.cta',
-      start: 'top 80%',
-      toggleActions: 'play none none none'
+      start: 'top 85%',
+      toggleActions: 'play none none reset'
     },
-    duration: 0.8,
+    duration: 1,
+    scale: 0.95,
     y: 30,
     opacity: 0,
-    ease: 'power2.out'
+    ease: 'power3.out'
   })
 
-  // Scroll indicator animation
+  // Enhanced scroll indicator animation
   gsap.to('.scroll-arrow', {
-    y: 10,
-    duration: 1,
+    y: 12,
+    duration: 1.5,
     repeat: -1,
     yoyo: true,
     ease: 'power1.inOut'
@@ -484,6 +505,8 @@ const closePhotoModal = () => {
   padding: 6rem 2rem;
   background: rgba(0, 0, 0, 0.3);
   position: relative;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .section-header {
@@ -522,11 +545,13 @@ const closePhotoModal = () => {
   background: #000;
   aspect-ratio: 3/2;
   transform: translateY(0);
-  transition: transform 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
 }
 
 .photo-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
 .photo-image {
@@ -549,9 +574,14 @@ const closePhotoModal = () => {
 .photo-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.95) 0%,
+    rgba(0,0,0,0.5) 50%,
+    rgba(0,0,0,0.1) 100%
+  );
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: flex-end;
   padding: 2rem;
@@ -564,7 +594,8 @@ const closePhotoModal = () => {
 .photo-info {
   color: #fff;
   transform: translateY(20px);
-  transition: transform 0.3s ease;
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 100%;
 }
 
 .photo-card:hover .photo-info {
@@ -603,59 +634,80 @@ const closePhotoModal = () => {
 
 .view-all-btn {
   display: inline-block;
-  padding: 1rem 2rem;
+  padding: 1.2rem 2.5rem;
   background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
   color: #000;
   font-weight: 600;
-  border-radius: 8px;
+  border-radius: 12px;
   text-decoration: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(144, 153, 62, 0.2);
 }
 
 .view-all-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(144, 153, 62, 0.3);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 0 12px 24px rgba(144, 153, 62, 0.3);
 }
 
 /* Photo Modal */
 .photo-modal {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1000;
   padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .modal-content {
   max-width: 1200px;
   width: 90%;
   background: #1a1a1a;
-  border-radius: 12px;
+  border-radius: 16px;
   overflow: hidden;
   position: relative;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  animation: modalEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@keyframes modalEnter {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .close-btn {
   position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(0, 0, 0, 0.5);
+  top: 1.5rem;
+  right: 1.5rem;
+  background: rgba(0, 0, 0, 0.6);
   border: none;
   color: #fff;
-  width: 2.5rem;
-  height: 2.5rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 50%;
   font-size: 1.5rem;
   cursor: pointer;
-  transition: background-color 0.3s ease;
-  z-index: 1;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
 }
 
 .close-btn:hover {
   background: rgba(0, 0, 0, 0.8);
+  transform: scale(1.1);
 }
 
 .modal-content img {
