@@ -159,6 +159,7 @@ import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useDataStore } from '../stores/dataStore'
+import SplitType from 'split-type'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -233,6 +234,38 @@ const rotateBackground = () => {
 
 // Update the initializeAnimations function
 const initializeAnimations = () => {
+  // Typing animation for hero description
+  const heroText = new SplitType('.hero-description', { types: 'words,chars' })
+  gsap.from(heroText.chars, {
+    opacity: 0,
+    y: 20,
+    rotateX: -90,
+    stagger: 0.02,
+    duration: 0.8,
+    ease: 'back.out(1.7)',
+    scrollTrigger: {
+      trigger: '.hero-description',
+      start: 'top 80%',
+    }
+  })
+
+  // Enhanced hero title animation
+  const titleText = new SplitType('.hero-content h1', { types: 'words,chars' })
+  gsap.from(titleText.chars, {
+    opacity: 0,
+    scale: 0,
+    y: 100,
+    rotateX: -60,
+    transformOrigin: '50% 50% -50',
+    stagger: 0.05,
+    duration: 1,
+    ease: 'back.out(1.7)',
+    scrollTrigger: {
+      trigger: '.hero-content h1',
+      start: 'top 80%',
+    }
+  })
+
   // Subtle parallax for hero section
   gsap.to('.background-image.active', {
     y: '15%',
@@ -245,9 +278,10 @@ const initializeAnimations = () => {
     }
   })
 
-  // Floating animation for hero content
+  // Floating animation for hero content with depth
   gsap.to('.hero-content', {
     y: '-30px',
+    rotateX: '5deg',
     scrollTrigger: {
       trigger: '.hero',
       start: 'top top',
@@ -256,44 +290,79 @@ const initializeAnimations = () => {
     }
   })
 
-  // Smooth section transitions
+  // Enhanced section transitions with 3D effect
   gsap.utils.toArray('section').forEach(section => {
     gsap.from(section, {
       scrollTrigger: {
         trigger: section,
         start: 'top 80%',
       },
-      y: 30,
+      y: 60,
+      rotateX: '5deg',
       opacity: 0,
-      duration: 1,
-      ease: 'power2.out'
+      duration: 1.2,
+      ease: 'power4.out'
     })
   })
 
-  // Featured items stagger reveal
+  // Featured items stagger with 3D hover
   gsap.from('.featured-item', {
     scrollTrigger: {
       trigger: '.featured-grid',
       start: 'top 80%'
     },
-    y: 50,
+    y: 100,
+    rotateX: '15deg',
     opacity: 0,
-    duration: 0.8,
-    stagger: 0.2,
-    ease: 'power2.out'
+    duration: 1,
+    stagger: 0.15,
+    ease: 'power4.out'
   })
 
-  // Features stagger animation
+  // Stats counter animation
+  gsap.utils.toArray('.stat-number').forEach(stat => {
+    const endValue = parseInt(stat.textContent)
+    gsap.from(stat, {
+      textContent: 0,
+      duration: 2,
+      ease: 'power1.out',
+      snap: { textContent: 1 },
+      scrollTrigger: {
+        trigger: stat,
+        start: 'top 80%',
+      }
+    })
+  })
+
+  // Features enhanced animation
   gsap.from('.feature', {
     scrollTrigger: {
       trigger: '.features',
       start: 'top 80%'
     },
-    y: 30,
+    y: 60,
     opacity: 0,
-    duration: 0.6,
+    rotateX: '10deg',
+    duration: 0.8,
     stagger: 0.2,
-    ease: 'back.out(1.2)'
+    ease: 'back.out(1.4)'
+  })
+
+  // Typing animation for section titles
+  gsap.utils.toArray('section h2').forEach(title => {
+    const titleText = new SplitType(title, { types: 'words,chars' })
+    gsap.from(titleText.chars, {
+      opacity: 0,
+      y: 20,
+      rotateX: -90,
+      stagger: 0.02,
+      duration: 0.6,
+      ease: 'back.out(1.7)',
+      scrollTrigger: {
+        trigger: title,
+        start: 'top 80%',
+      }
+    })
   })
 }
 
@@ -537,19 +606,21 @@ h2 {
   transform: none;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   transform-style: preserve-3d;
-  perspective: 1000px;
+  perspective: 2000px;
 }
 
 .featured-item:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.1);
 }
 
 .featured-image {
   position: relative;
   width: 100%;
   height: 100%;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .featured-image img {
@@ -561,7 +632,7 @@ h2 {
 }
 
 .featured-item:hover img {
-  transform: scale(1.05) translateZ(30px);
+  transform: translateZ(50px);
 }
 
 .featured-overlay {
@@ -634,10 +705,17 @@ h2 {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.8);
 }
 
 .stat:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(255,255,255,0.2);
 }
 
 .stat::after {
@@ -740,11 +818,17 @@ h2 {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.8);
 }
 
 .feature:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(255,255,255,0.2);
 }
 
 .feature::before {
@@ -773,7 +857,7 @@ h2 {
 }
 
 .feature:hover .feature-icon {
-  transform: scale(1.2) rotate(10deg);
+  transform: scale(1.2) rotate(5deg);
 }
 
 .feature h3 {
@@ -864,6 +948,8 @@ h2 {
   will-change: transform;
   position: relative;
   overflow: hidden;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .btn::before {
@@ -899,8 +985,10 @@ h2 {
 }
 
 .btn:hover {
-  transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  transform: translateY(-4px) scale(1.02) translateZ(20px) !important;
+  box-shadow: 
+    0 15px 30px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.1);
 }
 
 .btn-primary:hover {
@@ -933,6 +1021,8 @@ h2 {
   overflow: hidden;
   animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-origin: center;
+  transform-style: preserve-3d;
+  perspective: 2000px;
 }
 
 .modal-close {
@@ -1004,11 +1094,17 @@ h2 {
   border-right: 3px solid var(--primary);
   animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   margin-bottom: var(--spacing-md);
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 @keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from { 
+    transform: rotate(0deg) rotateX(30deg) rotateY(30deg); 
+  }
+  to { 
+    transform: rotate(360deg) rotateX(30deg) rotateY(30deg); 
+  }
 }
 
 /* Error State */
@@ -1093,22 +1189,30 @@ h2 {
 }
 
 @keyframes shimmer {
-  0% { transform: translateX(-100%); }
-  20%, 100% { transform: translateX(100%); }
+  0% { 
+    transform: translateX(-100%) rotateZ(-45deg); 
+    opacity: 0;
+  }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { 
+    transform: translateX(100%) rotateZ(-45deg);
+    opacity: 0;
+  }
 }
 
 /* Enhanced Animations */
 .featured-item {
   transform-style: preserve-3d;
-  perspective: 1000px;
+  perspective: 2000px;
 }
 
 .featured-image {
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .featured-item:hover .featured-image {
-  transform: translateZ(20px);
+  transform: translateZ(50px);
 }
 
 .stat {
@@ -1116,7 +1220,7 @@ h2 {
 }
 
 .stat:hover {
-  transform: translateY(-5px);
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
 }
 
 /* Remove gradient animation for stat numbers */
@@ -1125,8 +1229,10 @@ h2 {
 }
 
 .feature:hover {
-  transform: translateY(-5px) scale(1.02);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(255,255,255,0.2);
 }
 
 .feature-icon {
@@ -1143,8 +1249,10 @@ h2 {
 }
 
 .btn:hover {
-  transform: translateY(-2px) scale(1.02) !important;
-  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
+  transform: translateY(-4px) scale(1.02) translateZ(20px) !important;
+  box-shadow: 
+    0 15px 30px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.1);
 }
 
 .hero-content h1 {
@@ -1167,8 +1275,14 @@ h2 {
 }
 
 @keyframes modalPop {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from { 
+    transform: scale(0.9) rotateX(5deg); 
+    opacity: 0; 
+  }
+  to { 
+    transform: scale(1) rotateX(0deg); 
+    opacity: 1; 
+  }
 }
 
 /* Responsive Design */
@@ -1226,5 +1340,120 @@ h2 {
 :deep(nav.scrolled) {
   background: rgba(0, 0, 0, 0.8);
   backdrop-filter: blur(10px);
+}
+
+/* Enhanced 3D Hover Effects */
+.featured-item {
+  transform-style: preserve-3d;
+  perspective: 2000px;
+}
+
+.featured-item:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.1);
+}
+
+.featured-image {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.featured-item:hover .featured-image {
+  transform: translateZ(50px);
+}
+
+/* Enhanced Button Animations */
+.btn {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.btn:hover {
+  transform: translateY(-4px) scale(1.02) translateZ(20px) !important;
+  box-shadow: 
+    0 15px 30px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.1);
+}
+
+/* Enhanced Stats Cards */
+.stat {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.8);
+}
+
+.stat:hover {
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(255,255,255,0.2);
+}
+
+/* Enhanced Feature Cards */
+.feature {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  backdrop-filter: blur(10px);
+  background: rgba(255,255,255,0.8);
+}
+
+.feature:hover {
+  transform: translateY(-8px) rotateX(5deg) rotateY(5deg) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.1),
+    0 0 0 1px rgba(255,255,255,0.2);
+}
+
+/* Enhanced Modal Animation */
+.modal-content {
+  transform-style: preserve-3d;
+  perspective: 2000px;
+}
+
+@keyframes modalPop {
+  from { 
+    transform: scale(0.9) rotateX(5deg); 
+    opacity: 0; 
+  }
+  to { 
+    transform: scale(1) rotateX(0deg); 
+    opacity: 1; 
+  }
+}
+
+/* Typing Cursor Effect */
+.hero-description::after,
+section h2::after {
+  content: '|';
+  animation: cursor 1s infinite;
+  opacity: 0;
+}
+
+@keyframes cursor {
+  0%, 100% { opacity: 0; }
+  50% { opacity: 1; }
+}
+
+/* Smooth Scroll Behavior */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Enhanced Loading Spinner */
+.loading-spinner {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+@keyframes spin {
+  from { 
+    transform: rotate(0deg) rotateX(30deg) rotateY(30deg); 
+  }
+  to { 
+    transform: rotate(360deg) rotateX(30deg) rotateY(30deg); 
+  }
 }
 </style>
