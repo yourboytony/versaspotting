@@ -2,13 +2,16 @@
   <div class="home" ref="mainContainer">
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-overlay"></div>
-      <div class="hero-background" :style="{ backgroundImage: `url(${currentBackground})` }"></div>
-      <div v-if="previousBackground" class="hero-background previous" :style="{ backgroundImage: `url(${previousBackground})` }"></div>
+      <div class="hero-background">
+        <video autoplay loop muted playsinline class="hero-video">
+          <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35f1a9e7c02d&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+        </video>
+        <div class="hero-overlay"></div>
+      </div>
       <div class="hero-content">
         <h1 class="title">VERSA Spotting Group</h1>
-        <p class="subtitle">Capturing the beauty of aviation around the world</p>
-        <p class="description">Join our community of passionate aviation photographers and share your love for aviation photography</p>
+        <p class="subtitle">Where Aviation Meets Artistry</p>
+        <p class="description">Join Vancouver's premier aviation photography community</p>
         <div class="hero-buttons">
           <router-link to="/portfolio" class="button primary">View Portfolios</router-link>
           <router-link to="/applications" class="button secondary">Join Us</router-link>
@@ -18,16 +21,13 @@
         <span class="scroll-text">Scroll to explore</span>
         <div class="scroll-arrow"></div>
       </div>
-      <div class="particles">
-        <div v-for="n in 20" :key="n" class="particle"></div>
-      </div>
     </section>
 
     <!-- Recent Uploads Section -->
     <section class="recent-uploads">
       <div class="section-header">
         <h2>Recent Uploads</h2>
-        <p>Check out our latest aviation photography</p>
+        <p>Discover our latest captures</p>
       </div>
       <div class="photos-container">
         <div v-if="recentPhotos.length === 0" class="no-photos">
@@ -113,7 +113,7 @@
     <section class="features">
       <div class="section-header">
         <h2>Why Join VERSA</h2>
-        <p>Discover the benefits of being part of our community</p>
+        <p>Experience the difference</p>
       </div>
       <div class="features-grid">
         <div class="feature-card">
@@ -518,6 +518,8 @@ const closePhotoModal = () => {
 .home {
   min-height: 100vh;
   overflow-x: hidden;
+  background: #000;
+  color: #fff;
 }
 
 /* Hero Section */
@@ -539,22 +541,14 @@ const closePhotoModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-size: cover;
-  background-position: center;
-  transition: opacity 1s ease-in-out;
   z-index: 0;
+}
+
+.hero-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   transform: scale(1.1);
-  opacity: 1;
-}
-
-.hero-background.previous {
-  opacity: 0;
-  transition: opacity 1s ease-in-out;
-}
-
-.hero-background:not(.previous) {
-  opacity: 1;
-  transition: opacity 1s ease-in-out;
 }
 
 .hero-overlay {
@@ -579,42 +573,48 @@ const closePhotoModal = () => {
 }
 
 .title {
-  font-size: 4rem;
+  font-size: 4.5rem;
   font-weight: 800;
   margin-bottom: 1rem;
-  color: var(--primary-color);
-  text-shadow: 0 0 20px rgba(144, 153, 62, 0.5);
-  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  letter-spacing: -1px;
+  line-height: 1.1;
 }
 
 .subtitle {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   margin-bottom: 1rem;
-  color: #ffffff;
+  color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  letter-spacing: -0.5px;
 }
 
 .description {
   font-size: 1.2rem;
   margin-bottom: 3rem;
-  color: #cccccc;
+  color: rgba(255, 255, 255, 0.8);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+  font-weight: 400;
 }
 
 .hero-buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   justify-content: center;
 }
 
 .button {
-  padding: 1rem 2rem;
-  border-radius: 8px;
+  padding: 1rem 2.5rem;
+  border-radius: 30px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
 }
 
 .button::before {
@@ -638,91 +638,33 @@ const closePhotoModal = () => {
 }
 
 .button.primary {
-  background: var(--primary-color);
-  color: #000000;
-  box-shadow: 0 5px 15px rgba(144, 153, 62, 0.4);
+  background: #fff;
+  color: #000;
+  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
 }
 
 .button.secondary {
   background: transparent;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
+  border: 2px solid #fff;
+  color: #fff;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .button:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(144, 153, 62, 0.4);
-}
-
-/* Particles */
-.particles {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.particle {
-  position: absolute;
-  width: 5px;
-  height: 5px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  animation: float 15s infinite linear;
-}
-
-.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-.particle:nth-child(2) { left: 20%; top: 60%; animation-delay: 1s; }
-.particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 2s; }
-.particle:nth-child(4) { left: 40%; top: 80%; animation-delay: 3s; }
-.particle:nth-child(5) { left: 50%; top: 30%; animation-delay: 4s; }
-.particle:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; }
-.particle:nth-child(7) { left: 70%; top: 50%; animation-delay: 6s; }
-.particle:nth-child(8) { left: 80%; top: 90%; animation-delay: 7s; }
-.particle:nth-child(9) { left: 90%; top: 10%; animation-delay: 8s; }
-.particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 9s; }
-.particle:nth-child(11) { left: 25%; top: 30%; animation-delay: 10s; }
-.particle:nth-child(12) { left: 35%; top: 70%; animation-delay: 11s; }
-.particle:nth-child(13) { left: 45%; top: 20%; animation-delay: 12s; }
-.particle:nth-child(14) { left: 55%; top: 60%; animation-delay: 13s; }
-.particle:nth-child(15) { left: 65%; top: 40%; animation-delay: 14s; }
-.particle:nth-child(16) { left: 75%; top: 80%; animation-delay: 15s; }
-.particle:nth-child(17) { left: 85%; top: 30%; animation-delay: 16s; }
-.particle:nth-child(18) { left: 95%; top: 70%; animation-delay: 17s; }
-.particle:nth-child(19) { left: 5%; top: 50%; animation-delay: 18s; }
-.particle:nth-child(20) { left: 50%; top: 90%; animation-delay: 19s; }
-
-@keyframes float {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) rotate(360deg);
-    opacity: 0;
-  }
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
 }
 
 /* Recent Uploads Section */
 .recent-uploads {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.3);
+  padding: 6rem 2rem;
+  background: #000;
 }
 
 .section-header {
@@ -731,28 +673,17 @@ const closePhotoModal = () => {
 }
 
 .section-header h2 {
-  font-size: 2.5rem;
+  font-size: 3rem;
   margin-bottom: 1rem;
-  color: var(--primary-color);
-  position: relative;
-  display: inline-block;
-}
-
-.section-header h2::after {
-  content: '';
-  position: absolute;
-  bottom: -5px;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 80px;
-  height: 3px;
-  background: var(--primary-color);
-  border-radius: 3px;
+  color: #fff;
+  font-weight: 700;
+  letter-spacing: -1px;
 }
 
 .section-header p {
-  color: #fff;
-  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 1.2rem;
+  font-weight: 400;
 }
 
 .photos-container {
@@ -763,19 +694,19 @@ const closePhotoModal = () => {
 
 .photos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 2rem;
   margin-bottom: 4rem;
 }
 
 .photo-card {
   position: relative;
-  border-radius: 12px;
+  border-radius: 20px;
   overflow: hidden;
   aspect-ratio: 4/3;
   cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
   transform-style: preserve-3d;
   perspective: 1000px;
 }
@@ -784,7 +715,7 @@ const closePhotoModal = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .photo-card:hover img {
@@ -796,12 +727,12 @@ const closePhotoModal = () => {
   inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: flex-end;
-  padding: 1.5rem;
-  backdrop-filter: blur(3px);
-  -webkit-backdrop-filter: blur(3px);
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
 .photo-card:hover .photo-overlay {
@@ -811,7 +742,7 @@ const closePhotoModal = () => {
 .photo-info {
   color: #fff;
   transform: translateY(20px);
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .photo-card:hover .photo-info {
@@ -819,26 +750,23 @@ const closePhotoModal = () => {
 }
 
 .photo-info h3 {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   margin-bottom: 0.5rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .photo-info .photographer {
-  font-size: 0.9rem;
+  font-size: 1rem;
   opacity: 0.9;
   margin-bottom: 0.25rem;
+  font-weight: 500;
 }
 
 .photo-info .date {
-  font-size: 0.8rem;
+  font-size: 0.9rem;
   opacity: 0.7;
-}
-
-.no-photos {
-  text-align: center;
-  padding: 4rem;
-  color: #fff;
-  opacity: 0.6;
+  font-weight: 400;
 }
 
 .view-all {
@@ -848,15 +776,18 @@ const closePhotoModal = () => {
 
 .view-all-btn {
   display: inline-block;
-  padding: 1rem 2rem;
-  background: var(--primary-color);
-  color: #000;
+  padding: 1rem 2.5rem;
+  background: transparent;
+  color: #fff;
   text-decoration: none;
-  border-radius: 8px;
+  border-radius: 30px;
   font-weight: 600;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  border: 2px solid #fff;
+  font-size: 1.1rem;
+  letter-spacing: -0.5px;
 }
 
 .view-all-btn::before {
@@ -881,120 +812,20 @@ const closePhotoModal = () => {
 
 .view-all-btn:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(144, 153, 62, 0.4);
-}
-
-/* Photo Modal */
-.photo-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.95);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 2rem;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-}
-
-.modal-content {
-  max-width: 1200px;
-  width: 90%;
-  background: #1a1a1a;
-  border-radius: 16px;
-  overflow: hidden;
-  position: relative;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-  animation: modalEnter 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-@keyframes modalEnter {
-  from {
-    opacity: 0;
-    transform: scale(0.95);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1);
-  }
-}
-
-.close-btn {
-  position: absolute;
-  top: 1.5rem;
-  right: 1.5rem;
-  background: rgba(0, 0, 0, 0.6);
-  border: none;
-  color: #fff;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-}
-
-.close-btn:hover {
-  background: rgba(0, 0, 0, 0.8);
-  transform: scale(1.1);
-}
-
-.modal-content img {
-  width: 100%;
-  max-height: 70vh;
-  object-fit: contain;
-}
-
-.modal-info {
-  padding: 2rem;
-}
-
-.modal-info h2 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: #fff;
-}
-
-.modal-info .photographer {
-  font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1rem;
-}
-
-.modal-info .description {
-  color: rgba(255, 255, 255, 0.7);
-  margin-bottom: 1.5rem;
-  line-height: 1.6;
-}
-
-.photo-details {
-  display: flex;
-  gap: 2rem;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.photo-details span {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 /* About Section */
 .about {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: var(--background-color);
+  padding: 6rem 2rem;
+  background: #000;
 }
 
 .about-wrapper {
@@ -1018,22 +849,25 @@ const closePhotoModal = () => {
 
 .about-title h2 {
   font-size: 3.5rem;
-  color: var(--primary-color);
+  color: #fff;
   font-weight: 700;
   margin: 0;
+  letter-spacing: -1px;
 }
 
 .title-line {
   width: 100px;
   height: 3px;
-  background: var(--primary-color);
+  background: #fff;
   border-radius: 3px;
 }
 
 .about-subtitle {
   font-size: 1.5rem;
-  color: var(--text-color);
+  color: rgba(255, 255, 255, 0.8);
   margin: 0;
+  font-weight: 500;
+  letter-spacing: -0.5px;
 }
 
 .about-content {
@@ -1046,7 +880,7 @@ const closePhotoModal = () => {
 .about-text {
   font-size: 1.2rem;
   line-height: 1.8;
-  color: var(--text-color);
+  color: rgba(255, 255, 255, 0.8);
 }
 
 .about-text p {
@@ -1064,87 +898,48 @@ const closePhotoModal = () => {
 }
 
 .stat-box {
-  background: var(--card-background);
+  background: rgba(255, 255, 255, 0.05);
   padding: 2rem;
-  border-radius: 15px;
+  border-radius: 20px;
   text-align: center;
-  border: 1px solid var(--border-color);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .stat-box:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .stat-value {
   display: block;
-  font-size: 3rem;
+  font-size: 3.5rem;
   font-weight: 700;
-  color: var(--primary-color);
+  color: #fff;
   margin-bottom: 0.5rem;
   line-height: 1;
+  letter-spacing: -1px;
 }
 
 .stat-label {
-  color: var(--text-color);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.1rem;
   font-weight: 500;
-}
-
-@media (max-width: 968px) {
-  .about-content {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-
-  .about-text {
-    text-align: center;
-  }
-}
-
-@media (max-width: 768px) {
-  .about-title h2 {
-    font-size: 2.5rem;
-  }
-
-  .about-subtitle {
-    font-size: 1.2rem;
-  }
-
-  .about-stats {
-    grid-template-columns: 1fr;
-  }
+  letter-spacing: -0.5px;
 }
 
 /* Features Section */
 .features {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: var(--card-background);
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.section-header h2 {
-  font-size: 2.5rem;
-  color: var(--primary-color);
-  margin-bottom: 1rem;
-  font-weight: 700;
-}
-
-.section-header p {
-  color: var(--text-color);
-  font-size: 1.2rem;
+  padding: 6rem 2rem;
+  background: #000;
 }
 
 .features-grid {
@@ -1157,30 +952,31 @@ const closePhotoModal = () => {
 }
 
 .feature-card {
-  background: var(--background-color);
-  padding: 2rem;
-  border-radius: 15px;
-  border: 1px solid var(--primary-color);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   text-align: center;
   height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .feature-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .feature-icon {
   font-size: 2.5rem;
-  color: var(--primary-color);
+  color: #fff;
   margin-bottom: 1.5rem;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .feature-card:hover .feature-icon {
@@ -1189,28 +985,30 @@ const closePhotoModal = () => {
 
 .feature-card h3 {
   font-size: 1.5rem;
-  color: var(--primary-color);
+  color: #fff;
   margin-bottom: 1rem;
   font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .feature-card p {
-  color: var(--text-color);
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.1rem;
   line-height: 1.6;
   margin: 0;
+  font-weight: 400;
 }
 
 /* Announcements Section */
 .announcements {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.8);
+  padding: 6rem 2rem;
+  background: #000;
 }
 
 .announcements-grid {
@@ -1223,46 +1021,51 @@ const closePhotoModal = () => {
 }
 
 .announcement-card {
-  background: rgba(0, 0, 0, 0.6);
-  padding: 2rem;
-  border-radius: 15px;
-  border: 1px solid var(--primary-color);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 2.5rem;
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
 }
 
 .announcement-card:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .announcement-date {
-  color: var(--primary-color);
+  color: rgba(255, 255, 255, 0.6);
   font-size: 0.9rem;
   margin-bottom: 1rem;
+  font-weight: 500;
 }
 
 .announcement-card h3 {
-  color: #ffffff;
+  color: #fff;
   font-size: 1.3rem;
   margin-bottom: 1rem;
+  font-weight: 600;
+  letter-spacing: -0.5px;
 }
 
 .announcement-card p {
-  color: #cccccc;
+  color: rgba(255, 255, 255, 0.8);
   line-height: 1.6;
+  font-weight: 400;
 }
 
 /* CTA Section */
 .cta {
-  height: 100vh;
+  min-height: 100vh;
   position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  background: rgba(0, 0, 0, 0.8);
+  padding: 6rem 2rem;
+  background: #000;
   text-align: center;
 }
 
@@ -1272,15 +1075,19 @@ const closePhotoModal = () => {
 }
 
 .cta h2 {
-  font-size: 2.5rem;
-  color: var(--primary-color);
+  font-size: 3rem;
+  color: #fff;
   margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: -1px;
 }
 
 .cta p {
-  color: #cccccc;
+  color: rgba(255, 255, 255, 0.8);
   font-size: 1.2rem;
   margin-bottom: 2rem;
+  font-weight: 400;
+  letter-spacing: -0.5px;
 }
 
 /* Scroll Indicator */
@@ -1326,16 +1133,47 @@ const closePhotoModal = () => {
 }
 
 /* Responsive Design */
+@media (max-width: 968px) {
+  .about-content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .about-text {
+    text-align: center;
+  }
+
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 768px) {
   .title {
     font-size: 3rem;
+  }
+
+  .subtitle {
+    font-size: 1.4rem;
   }
 
   .hero-buttons {
     flex-direction: column;
   }
 
-  .features-grid {
+  .about-title h2 {
+    font-size: 2.5rem;
+  }
+
+  .about-subtitle {
+    font-size: 1.2rem;
+  }
+
+  .about-stats {
+    grid-template-columns: 1fr;
+  }
+
+  .photos-grid {
     grid-template-columns: 1fr;
   }
 
@@ -1344,18 +1182,7 @@ const closePhotoModal = () => {
   .features,
   .announcements,
   .cta {
-    padding: 2rem 1rem;
-  }
-
-  .mission-section h2,
-  .team-section h2 {
-    font-size: 2.5rem;
-  }
-  
-  .mission-text,
-  .team-text {
-    font-size: 1.1rem;
-    padding: 0 var(--spacing-md);
+    padding: 4rem 1rem;
   }
 }
 </style> 
