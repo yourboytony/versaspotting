@@ -53,7 +53,7 @@
               <i class="icon-education"></i>
             </div>
             <h3>Education</h3>
-            <p>We believe in continuous learning and sharing knowledge with our community.</p>
+            <p>We believe in continuous learning and sharing knowledge with the broader community.</p>
           </div>
         </div>
       </div>
