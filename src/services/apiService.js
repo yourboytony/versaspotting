@@ -4,21 +4,24 @@
 
 import { initializeApp } from 'firebase/app'
 import { getDatabase, ref, set, get, child } from 'firebase/database'
+import { getAnalytics } from 'firebase/analytics'
 
 // Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  apiKey: "AIzaSyCtbW5ypHtOjLs5apZU1xA5atFF7qiSn3I",
   authDomain: "versa-spotting.firebaseapp.com",
   databaseURL: "https://versa-spotting-default-rtdb.firebaseio.com",
   projectId: "versa-spotting",
-  storageBucket: "versa-spotting.appspot.com",
-  messagingSenderId: "XXXXXXXXXXXX",
-  appId: "1:XXXXXXXXXXXX:web:XXXXXXXXXXXXXXXX"
+  storageBucket: "versa-spotting.firebasestorage.app",
+  messagingSenderId: "650407524316",
+  appId: "1:650407524316:web:973bbcac075cf0917ec119",
+  measurementId: "G-VQCMZ2MKJT"
 }
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig)
 const db = getDatabase(app)
+const analytics = getAnalytics(app)
 
 // Helper function to get data from Firebase
 const getData = async (key) => {
