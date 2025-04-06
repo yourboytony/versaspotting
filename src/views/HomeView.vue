@@ -247,13 +247,6 @@ const initializeAnimations = () => {
       duration: 1,
       ease: 'power3.out'
     }, '-=0.9')
-    .from('.hero-buttons .btn', {
-      y: 20,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: 'power3.out'
-    }, '-=0.7')
     .from('.scroll-indicator', {
       y: -20,
       opacity: 0,
@@ -580,6 +573,7 @@ h2 {
   margin-bottom: var(--spacing-xl);
   position: relative;
   z-index: 3;
+  opacity: 1 !important;
 }
 
 /* Featured Section */
@@ -807,9 +801,11 @@ h2 {
   font-weight: 600;
   text-decoration: none;
   border-radius: 50px;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.3s ease;
   cursor: pointer;
   text-shadow: none;
+  opacity: 1 !important;
+  transform: none !important;
 }
 
 .btn-primary {
@@ -825,7 +821,7 @@ h2 {
 }
 
 .btn:hover {
-  transform: translateY(-3px) scale(1.05);
+  transform: translateY(-3px) !important;
   box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
