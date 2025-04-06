@@ -36,10 +36,10 @@
             <router-link to="/portfolio" class="btn btn-primary">Explore Gallery</router-link>
             <router-link to="/applications" class="btn btn-outline">Join VERSA</router-link>
           </div>
-          <div class="scroll-indicator">
-            <span>Scroll to explore</span>
-            <div class="scroll-line"></div>
-          </div>
+        </div>
+        <div class="scroll-indicator">
+          <span>SCROLL TO EXPLORE</span>
+          <div class="scroll-line"></div>
         </div>
       </section>
 
@@ -798,28 +798,26 @@ h2 {
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: 5%;
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-sm);
-  opacity: 0.8;
+  gap: 0.75rem;
+  opacity: 0.9;
   z-index: 3;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 0.875rem;
+  font-size: 0.75rem;
   font-weight: 500;
+  letter-spacing: 0.2em;
 }
 
 .scroll-line {
   width: 1px;
-  height: 40px;
+  height: 32px;
   background: #fff;
   position: relative;
   overflow: hidden;
-  margin-top: 0.5rem;
 }
 
 .scroll-line::after {
