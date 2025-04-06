@@ -4,7 +4,8 @@
       <div class="container">
         <nav class="nav">
           <router-link to="/" class="logo-link" @click="scrollToTop">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCAyMDAgNTAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiMwMEE2RkYiLz48dGV4dCB4PSIxMCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiPkZFUlNBIE1FRElBPC90ZXh0Pjwvc3ZnPg==" alt="VERSA Logo" class="logo-img">
+            <span class="logo-text">VERSA</span>
+            <span class="logo-subtext">Spotting Group</span>
           </router-link>
           
           <div class="nav-links" :class="{ 'active': mobileMenuOpen }">
@@ -315,35 +316,28 @@ body {
 }
 
 .logo-link {
-  display: flex;
-  align-items: baseline;
-  gap: var(--spacing-xs);
   text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #00A6FF;
+  font-weight: bold;
+  transition: color 0.3s ease;
+}
+
+.logo-link:hover {
+  color: #004C99;
 }
 
 .logo-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  letter-spacing: 2px;
-  text-shadow: 0 0 20px rgba(144, 153, 62, 0.3);
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: neonPulse 3s infinite;
+  font-size: 24px;
+  line-height: 1;
 }
 
 .logo-subtext {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  letter-spacing: 1px;
-  font-weight: 500;
-  transition: all var(--transition-normal);
-}
-
-.logo-subtext:hover {
-  color: var(--primary-light);
+  font-size: 14px;
+  line-height: 1;
+  margin-top: 2px;
 }
 
 .nav-links {
