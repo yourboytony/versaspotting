@@ -1087,6 +1087,7 @@ body {
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
+  z-index: 1;
 }
 
 .quick-link::before {
@@ -1102,6 +1103,8 @@ body {
   );
   opacity: 0;
   transition: opacity var(--transition-normal);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .quick-link:hover::before {
@@ -1112,6 +1115,8 @@ body {
   color: var(--primary-color);
   font-size: 1.2rem;
   transition: transform var(--transition-normal);
+  position: relative;
+  z-index: 2;
 }
 
 .quick-link:hover i {
@@ -1120,7 +1125,7 @@ body {
 
 .quick-link span {
   position: relative;
-  z-index: 1;
+  z-index: 2;
 }
 
 .quick-link:hover {
