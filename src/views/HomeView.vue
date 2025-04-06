@@ -420,6 +420,8 @@ h2 {
   gap: var(--spacing-md);
   justify-content: center;
   margin-bottom: var(--spacing-xl);
+  position: relative;
+  z-index: 3;
 }
 
 /* Featured Section */
@@ -646,11 +648,13 @@ h2 {
   border-radius: 50px;
   transition: all 0.3s ease;
   cursor: pointer;
+  text-shadow: none;
 }
 
 .btn-primary {
-  background: #fff;
-  color: var(--primary);
+  background: var(--primary);
+  color: #fff;
+  border: 2px solid var(--primary);
 }
 
 .btn-outline {
@@ -662,6 +666,15 @@ h2 {
 .btn:hover {
   transform: translateY(-3px);
   box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+}
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
+}
+
+.btn-outline:hover {
+  background: rgba(255,255,255,0.1);
 }
 
 /* Photo Modal */
@@ -785,7 +798,7 @@ h2 {
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: var(--spacing-lg);
+  bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
@@ -793,6 +806,7 @@ h2 {
   align-items: center;
   gap: var(--spacing-sm);
   opacity: 0.7;
+  z-index: 3;
 }
 
 .scroll-indicator span {
