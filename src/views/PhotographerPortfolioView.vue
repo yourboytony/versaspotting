@@ -101,14 +101,14 @@ const closePhotoModal = () => {
 const loadPhotographerData = async (id) => {
   try {
     // Get photographer data
-    const photographerData = store.photographers.find(p => p.id === parseInt(id))
+    const photographerData = store.photographers.find(p => p.id === id)
     if (!photographerData) {
       router.push('/portfolio') // Redirect if photographer not found
       return
     }
 
     // Get photographer's photos
-    const photographerPhotos = store.photos.filter(photo => photo.photographerId === parseInt(id))
+    const photographerPhotos = store.photos.filter(photo => photo.photographerId === id)
     
     // Format photographer data
     photographer.value = {
