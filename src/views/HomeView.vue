@@ -111,6 +111,11 @@
 
     <!-- Features Section -->
     <section class="features">
+      <div class="features-background">
+        <div class="features-particles">
+          <div v-for="n in 20" :key="n" class="particle"></div>
+        </div>
+      </div>
       <div class="section-header">
         <h2>Why Join VERSA</h2>
         <p>Experience the difference</p>
@@ -122,6 +127,7 @@
           </div>
           <h3>Photographic Excellence</h3>
           <p>Our photographers are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
+          <div class="feature-glow"></div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
@@ -129,6 +135,7 @@
           </div>
           <h3>Community Focus</h3>
           <p>We believe in building a strong community of aviation enthusiasts and photographers who support and inspire each other.</p>
+          <div class="feature-glow"></div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
@@ -136,12 +143,18 @@
           </div>
           <h3>YVR-Based</h3>
           <p>Located at Vancouver International Airport, we have prime access to some of the most beautiful aircraft in the world.</p>
+          <div class="feature-glow"></div>
         </div>
       </div>
     </section>
 
     <!-- Latest Announcements -->
     <section class="announcements">
+      <div class="announcements-background">
+        <div class="announcements-particles">
+          <div v-for="n in 15" :key="n" class="particle"></div>
+        </div>
+      </div>
       <div class="section-header">
         <h2>Latest Announcements</h2>
         <p>Stay updated with our latest news and events</p>
@@ -151,12 +164,19 @@
           <div class="announcement-date">{{ formatDate(announcement.date) }}</div>
           <h3>{{ announcement.title }}</h3>
           <p>{{ announcement.content }}</p>
+          <div class="announcement-glow"></div>
         </div>
       </div>
     </section>
 
     <!-- CTA Section -->
     <section class="cta">
+      <div class="cta-background">
+        <video autoplay loop muted playsinline class="cta-video">
+          <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35f1a9e7c02d&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
+        </video>
+        <div class="cta-overlay"></div>
+      </div>
       <div class="cta-content">
         <h2>Ready to Join VERSA?</h2>
         <p>Start your journey with us today and become part of Vancouver's premier aviation photography community</p>
@@ -940,9 +960,68 @@ const closePhotoModal = () => {
   align-items: center;
   padding: 6rem 2rem;
   background: #000;
+  overflow: hidden;
+}
+
+.features-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, #000000, #1a1a1a);
+  z-index: 0;
+}
+
+.features-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.particle {
+  position: absolute;
+  width: 3px;
+  height: 3px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: float 15s infinite linear;
+}
+
+.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 20%; top: 60%; animation-delay: 1s; }
+.particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 2s; }
+.particle:nth-child(4) { left: 40%; top: 80%; animation-delay: 3s; }
+.particle:nth-child(5) { left: 50%; top: 30%; animation-delay: 4s; }
+.particle:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; }
+.particle:nth-child(7) { left: 70%; top: 50%; animation-delay: 6s; }
+.particle:nth-child(8) { left: 80%; top: 90%; animation-delay: 7s; }
+.particle:nth-child(9) { left: 90%; top: 10%; animation-delay: 8s; }
+.particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 9s; }
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 .features-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
@@ -952,6 +1031,7 @@ const closePhotoModal = () => {
 }
 
 .feature-card {
+  position: relative;
   background: rgba(255, 255, 255, 0.05);
   padding: 2.5rem;
   border-radius: 20px;
@@ -964,10 +1044,27 @@ const closePhotoModal = () => {
   align-items: center;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.feature-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.feature-card:hover .feature-glow {
+  opacity: 1;
 }
 
 .feature-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.02);
   box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
   background: rgba(255, 255, 255, 0.1);
 }
@@ -976,11 +1073,31 @@ const closePhotoModal = () => {
   font-size: 2.5rem;
   color: #fff;
   margin-bottom: 1.5rem;
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+}
+
+.feature-icon::after {
+  content: '';
+  position: absolute;
+  width: 50px;
+  height: 50px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 50%;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+  transition: all 0.5s ease;
 }
 
 .feature-card:hover .feature-icon {
-  transform: scale(1.2);
+  transform: scale(1.2) rotate(5deg);
+}
+
+.feature-card:hover .feature-icon::after {
+  transform: translate(-50%, -50%) scale(1.5);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .feature-card h3 {
@@ -1009,9 +1126,31 @@ const closePhotoModal = () => {
   align-items: center;
   padding: 6rem 2rem;
   background: #000;
+  overflow: hidden;
+}
+
+.announcements-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, #000000, #1a1a1a);
+  z-index: 0;
+}
+
+.announcements-particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
 .announcements-grid {
+  position: relative;
+  z-index: 1;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
@@ -1021,16 +1160,34 @@ const closePhotoModal = () => {
 }
 
 .announcement-card {
+  position: relative;
   background: rgba(255, 255, 255, 0.05);
   padding: 2.5rem;
   border-radius: 20px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+.announcement-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.announcement-card:hover .announcement-glow {
+  opacity: 1;
 }
 
 .announcement-card:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.02);
   box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
   background: rgba(255, 255, 255, 0.1);
 }
@@ -1067,27 +1224,76 @@ const closePhotoModal = () => {
   padding: 6rem 2rem;
   background: #000;
   text-align: center;
+  overflow: hidden;
+}
+
+.cta-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.cta-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transform: scale(1.1);
+}
+
+.cta-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.8),
+    rgba(0, 0, 0, 0.95)
+  );
+  z-index: 1;
 }
 
 .cta-content {
+  position: relative;
+  z-index: 2;
   max-width: 800px;
   margin: 0 auto;
 }
 
 .cta h2 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   color: #fff;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
   font-weight: 700;
   letter-spacing: -1px;
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
 }
 
 .cta p {
   color: rgba(255, 255, 255, 0.8);
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
+  font-size: 1.4rem;
+  margin-bottom: 2.5rem;
   font-weight: 400;
   letter-spacing: -0.5px;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.cta .button {
+  font-size: 1.2rem;
+  padding: 1.2rem 3rem;
+  background: #fff;
+  color: #000;
+  border: none;
+  box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
+}
+
+.cta .button:hover {
+  transform: translateY(-5px) scale(1.05);
+  box-shadow: 0 20px 40px rgba(255, 255, 255, 0.3);
 }
 
 /* Scroll Indicator */
