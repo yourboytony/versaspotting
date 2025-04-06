@@ -798,29 +798,28 @@ h2 {
 /* Scroll Indicator */
 .scroll-indicator {
   position: absolute;
-  bottom: 2rem;
+  bottom: 5%;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-sm);
-  opacity: 0.7;
+  opacity: 0.8;
   z-index: 3;
-}
-
-.scroll-indicator span {
-  font-size: 0.875rem;
   text-transform: uppercase;
   letter-spacing: 0.1em;
+  font-size: 0.875rem;
+  font-weight: 500;
 }
 
 .scroll-line {
-  width: 2px;
-  height: 50px;
+  width: 1px;
+  height: 40px;
   background: #fff;
   position: relative;
   overflow: hidden;
+  margin-top: 0.5rem;
 }
 
 .scroll-line::after {
@@ -836,7 +835,9 @@ h2 {
 
 @keyframes scroll {
   0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
+  50% { transform: translateY(100%); }
+  51% { transform: translateY(-100%); }
+  100% { transform: translateY(-100%); }
 }
 
 /* Responsive Design */
