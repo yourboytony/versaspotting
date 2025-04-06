@@ -33,7 +33,7 @@
       <router-link 
         v-for="photographer in filteredPhotographers" 
         :key="photographer.id"
-        :to="'/portfolio/' + photographer.id"
+        :to="'/photographer/' + photographer.id"
         class="photographer-card"
       >
         <div class="photographer-image" :style="getBackgroundStyle(photographer.id)">
@@ -107,7 +107,11 @@ const parseImageUrl = (url) => {
     // Extract the image ID from the URL
     const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
     if (match) {
-      return `https://i.postimg.cc/${match[1]}/image.jpg`
+      // Check if it's a GIF
+      if (url.toLowerCase().includes('.gif')) {
+        return `https://i.postimg.cc/${match[1]}.gif`
+      }
+      return `https://i.postimg.cc/${match[1]}`
     }
   }
   

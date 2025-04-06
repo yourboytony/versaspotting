@@ -147,7 +147,11 @@ const parseImageUrl = (url) => {
     // Extract the image ID from the URL
     const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
     if (match) {
-      return `https://i.postimg.cc/${match[1]}/image.jpg`
+      // Check if it's a GIF
+      if (url.toLowerCase().includes('.gif')) {
+        return `https://i.postimg.cc/${match[1]}.gif`
+      }
+      return `https://i.postimg.cc/${match[1]}`
     }
   }
   
