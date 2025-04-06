@@ -14,44 +14,29 @@
         <div class="hero-overlay"></div>
       </div>
       <div class="hero-content">
-        <div class="hero-text">
-          <h1>VERSA<br>Spotting Group</h1>
-          <p>Vancouver's Premier Aviation Photography Community</p>
-          <div class="hero-cta">
-            <router-link to="/portfolio" class="btn-primary">View Gallery</router-link>
-            <router-link to="/applications" class="btn-secondary">Join Us</router-link>
-          </div>
-        </div>
-        <div class="scroll-hint">
-          <span>Scroll to explore</span>
-          <div class="scroll-line"></div>
+        <h1>VERSA<br>Spotting Group</h1>
+        <p>Vancouver's Premier Aviation Photography Community</p>
+        <div class="hero-buttons">
+          <router-link to="/portfolio" class="btn">View Gallery</router-link>
+          <router-link to="/applications" class="btn btn-outline">Join Us</router-link>
         </div>
       </div>
     </section>
 
-    <!-- Featured Section -->
-    <section class="featured">
-      <div class="featured-grid">
-        <div class="featured-text">
-          <h2>Capture the<br>Extraordinary</h2>
-          <p>Join a community of passionate aviation photographers capturing the beauty of flight at YVR.</p>
-          <div class="stats">
-            <div class="stat">
-              <span class="number">{{ totalPhotographers }}</span>
-              <span class="label">Members</span>
-            </div>
-            <div class="stat">
-              <span class="number">{{ totalPhotos }}</span>
-              <span class="label">Photos</span>
-            </div>
-            <div class="stat">
-              <span class="number">{{ totalLocations }}</span>
-              <span class="label">Locations</span>
-            </div>
-          </div>
+    <!-- Stats Section -->
+    <section class="stats">
+      <div class="stats-container">
+        <div class="stat">
+          <span class="number">{{ totalPhotographers }}</span>
+          <span class="label">Members</span>
         </div>
-        <div class="featured-image">
-          <img :src="recentPhotos[0]?.imageUrl" alt="Featured Photo" @error="handleImageError">
+        <div class="stat">
+          <span class="number">{{ totalPhotos }}</span>
+          <span class="label">Photos</span>
+        </div>
+        <div class="stat">
+          <span class="number">{{ totalLocations }}</span>
+          <span class="label">Locations</span>
         </div>
       </div>
     </section>
@@ -60,44 +45,40 @@
     <section class="gallery">
       <h2>Recent Captures</h2>
       <div class="gallery-grid">
-        <div v-for="photo in recentPhotos.slice(1, 7)" 
+        <div v-for="photo in recentPhotos.slice(0, 6)" 
              :key="photo.id" 
              class="gallery-item"
              @click="openPhotoModal(photo)">
-          <div class="gallery-image">
-            <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
-          </div>
+          <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
           <div class="gallery-info">
             <h3>{{ photo.title }}</h3>
             <p>By {{ photo.photographer }}</p>
           </div>
         </div>
       </div>
-      <router-link to="/portfolio" class="btn-primary">View All Photos</router-link>
+      <router-link to="/portfolio" class="btn">View All Photos</router-link>
     </section>
 
     <!-- About Section -->
     <section class="about">
       <div class="about-content">
-        <div class="about-text">
-          <h2>About VERSA</h2>
-          <p>We are a community of aviation enthusiasts and photographers based in Vancouver, Canada. Our mission is to capture and share the beauty of aviation through our lenses.</p>
-          <div class="features">
-            <div class="feature">
-              <div class="feature-icon">✈️</div>
-              <h3>Aviation Focus</h3>
-              <p>Dedicated to capturing aircraft at their best moments</p>
-            </div>
-            <div class="feature">
-              <div class="feature-icon">📸</div>
-              <h3>Photography Excellence</h3>
-              <p>Committed to producing high-quality aviation photography</p>
-            </div>
-            <div class="feature">
-              <div class="feature-icon">🤝</div>
-              <h3>Community Driven</h3>
-              <p>Supporting and inspiring fellow aviation photographers</p>
-            </div>
+        <h2>About VERSA</h2>
+        <p>We are a community of aviation enthusiasts and photographers based in Vancouver, Canada. Our mission is to capture and share the beauty of aviation through our lenses.</p>
+        <div class="features">
+          <div class="feature">
+            <div class="feature-icon">✈️</div>
+            <h3>Aviation Focus</h3>
+            <p>Dedicated to capturing aircraft at their best moments</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">📸</div>
+            <h3>Photography Excellence</h3>
+            <p>Committed to producing high-quality aviation photography</p>
+          </div>
+          <div class="feature">
+            <div class="feature-icon">🤝</div>
+            <h3>Community Driven</h3>
+            <p>Supporting and inspiring fellow aviation photographers</p>
           </div>
         </div>
       </div>
@@ -108,7 +89,7 @@
       <div class="cta-content">
         <h2>Ready to Join VERSA?</h2>
         <p>Start your journey with us today and become part of Vancouver's premier aviation photography community.</p>
-        <router-link to="/applications" class="btn-primary">Apply Now</router-link>
+        <router-link to="/applications" class="btn">Apply Now</router-link>
       </div>
     </section>
   </div>
@@ -134,7 +115,7 @@ const recentPhotos = computed(() => {
   return photos
     .slice()
     .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 7)
+    .slice(0, 6)
     .map(photo => ({
       ...photo,
       photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
@@ -176,7 +157,7 @@ onMounted(async () => {
   }
   
   // Hero animations
-  gsap.from('.hero-text', {
+  gsap.from('.hero-content', {
     duration: 1.5,
     y: 100,
     opacity: 0,
@@ -184,25 +165,21 @@ onMounted(async () => {
     delay: 0.5
   })
   
-  // Featured section animations
+  // Stats animations
   gsap.timeline({
     scrollTrigger: {
-      trigger: '.featured',
+      trigger: '.stats',
       start: 'top center',
       end: 'bottom center',
       scrub: 1
     }
   })
-  .from('.featured-text', {
-    x: -100,
+  .from('.stat', {
+    y: 50,
     opacity: 0,
+    stagger: 0.2,
     duration: 1
   })
-  .from('.featured-image', {
-    x: 100,
-    opacity: 0,
-    duration: 1
-  }, '-=0.5')
   
   // Gallery animations
   gsap.timeline({
@@ -225,7 +202,7 @@ onMounted(async () => {
     duration: 1
   }, '-=0.5')
   
-  // About section animations
+  // About animations
   gsap.timeline({
     scrollTrigger: {
       trigger: '.about',
@@ -234,7 +211,7 @@ onMounted(async () => {
       scrub: 1
     }
   })
-  .from('.about-text', {
+  .from('.about-content', {
     y: 50,
     opacity: 0,
     duration: 1
@@ -341,23 +318,14 @@ const closePhotoModal = () => {
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 1400px;
+  max-width: 1200px;
   width: 100%;
   padding: 0 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
-}
-
-.hero-text {
   text-align: center;
-  margin-bottom: 4rem;
 }
 
-.hero-text h1 {
-  font-size: 6rem;
+.hero-content h1 {
+  font-size: 5rem;
   font-weight: 800;
   line-height: 1.1;
   margin-bottom: 1rem;
@@ -365,20 +333,20 @@ const closePhotoModal = () => {
   text-shadow: 0 0 20px rgba(130, 157, 80, 0.5);
 }
 
-.hero-text p {
+.hero-content p {
   font-size: 1.5rem;
   margin-bottom: 2rem;
   opacity: 0.9;
   font-weight: 500;
 }
 
-.hero-cta {
+.hero-buttons {
   display: flex;
   gap: 1.5rem;
   justify-content: center;
 }
 
-.btn-primary {
+.btn {
   display: inline-block;
   padding: 1.2rem 3rem;
   background: var(--primary);
@@ -390,98 +358,29 @@ const closePhotoModal = () => {
   box-shadow: 0 5px 15px rgba(130, 157, 80, 0.4);
 }
 
-.btn-secondary {
-  display: inline-block;
-  padding: 1.2rem 3rem;
+.btn-outline {
   background: transparent;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 50px;
-  font-weight: 600;
   border: 2px solid var(--primary);
-  transition: all 0.3s ease;
 }
 
-.btn-primary:hover {
+.btn:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(130, 157, 80, 0.4);
 }
 
-.btn-secondary:hover {
+.btn-outline:hover {
   background: var(--primary);
-  transform: translateY(-5px);
 }
 
-.scroll-hint {
-  position: absolute;
-  bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1rem;
-  opacity: 0.8;
-}
-
-.scroll-hint span {
-  font-size: 0.9rem;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-}
-
-.scroll-line {
-  width: 2px;
-  height: 50px;
-  background: #fff;
-  position: relative;
-}
-
-.scroll-line::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  animation: scroll 2s infinite;
-}
-
-@keyframes scroll {
-  0% { transform: translateY(-100%); }
-  100% { transform: translateY(100%); }
-}
-
-/* Featured Section */
-.featured {
-  padding: 8rem 2rem;
+/* Stats Section */
+.stats {
+  padding: 4rem 2rem;
   background: var(--card-bg);
 }
 
-.featured-grid {
-  max-width: 1400px;
+.stats-container {
+  max-width: 1200px;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 4rem;
-  align-items: center;
-}
-
-.featured-text h2 {
-  font-size: 4rem;
-  color: var(--primary);
-  margin-bottom: 1.5rem;
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -1px;
-}
-
-.featured-text p {
-  font-size: 1.2rem;
-  margin-bottom: 3rem;
-  line-height: 1.6;
-}
-
-.stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
@@ -489,6 +388,16 @@ const closePhotoModal = () => {
 
 .stat {
   text-align: center;
+  padding: 2rem;
+  background: var(--background);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+.stat:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(130, 157, 80, 0.2);
 }
 
 .stat .number {
@@ -500,22 +409,9 @@ const closePhotoModal = () => {
 }
 
 .stat .label {
-  font-size: 1rem;
+  font-size: 1.2rem;
   color: var(--text);
   font-weight: 500;
-}
-
-.featured-image {
-  position: relative;
-  border-radius: 20px;
-  overflow: hidden;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-}
-
-.featured-image img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
 }
 
 /* Gallery Section */
@@ -532,7 +428,7 @@ const closePhotoModal = () => {
 }
 
 .gallery-grid {
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto 4rem;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -545,25 +441,21 @@ const closePhotoModal = () => {
   overflow: hidden;
   cursor: pointer;
   transition: all 0.3s ease;
+  aspect-ratio: 4/3;
 }
 
 .gallery-item:hover {
   transform: translateY(-10px);
 }
 
-.gallery-image {
-  aspect-ratio: 4/3;
-  overflow: hidden;
-}
-
-.gallery-image img {
+.gallery-item img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.3s ease;
 }
 
-.gallery-item:hover .gallery-image img {
+.gallery-item:hover img {
   transform: scale(1.1);
 }
 
@@ -601,27 +493,25 @@ const closePhotoModal = () => {
 }
 
 .about-content {
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
-.about-text {
-  max-width: 800px;
+  max-width: 1200px;
   margin: 0 auto;
   text-align: center;
 }
 
-.about-text h2 {
+.about-content h2 {
   font-size: 3rem;
   color: var(--primary);
   margin-bottom: 1.5rem;
   font-weight: 700;
 }
 
-.about-text p {
+.about-content p {
   font-size: 1.2rem;
   line-height: 1.6;
   margin-bottom: 4rem;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .features {
@@ -636,11 +526,12 @@ const closePhotoModal = () => {
   background: var(--background);
   border-radius: 20px;
   transition: all 0.3s ease;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
 .feature:hover {
   transform: translateY(-10px);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(130, 157, 80, 0.2);
 }
 
 .feature-icon {
@@ -657,6 +548,7 @@ const closePhotoModal = () => {
 .feature p {
   font-size: 1rem;
   line-height: 1.6;
+  margin: 0;
 }
 
 /* CTA Section */
@@ -685,29 +577,24 @@ const closePhotoModal = () => {
   line-height: 1.6;
 }
 
-.cta .btn-primary {
+.cta .btn {
   background: #fff;
   color: var(--primary);
 }
 
-.cta .btn-primary:hover {
+.cta .btn:hover {
   transform: translateY(-5px);
   box-shadow: 0 15px 30px rgba(255,255,255,0.2);
 }
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .hero-text h1 {
-    font-size: 5rem;
+  .hero-content h1 {
+    font-size: 4rem;
   }
   
-  .featured-grid {
-    grid-template-columns: 1fr;
-    gap: 3rem;
-  }
-  
-  .featured-text {
-    text-align: center;
+  .stats-container {
+    grid-template-columns: repeat(2, 1fr);
   }
   
   .features {
@@ -716,19 +603,19 @@ const closePhotoModal = () => {
 }
 
 @media (max-width: 768px) {
-  .hero-text h1 {
-    font-size: 3.5rem;
+  .hero-content h1 {
+    font-size: 3rem;
   }
   
-  .hero-text p {
+  .hero-content p {
     font-size: 1.2rem;
   }
   
-  .hero-cta {
+  .hero-buttons {
     flex-direction: column;
   }
   
-  .stats {
+  .stats-container {
     grid-template-columns: 1fr;
   }
   
@@ -736,7 +623,7 @@ const closePhotoModal = () => {
     grid-template-columns: 1fr;
   }
   
-  .featured,
+  .stats,
   .gallery,
   .about,
   .cta {
