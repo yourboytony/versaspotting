@@ -4,6 +4,7 @@
     <section class="hero">
       <div class="hero-overlay"></div>
       <div class="hero-background" :style="{ backgroundImage: `url(${currentBackground})` }"></div>
+      <div v-if="previousBackground" class="hero-background previous" :style="{ backgroundImage: `url(${previousBackground})` }"></div>
       <div class="hero-content">
         <h1 class="title">VERSA Spotting Group</h1>
         <p class="subtitle">Capturing the beauty of aviation around the world</p>
@@ -180,6 +181,7 @@ const selectedPhoto = ref(null)
 const mainContainer = ref(null)
 const isLoading = ref(true)
 const mousePosition = ref({ x: 0, y: 0 })
+const previousBackground = ref(null)
 
 // Get recent photos for background with error handling
 const backgroundPhotos = computed(() => {
@@ -199,9 +201,10 @@ const currentBackground = computed(() => {
   return backgroundPhotos.value[currentBackgroundIndex.value] || 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png'
 })
 
-// Change background every 5 seconds
+// Change background every 5 seconds with crossfade
 const startBackgroundRotation = () => {
   backgroundInterval.value = setInterval(() => {
+    previousBackground.value = currentBackground.value
     currentBackgroundIndex.value = (currentBackgroundIndex.value + 1) % backgroundPhotos.value.length
   }, 5000)
 }
@@ -538,9 +541,20 @@ const closePhotoModal = () => {
   bottom: 0;
   background-size: cover;
   background-position: center;
-  transition: background-image 1s ease-in-out;
+  transition: opacity 1s ease-in-out;
   z-index: 0;
   transform: scale(1.1);
+  opacity: 1;
+}
+
+.hero-background.previous {
+  opacity: 0;
+  transition: opacity 1s ease-in-out;
+}
+
+.hero-background:not(.previous) {
+  opacity: 1;
+  transition: opacity 1s ease-in-out;
 }
 
 .hero-overlay {
