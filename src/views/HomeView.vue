@@ -528,37 +528,35 @@ h2 {
   opacity: 0;
   transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1.1);
-  margin: 0;
-  padding: 0;
+  z-index: 0;
 }
 
 .background-image.active {
   opacity: 1;
-  transform: scale(1.05);
+  transform: scale(1);
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
-  z-index: 5;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+  z-index: 1;
 }
 
 .hero-content {
   position: relative;
-  z-index: 10;
+  z-index: 20;
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
   text-align: center;
-  animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .welcome-text {
   text-align: center;
   margin-bottom: var(--spacing-lg);
   position: relative;
-  z-index: 10;
+  z-index: 20;
 }
 
 .pre-title {
@@ -580,8 +578,10 @@ h1 {
   letter-spacing: -0.02em;
   text-shadow: 0 2px 20px rgba(0,0,0,0.5);
   opacity: 1;
-  -webkit-text-fill-color: #ffffff;
-  background: none;
+  background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shine 3s linear infinite;
 }
 
 .hero-description {
@@ -592,7 +592,7 @@ h1 {
   color: #ffffff;
   text-shadow: 0 2px 10px rgba(0,0,0,0.3);
   position: relative;
-  z-index: 10;
+  z-index: 20;
 }
 
 .hero-buttons {
@@ -601,8 +601,7 @@ h1 {
   justify-content: center;
   margin-bottom: var(--spacing-xl);
   position: relative;
-  z-index: 3;
-  opacity: 1 !important;
+  z-index: 20;
 }
 
 /* Featured Section */
@@ -1160,12 +1159,12 @@ h1 {
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  z-index: 3;
+  z-index: 20;
+  color: #ffffff;
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.2em;
   opacity: 0.7;
-  animation: float 4s ease-in-out infinite;
 }
 
 .scroll-indicator::after {
@@ -1178,11 +1177,6 @@ h1 {
   height: 50px;
   background: linear-gradient(to bottom, #fff, transparent);
   animation: scrollPulse 2s infinite;
-}
-
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-10px); }
 }
 
 @keyframes scrollPulse {
