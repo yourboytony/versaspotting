@@ -26,22 +26,44 @@
         <p>Check out our latest aviation photography</p>
       </div>
       <div class="photos-grid">
-        <div v-for="photo in recentPhotos" :key="photo.id" class="photo-card">
+        <div v-for="photo in recentPhotos" :key="photo.id" class="photo-card" @click="viewPhoto(photo)">
           <div class="photo-image">
             <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
-          </div>
-          <div class="photo-info">
-            <h3>{{ photo.title }}</h3>
-            <p>By {{ photo.photographer }}</p>
-            <div class="photo-meta">
-              <span>{{ photo.camera }}</span>
-              <span>{{ photo.lens }}</span>
-              <span>{{ formatDate(photo.date) }}</span>
+            <div class="photo-overlay">
+              <div class="photo-info">
+                <h3>{{ photo.title }}</h3>
+                <p class="photographer">By {{ photo.photographer }}</p>
+                <div class="photo-meta">
+                  <span><i class="fas fa-camera"></i> {{ photo.camera }}</span>
+                  <span><i class="fas fa-calendar"></i> {{ formatDate(photo.date) }}</span>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </div>
+      <div class="view-all">
+        <router-link to="/portfolio" class="view-all-btn">View All Photos</router-link>
+      </div>
     </section>
+
+    <!-- Photo Modal -->
+    <div v-if="selectedPhoto" class="photo-modal" @click="closePhotoModal">
+      <div class="modal-content" @click.stop>
+        <button class="close-btn" @click="closePhotoModal">&times;</button>
+        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title">
+        <div class="modal-info">
+          <h2>{{ selectedPhoto.title }}</h2>
+          <p class="photographer">By {{ selectedPhoto.photographer }}</p>
+          <p class="description">{{ selectedPhoto.description }}</p>
+          <div class="photo-details">
+            <span><i class="fas fa-camera"></i> {{ selectedPhoto.camera }}</span>
+            <span><i class="fas fa-camera-retro"></i> {{ selectedPhoto.lens }}</span>
+            <span><i class="fas fa-calendar"></i> {{ formatDate(selectedPhoto.date) }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- About Section -->
     <section class="about">
@@ -143,6 +165,7 @@ import { useDataStore } from '../stores/dataStore'
 const dataStore = useDataStore()
 const currentBackgroundIndex = ref(0)
 const backgroundInterval = ref(null)
+const selectedPhoto = ref(null)
 
 // Get recent photos for background
 const backgroundPhotos = computed(() => {
@@ -343,6 +366,16 @@ onUnmounted(() => {
     clearInterval(backgroundInterval.value)
   }
 })
+
+const viewPhoto = (photo) => {
+  selectedPhoto.value = photo
+  document.body.style.overflow = 'hidden'
+}
+
+const closePhotoModal = () => {
+  selectedPhoto.value = null
+  document.body.style.overflow = 'auto'
+}
 </script>
 
 <style scoped>
@@ -448,85 +481,252 @@ onUnmounted(() => {
 
 /* Recent Uploads Section */
 .recent-uploads {
-  padding: 4rem 2rem;
-  background: rgba(0, 0, 0, 0.8);
-  border-radius: 20px;
-  margin: 2rem;
+  padding: 6rem 2rem;
+  background: rgba(0, 0, 0, 0.3);
+  position: relative;
 }
 
 .section-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 4rem;
 }
 
 .section-header h2 {
-  font-size: 2.5rem;
-  color: var(--primary-color);
+  font-size: 3rem;
+  font-weight: 700;
   margin-bottom: 1rem;
+  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .section-header p {
-  color: #cccccc;
+  color: rgba(255, 255, 255, 0.7);
   font-size: 1.2rem;
 }
 
 .photos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
 }
 
 .photo-card {
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 15px;
+  position: relative;
+  border-radius: 12px;
   overflow: hidden;
-  border: 1px solid var(--primary-color);
-  transition: all 0.3s ease;
+  cursor: pointer;
+  background: #000;
+  aspect-ratio: 3/2;
+  transform: translateY(0);
+  transition: transform 0.3s ease;
 }
 
 .photo-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .photo-image {
-  width: 100%;
-  height: 250px;
-  overflow: hidden;
   position: relative;
+  width: 100%;
+  height: 100%;
 }
 
 .photo-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.5s ease;
 }
 
 .photo-card:hover .photo-image img {
   transform: scale(1.05);
 }
 
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.4) 50%, rgba(0,0,0,0) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: flex-end;
+  padding: 2rem;
+}
+
+.photo-card:hover .photo-overlay {
+  opacity: 1;
+}
+
 .photo-info {
-  padding: 1.5rem;
+  color: #fff;
+  transform: translateY(20px);
+  transition: transform 0.3s ease;
+}
+
+.photo-card:hover .photo-info {
+  transform: translateY(0);
 }
 
 .photo-info h3 {
-  color: #ffffff;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  font-weight: 600;
   margin-bottom: 0.5rem;
 }
 
-.photo-info p {
-  color: #cccccc;
+.photo-info .photographer {
+  font-size: 1rem;
+  color: rgba(255, 255, 255, 0.8);
   margin-bottom: 1rem;
 }
 
 .photo-meta {
   display: flex;
   gap: 1rem;
-  color: var(--primary-color);
   font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.photo-meta span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.view-all {
+  text-align: center;
+  margin-top: 4rem;
+}
+
+.view-all-btn {
+  display: inline-block;
+  padding: 1rem 2rem;
+  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
+  color: #000;
+  font-weight: 600;
+  border-radius: 8px;
+  text-decoration: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.view-all-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(144, 153, 62, 0.3);
+}
+
+/* Photo Modal */
+.photo-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 2rem;
+}
+
+.modal-content {
+  max-width: 1200px;
+  width: 90%;
+  background: #1a1a1a;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  background: rgba(0, 0, 0, 0.5);
+  border: none;
+  color: #fff;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  z-index: 1;
+}
+
+.close-btn:hover {
+  background: rgba(0, 0, 0, 0.8);
+}
+
+.modal-content img {
+  width: 100%;
+  max-height: 70vh;
+  object-fit: contain;
+}
+
+.modal-info {
+  padding: 2rem;
+}
+
+.modal-info h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #fff;
+}
+
+.modal-info .photographer {
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.8);
+  margin-bottom: 1rem;
+}
+
+.modal-info .description {
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.photo-details {
+  display: flex;
+  gap: 2rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.photo-details span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+@media (max-width: 768px) {
+  .photos-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header h2 {
+    font-size: 2.5rem;
+  }
+
+  .photo-modal {
+    padding: 1rem;
+  }
+
+  .modal-content {
+    width: 100%;
+  }
+
+  .modal-info {
+    padding: 1.5rem;
+  }
+
+  .modal-info h2 {
+    font-size: 1.5rem;
+  }
+
+  .photo-details {
+    flex-direction: column;
+    gap: 1rem;
+  }
 }
 
 /* About Section */
