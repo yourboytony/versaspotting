@@ -238,196 +238,51 @@ const rotateBackground = () => {
 
 // Update the initializeAnimations function
 const initializeAnimations = () => {
-  // Hero animations with staggered reveal
-  const heroTimeline = gsap.timeline()
-  heroTimeline
-    .from('.hero-content .overline', {
-      y: 30,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out'
-    })
-    .from('.hero-content h1', {
-      y: 50,
-      opacity: 0,
-      duration: 1.2,
-      ease: 'power4.out'
-    }, '-=0.7')
-    .from('.hero-content .hero-description', {
-      y: 30,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out'
-    }, '-=0.9')
-    .from('.scroll-indicator', {
-      y: -20,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    }, '-=0.5')
-
-  // Parallax effect for hero background
+  // Subtle hero parallax effect only
   gsap.to('.background-image.active', {
-    y: '20%',
+    y: '10%',
     scrollTrigger: {
       trigger: '.hero',
       start: 'top top',
       end: 'bottom top',
-      scrub: 1
+      scrub: true
     }
   })
 
-  // Featured section animations
-  gsap.from('.featured .overline, .featured h2', {
-    scrollTrigger: {
-      trigger: '.featured',
-      start: 'top 80%',
-      end: 'top 20%',
-      toggleActions: 'play none none reverse'
-    },
-    y: 50,
-    opacity: 0,
-    duration: 1,
-    stagger: 0.2,
-    ease: 'power3.out'
-  })
-
-  gsap.from('.featured-item', {
-    scrollTrigger: {
-      trigger: '.featured-grid',
-      start: 'top 80%',
-      end: 'top 20%',
-      toggleActions: 'play none none reverse'
-    },
-    y: 100,
-    opacity: 0,
-    duration: 1,
-    stagger: 0.2,
-    ease: 'power3.out'
-  })
-
-  // Stats section animations with counter effect
-  const statsTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.stats',
-      start: 'top 80%',
-      end: 'top 20%',
-      toggleActions: 'play none none reverse'
-    }
-  })
-
-  statsTimeline
-    .from('.stats .overline, .stats h2', {
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.2,
-      ease: 'power3.out'
-    })
-    .from('.stat', {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: 'power3.out'
-    }, '-=0.5')
-
-  // Animate stat numbers
-  gsap.utils.toArray('.stat-number').forEach(stat => {
-    let endValue = parseInt(stat.textContent)
-    gsap.from(stat, {
+  // Simple fade in for sections
+  const sections = ['.featured', '.stats', '.about', '.cta']
+  sections.forEach(section => {
+    gsap.from(section, {
       scrollTrigger: {
-        trigger: stat,
+        trigger: section,
         start: 'top 80%',
-        toggleActions: 'play none none reverse'
+        end: 'top 20%',
+        toggleActions: 'play none none none'
       },
-      innerText: 0,
-      duration: 2,
-      snap: { innerText: 1 },
+      opacity: 0,
+      y: 20,
+      duration: 0.8,
       ease: 'power2.out'
     })
   })
 
-  // About section animations with parallax
-  const aboutTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.about',
-      start: 'top 80%',
-      end: 'top 20%',
-      toggleActions: 'play none none reverse'
-    }
-  })
-
-  aboutTimeline
-    .from('.about .overline, .about h2', {
-      y: 50,
-      opacity: 0,
-      duration: 1,
-      stagger: 0.2,
-      ease: 'power3.out'
+  // Subtle hover animations for cards
+  gsap.utils.toArray('.featured-item, .stat, .feature').forEach(element => {
+    element.addEventListener('mouseenter', () => {
+      gsap.to(element, {
+        y: -5,
+        duration: 0.3,
+        ease: 'power2.out'
+      })
     })
-    .from('.about-text p', {
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power3.out'
-    }, '-=0.5')
-    .from('.feature', {
-      y: 50,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: 'power3.out'
-    }, '-=0.5')
-
-  gsap.from('.about-image', {
-    scrollTrigger: {
-      trigger: '.about-image',
-      start: 'top 80%',
-      end: 'bottom 20%',
-      scrub: 1
-    },
-    y: '10%',
-    scale: 0.95,
-    opacity: 0.8
-  })
-
-  // CTA section animations
-  const ctaTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.cta',
-      start: 'top 80%',
-      end: 'top 20%',
-      toggleActions: 'play none none reverse'
-    }
-  })
-
-  ctaTimeline
-    .from('.cta .overline', {
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power3.out'
+    element.addEventListener('mouseleave', () => {
+      gsap.to(element, {
+        y: 0,
+        duration: 0.3,
+        ease: 'power2.out'
+      })
     })
-    .from('.cta h2', {
-      y: 40,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out'
-    }, '-=0.6')
-    .from('.cta p', {
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      ease: 'power3.out'
-    }, '-=0.7')
-    .from('.cta .btn', {
-      y: 20,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.2,
-      ease: 'power3.out'
-    }, '-=0.5')
+  })
 }
 
 // Component lifecycle
@@ -607,13 +462,13 @@ h2 {
   overflow: hidden;
   aspect-ratio: 4/3;
   cursor: pointer;
-  transform: translateY(0);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: none;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .featured-item:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .featured-image {
@@ -690,7 +545,7 @@ h2 {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-height: 200px;
   display: flex;
   flex-direction: column;
@@ -698,8 +553,8 @@ h2 {
 }
 
 .stat:hover {
-  transform: translateY(-10px) scale(1.05);
-  box-shadow: 0 30px 60px rgba(0,0,0,0.15);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .stat-number {
@@ -753,12 +608,12 @@ h2 {
   padding: var(--spacing-md);
   background: var(--card-bg);
   border-radius: var(--border-radius);
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .feature:hover {
-  transform: translateY(-5px) scale(1.03);
-  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
 }
 
 .feature-icon {
@@ -824,7 +679,7 @@ h2 {
   font-weight: 600;
   text-decoration: none;
   border-radius: 50px;
-  transition: all 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
   cursor: pointer;
   text-shadow: none;
   opacity: 1 !important;
@@ -844,8 +699,8 @@ h2 {
 }
 
 .btn:hover {
-  transform: translateY(-3px) !important;
-  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  transform: translateY(-2px) !important;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
 
 .btn-primary:hover {
@@ -986,12 +841,8 @@ h2 {
   flex-direction: column;
   align-items: center;
   gap: 0.75rem;
-  opacity: 0.9;
-  z-index: 3;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
+  opacity: 0.7;
 }
 
 .scroll-line {
@@ -1022,7 +873,7 @@ h2 {
 
 @keyframes float {
   0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-10px); }
+  50% { transform: translateX(-50%) translateY(-5px); }
 }
 
 /* Responsive Design */
