@@ -1,156 +1,120 @@
 <template>
-  <div class="portfolio-container">
+  <div class="portfolio">
     <div class="portfolio-header">
       <h1>Photographer Portfolios</h1>
-      <div class="filters">
-        <div class="search-box">
-          <input 
-            type="text" 
-            v-model="searchQuery" 
-            placeholder="Search photographers..."
-            @input="filterPhotographers"
-          >
-          <i class="icon-search"></i>
-        </div>
-        <div class="view-options">
-          <button 
-            :class="['view-btn', { active: viewMode === 'grid' }]"
-            @click="viewMode = 'grid'"
-          >
-            <i class="icon-grid"></i>
-          </button>
-          <button 
-            :class="['view-btn', { active: viewMode === 'list' }]"
-            @click="viewMode = 'list'"
-          >
-            <i class="icon-list"></i>
-          </button>
+      <div class="search-bar">
+        <input 
+          type="text" 
+          v-model="searchQuery" 
+          placeholder="Search photographers..."
+          @input="filterPhotographers"
+        >
+        <div class="search-icon">
+          <i class="fas fa-search"></i>
         </div>
       </div>
     </div>
 
-    <div class="photographers-grid" :class="viewMode">
-      <router-link 
+    <div class="photographers-grid" v-if="filteredPhotographers.length > 0">
+      <div 
         v-for="photographer in filteredPhotographers" 
-        :key="photographer.id"
-        :to="'/photographer/' + photographer.id"
+        :key="photographer.id" 
         class="photographer-card"
+        @click="viewPortfolio(photographer.id)"
       >
-        <div class="photographer-image" :style="getBackgroundStyle(photographer.id)">
-          <div class="overlay"></div>
-          <div class="photographer-info">
-            <div class="profile-image">
-              <img :src="photographer.avatar" :alt="photographer.name" @error="handleImageError">
-            </div>
-            <h2>{{ photographer.name }}</h2>
-            <p class="specialty">{{ photographer.specialty }}</p>
-            <div class="stats">
-              <span><i class="icon-photos"></i> {{ getPhotoCount(photographer.id) }} Photos</span>
-              <span><i class="icon-location"></i> {{ photographer.location }}</span>
+        <div class="card-image">
+          <img :src="photographer.coverImage || '/placeholder.jpg'" :alt="photographer.name">
+          <div class="card-overlay">
+            <div class="photographer-stats">
+              <span><i class="fas fa-camera"></i> {{ photographer.photoCount }} Photos</span>
+              <span><i class="fas fa-map-marker-alt"></i> {{ photographer.location }}</span>
             </div>
           </div>
         </div>
-      </router-link>
+        <div class="card-content">
+          <div class="photographer-avatar">
+            <img :src="photographer.avatar || '/default-avatar.jpg'" :alt="photographer.name">
+          </div>
+          <h3>{{ photographer.name }}</h3>
+          <p class="photographer-specialty">{{ photographer.specialty }}</p>
+          <div class="photographer-tags">
+            <span v-for="tag in photographer.tags" :key="tag" class="tag">
+              {{ tag }}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else class="no-results">
+      <i class="fas fa-search"></i>
+      <p>No photographers found matching your search.</p>
+      <button @click="clearSearch" class="clear-search">Clear Search</button>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useDataStore } from '../stores/dataStore'
-import gsap from 'gsap'
+import { useRouter } from 'vue-router'
+import { useDataStore } from '@/stores/dataStore'
 
-const dataStore = useDataStore()
+const router = useRouter()
+const store = useDataStore()
 const searchQuery = ref('')
-const viewMode = ref('grid')
+const photographers = ref([])
 
-// Get filtered photographers based on search query
 const filteredPhotographers = computed(() => {
+  if (!searchQuery.value) return photographers.value
   const query = searchQuery.value.toLowerCase()
-  return dataStore.photographers.filter(photographer => 
+  return photographers.value.filter(photographer => 
     photographer.name.toLowerCase().includes(query) ||
     photographer.specialty.toLowerCase().includes(query) ||
-    photographer.location.toLowerCase().includes(query)
+    photographer.tags.some(tag => tag.toLowerCase().includes(query))
   )
 })
 
-// Get background style for photographer card
-const getBackgroundStyle = (photographerId) => {
-  const photos = dataStore.photos.filter(photo => photo.photographerId === photographerId)
-  if (photos.length > 0) {
-    // Get a random photo
-    const randomIndex = Math.floor(Math.random() * photos.length)
-    const randomPhoto = photos[randomIndex]
-    return {
-      backgroundImage: `url(${parseImageUrl(randomPhoto.imageUrl)})`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center'
-    }
-  }
-  
-  // Fallback to a gradient if no photos
-  return {
-    background: 'linear-gradient(135deg, #1a1a1a, #333333)'
-  }
+const filterPhotographers = () => {
+  // Debounced search implementation can be added here if needed
 }
 
-// Get photo count for a photographer
-const getPhotoCount = (photographerId) => {
-  return dataStore.photos.filter(photo => photo.photographerId === photographerId).length
+const clearSearch = () => {
+  searchQuery.value = ''
 }
 
-const parseImageUrl = (url) => {
-  if (!url) return ''
-  
-  // Handle postimages.org URLs
-  if (url.includes('postimages.org')) {
-    // Extract the image ID from the URL
-    const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
-    if (match) {
-      // Check if it's a GIF
-      if (url.toLowerCase().includes('.gif')) {
-        return `https://i.postimg.cc/${match[1]}.gif`
-      }
-      return `https://i.postimg.cc/${match[1]}`
-    }
-  }
-  
-  // Handle direct image URLs
-  if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-    return url
-  }
-  
-  return url
+const viewPortfolio = (id) => {
+  router.push(`/portfolio/${id}`)
 }
 
-const handleImageError = (event) => {
-  const img = event.target
-  if (img.classList.contains('profile-image')) {
-    img.src = 'https://via.placeholder.com/300x300?text=Profile+Image'
-  } else {
-    img.src = 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
-  }
-}
-
-onMounted(() => {
-  // Animation for photographer cards
-  gsap.from('.photographer-card', {
-    scrollTrigger: {
-      trigger: '.photographers-grid',
-      start: 'top 80%',
-      toggleActions: 'play none none reverse'
+onMounted(async () => {
+  // Simulated data - replace with actual data from your store
+  photographers.value = [
+    {
+      id: 1,
+      name: 'Anthony Nigro',
+      specialty: 'Aviation Photography',
+      location: 'YVR',
+      photoCount: 1,
+      tags: ['Aviation', 'Commercial'],
+      coverImage: '/path/to/cover.jpg',
+      avatar: '/path/to/avatar.jpg'
     },
-    duration: 0.8,
-    y: 50,
-    opacity: 0,
-    stagger: 0.1,
-    ease: 'power2.out'
-  })
+    {
+      id: 2,
+      name: 'Skyeler Kho',
+      specialty: 'Photography, Editing',
+      location: 'YVR, MNL',
+      photoCount: 0,
+      tags: ['Aviation', 'Editing'],
+      coverImage: '/path/to/cover.jpg',
+      avatar: '/path/to/avatar.jpg'
+    }
+  ]
 })
 </script>
 
 <style scoped>
-.portfolio-container {
+.portfolio {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
@@ -162,218 +126,199 @@ onMounted(() => {
 }
 
 .portfolio-header h1 {
-  font-size: 3rem;
-  font-weight: 800;
-  color: var(--text-color);
-  margin-bottom: 2rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 1.5rem;
+  color: #fff;
 }
 
-.filters {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 2rem;
-  margin-bottom: 2rem;
-}
-
-.search-box {
+.search-bar {
+  max-width: 500px;
+  margin: 0 auto;
   position: relative;
-  width: 300px;
 }
 
-.search-box input {
+.search-bar input {
   width: 100%;
-  padding: 1rem 1rem 1rem 3rem;
-  border: 2px solid var(--border-color);
-  border-radius: 50px;
+  padding: 1rem 3rem 1rem 1.5rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
   font-size: 1rem;
-  background: var(--card-background);
-  color: var(--text-color);
   transition: all 0.3s ease;
 }
 
-.search-box input:focus {
+.search-bar input:focus {
   outline: none;
-  border-color: var(--primary-color);
-  box-shadow: 0 0 0 3px rgba(var(--primary-rgb), 0.1);
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
-.search-box i {
+.search-bar input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.search-icon {
   position: absolute;
-  left: 1rem;
+  right: 1rem;
   top: 50%;
   transform: translateY(-50%);
-  color: var(--text-secondary);
-}
-
-.view-options {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.view-btn {
-  padding: 0.5rem 1rem;
-  border: 2px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--card-background);
-  color: var(--text-secondary);
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
-
-.view-btn.active {
-  background: var(--primary-color);
-  border-color: var(--primary-color);
-  color: white;
+  color: rgba(255, 255, 255, 0.5);
 }
 
 .photographers-grid {
   display: grid;
-  gap: 2rem;
-}
-
-.photographers-grid.grid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-}
-
-.photographers-grid.list {
-  grid-template-columns: 1fr;
+  gap: 2rem;
+  padding: 1rem 0;
 }
 
 .photographer-card {
-  position: relative;
-  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 3/4;
-  text-decoration: none;
   transition: all 0.3s ease;
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  position: relative;
 }
 
 .photographer-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
+  background: rgba(255, 255, 255, 0.08);
 }
 
-.photographer-image {
+.card-image {
+  position: relative;
+  padding-top: 66.67%; /* 3:2 aspect ratio */
+  background: #000;
+}
+
+.card-image img {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background-size: cover;
-  background-position: center;
-  transition: transform 0.3s ease;
-}
-
-.photographer-card:hover .photographer-image {
-  transform: scale(1.05);
-}
-
-.overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.8));
-  z-index: 1;
-}
-
-.photographer-info {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  padding: 2rem;
-  color: white;
-  z-index: 2;
-  text-align: center;
-}
-
-.profile-image {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  overflow: hidden;
-  margin: 0 auto 1rem;
-  border: 3px solid var(--primary-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-}
-
-.profile-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-.photographer-info h2 {
-  font-size: 1.8rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+.card-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 1rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  color: #fff;
 }
 
-.specialty {
-  color: var(--primary-color);
-  font-size: 1.1rem;
-  margin-bottom: 1rem;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-}
-
-.stats {
+.photographer-stats {
   display: flex;
-  justify-content: center;
-  gap: 1.5rem;
+  justify-content: space-between;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.9);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
-.stats span {
+.photographer-stats span {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
+.card-content {
+  padding: 1.5rem;
+  position: relative;
+}
+
+.photographer-avatar {
+  position: absolute;
+  top: -2.5rem;
+  left: 1.5rem;
+  width: 5rem;
+  height: 5rem;
+  border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  background: #000;
+}
+
+.photographer-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.card-content h3 {
+  margin-top: 2.5rem;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #fff;
+}
+
+.photographer-specialty {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.photographer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.tag {
+  background: rgba(144, 153, 62, 0.2);
+  color: #90993e;
+  padding: 0.3rem 0.8rem;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 4rem 0;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.no-results i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  opacity: 0.5;
+}
+
+.clear-search {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.clear-search:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
 @media (max-width: 768px) {
-  .portfolio-container {
+  .portfolio {
     padding: 1rem;
   }
-  
+
   .portfolio-header h1 {
-    font-size: 2.5rem;
+    font-size: 2rem;
   }
-  
-  .filters {
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .search-box {
-    width: 100%;
-  }
-  
-  .photographers-grid.grid {
+
+  .photographers-grid {
     grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
-  
-  .profile-image {
-    width: 80px;
-    height: 80px;
-  }
-  
-  .photographer-info h2 {
-    font-size: 1.5rem;
-  }
-  
-  .specialty {
-    font-size: 1rem;
-  }
-  
-  .stats {
-    flex-direction: column;
-    gap: 0.5rem;
+
+  .photographer-card:hover {
+    transform: none;
   }
 }
 </style> 
