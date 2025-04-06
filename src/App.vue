@@ -1084,52 +1084,22 @@ body {
   text-decoration: none;
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-md);
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
-  z-index: 1;
-}
-
-.quick-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(135deg, 
-    rgba(144, 153, 62, 0.1),
-    rgba(176, 185, 94, 0.1)
-  );
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-  z-index: -1;
-  pointer-events: none;
-}
-
-.quick-link:hover::before {
-  opacity: 1;
+  transition: color var(--transition-normal);
 }
 
 .quick-link i {
   color: var(--primary-color);
   font-size: 1.2rem;
-  transition: transform var(--transition-normal);
-  position: relative;
-  z-index: 2;
-}
-
-.quick-link:hover i {
-  transform: scale(1.2);
-}
-
-.quick-link span {
-  position: relative;
-  z-index: 2;
 }
 
 .quick-link:hover {
   color: var(--text-color);
-  transform: translateX(5px);
+}
+
+@media (max-width: 768px) {
+  .quick-links-container {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
 }
 </style> 
