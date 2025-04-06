@@ -29,8 +29,10 @@
           <div class="hero-overlay"></div>
         </div>
         <div class="hero-content">
-          <span class="overline">Welcome to</span>
-          <h1>VERSA<br>Spotting Group</h1>
+          <div class="welcome-text">
+            <h2 class="pre-title">WELCOME TO</h2>
+            <h1>VERSA<br>Spotting Group</h1>
+          </div>
           <p class="hero-description">Capturing the extraordinary at Vancouver International Airport. Join our community of passionate aviation photographers.</p>
           <div class="hero-buttons">
             <router-link to="/portfolio" class="btn btn-primary">Explore Gallery</router-link>
@@ -552,18 +554,32 @@ h2 {
   animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hero-content h1 {
+.welcome-text {
+  text-align: center;
+  margin-bottom: var(--spacing-lg);
+}
+
+.pre-title {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: var(--color-text-light);
+  margin-bottom: var(--spacing-sm);
+  letter-spacing: 0.2em;
+  opacity: 0.9;
+}
+
+h1 {
   font-size: clamp(3rem, 10vw, 6rem);
   font-weight: 800;
   line-height: 1;
-  margin: var(--spacing-sm) 0;
-  letter-spacing: -0.02em;
   background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-size: 200% 100%;
   animation: shine 3s linear infinite;
   filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+  margin: var(--spacing-sm) 0;
+  letter-spacing: -0.02em;
 }
 
 .hero-description {
