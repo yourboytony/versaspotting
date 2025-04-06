@@ -2,10 +2,7 @@
   <div class="admin-dashboard">
     <header class="admin-header">
       <h1>Admin Dashboard</h1>
-      <button @click="handleLogout" class="btn-logout">
-        <font-awesome-icon :icon="['fas', 'sign-out-alt']" />
-        Logout
-      </button>
+      <button @click="logout" class="logout-button">Logout</button>
     </header>
 
     <div class="admin-content">
@@ -13,127 +10,69 @@
         <button 
           v-for="tab in tabs" 
           :key="tab.id"
-          :class="['nav-btn', { active: currentTab === tab.id }]"
+          :class="{ active: currentTab === tab.id }"
           @click="currentTab = tab.id"
         >
-          <font-awesome-icon :icon="tab.icon" />
-          {{ tab.label }}
+          {{ tab.name }}
         </button>
       </nav>
 
       <div class="admin-main">
-        <!-- Profile Management -->
+        <!-- Profiles Tab -->
         <div v-if="currentTab === 'profiles'" class="tab-content">
-          <div class="section-instructions">
-            <h2>Profile Management</h2>
-            <p>Manage team member profiles here. Each profile should include:</p>
-            <ul>
-              <li>Name</li>
-              <li>Role (e.g., Photographer, Videographer)</li>
-              <li>Bio (short description)</li>
-              <li>Instagram handle</li>
-              <li>Profile photos</li>
-            </ul>
+          <h2>Profiles</h2>
+          <div class="data-grid">
+            <div v-for="profile in profiles" :key="profile.id" class="data-item">
+              <h3>{{ profile.name }}</h3>
+              <p>{{ profile.email }}</p>
+              <p v-if="profile.instagram">@{{ profile.instagram }}</p>
+              <p>{{ profile.bio }}</p>
+              <button @click="deleteProfile(profile.id)" class="delete-button">Delete</button>
+            </div>
           </div>
-          <ProfileManagement />
         </div>
 
-        <!-- Contact Form Submissions -->
+        <!-- Contact Submissions Tab -->
         <div v-if="currentTab === 'contact'" class="tab-content">
-          <div class="section-instructions">
-            <h2>Contact Form Submissions</h2>
-            <p>Review and manage contact form submissions. Each submission includes:</p>
-            <ul>
-              <li>Name</li>
-              <li>Email</li>
-              <li>Subject</li>
-              <li>Message</li>
-              <li>Timestamp</li>
-            </ul>
-          </div>
-          <div v-if="submissions.length === 0" class="no-data">
-            <p>No submissions yet</p>
-          </div>
-          <div v-else class="submissions-list">
-            <div v-for="submission in submissions" :key="submission.id" class="submission-card">
-              <div class="submission-header">
-                <h3>{{ submission.name }}</h3>
-                <span class="timestamp">{{ formatDate(submission.timestamp) }}</span>
-              </div>
-              <div class="submission-details">
-                <p><strong>Email:</strong> {{ submission.email }}</p>
-                <p><strong>Subject:</strong> {{ submission.subject }}</p>
-                <p><strong>Message:</strong> {{ submission.message }}</p>
-              </div>
-              <button @click="deleteSubmission(submission.id)" class="btn-delete">
-                <font-awesome-icon :icon="['fas', 'trash']" />
-              </button>
+          <h2>Contact Submissions</h2>
+          <div class="data-grid">
+            <div v-for="submission in submissions" :key="submission.id" class="data-item">
+              <h3>{{ submission.name }}</h3>
+              <p>{{ submission.email }}</p>
+              <p>{{ submission.message }}</p>
+              <button @click="deleteSubmission(submission.id)" class="delete-button">Delete</button>
             </div>
           </div>
         </div>
 
-        <!-- Team Applications -->
+        <!-- Team Applications Tab -->
         <div v-if="currentTab === 'applications'" class="tab-content">
-          <div class="section-instructions">
-            <h2>Team Applications</h2>
-            <p>Review and manage team applications. Each application includes:</p>
-            <ul>
-              <li>Name</li>
-              <li>Email</li>
-              <li>Instagram handle</li>
-              <li>Experience level</li>
-              <li>Reason for joining</li>
-              <li>Timestamp</li>
-            </ul>
-          </div>
-          <div v-if="applications.length === 0" class="no-data">
-            <p>No applications yet</p>
-          </div>
-          <div v-else class="applications-list">
-            <div v-for="application in applications" :key="application.id" class="application-card">
-              <div class="application-header">
-                <h3>{{ application.name }}</h3>
-                <span class="timestamp">{{ formatDate(application.timestamp) }}</span>
-              </div>
-              <div class="application-details">
-                <p><strong>Email:</strong> {{ application.email }}</p>
-                <p><strong>Instagram:</strong> {{ application.instagram }}</p>
-                <p><strong>Experience:</strong> {{ application.experience }}</p>
-                <p><strong>Why Join:</strong> {{ application.whyJoin }}</p>
-              </div>
-              <button @click="deleteApplication(application.id)" class="btn-delete">
-                <font-awesome-icon :icon="['fas', 'trash']" />
-              </button>
+          <h2>Team Applications</h2>
+          <div class="data-grid">
+            <div v-for="application in applications" :key="application.id" class="data-item">
+              <h3>{{ application.name }}</h3>
+              <p>{{ application.email }}</p>
+              <p v-if="application.instagram">@{{ application.instagram }}</p>
+              <p>{{ application.bio }}</p>
+              <select v-model="application.status" @change="updateApplicationStatus(application)">
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+              <button @click="deleteApplication(application.id)" class="delete-button">Delete</button>
             </div>
           </div>
         </div>
 
-        <!-- Uploaded Photos -->
+        <!-- Photos Tab -->
         <div v-if="currentTab === 'photos'" class="tab-content">
-          <div class="section-instructions">
-            <h2>Uploaded Photos</h2>
-            <p>Manage team member photos. Each photo entry includes:</p>
-            <ul>
-              <li>Photo preview</li>
-              <li>Description/caption</li>
-              <li>Associated profile</li>
-              <li>Upload date</li>
-            </ul>
-          </div>
-          <div v-if="photos.length === 0" class="no-data">
-            <p>No photos uploaded yet</p>
-          </div>
-          <div v-else class="photos-grid">
-            <div v-for="photo in photos" :key="photo.id" class="photo-card">
-              <img :src="photo.url" :alt="photo.description" class="photo-preview">
-              <div class="photo-info">
-                <p class="photo-description">{{ photo.description }}</p>
-                <p class="photo-profile">Profile: {{ photo.profileId }}</p>
-                <p class="photo-date">{{ formatDate(photo.timestamp) }}</p>
-              </div>
-              <button @click="deletePhoto(photo.id)" class="btn-delete">
-                <font-awesome-icon :icon="['fas', 'trash']" />
-              </button>
+          <h2>Photos</h2>
+          <div class="photo-grid">
+            <div v-for="photo in photos" :key="photo.id" class="photo-item">
+              <img :src="photo.url" :alt="photo.title">
+              <h3>{{ photo.title }}</h3>
+              <p>{{ photo.description }}</p>
+              <button @click="deletePhoto(photo.id)" class="delete-button">Delete</button>
             </div>
           </div>
         </div>
@@ -142,355 +81,285 @@
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-import { 
-  faUserCog, 
-  faEnvelope, 
-  faUserPlus, 
-  faImages,
-  faSignOutAlt,
-  faTrash
-} from '@fortawesome/free-solid-svg-icons'
-import ProfileManagement from '@/components/ProfileManagement.vue'
-import { 
-  getAllContactSubmissions, 
-  deleteContactSubmission,
-  getAllTeamApplications,
-  deleteTeamApplication,
-  getAllPhotos,
-  deletePhoto
-} from '@/data/database'
 
-export default {
-  name: 'AdminView',
-  components: {
-    FontAwesomeIcon,
-    ProfileManagement
-  },
-  setup() {
-    const router = useRouter()
-    const currentTab = ref('profiles')
-    const submissions = ref([])
-    const applications = ref([])
-    const photos = ref([])
+const router = useRouter()
+const currentTab = ref('profiles')
+const profiles = ref([])
+const submissions = ref([])
+const applications = ref([])
+const photos = ref([])
 
-    const tabs = [
-      { id: 'profiles', label: 'Profiles', icon: faUserCog },
-      { id: 'contact', label: 'Contact Forms', icon: faEnvelope },
-      { id: 'applications', label: 'Applications', icon: faUserPlus },
-      { id: 'photos', label: 'Photos', icon: faImages }
-    ]
+const tabs = [
+  { id: 'profiles', name: 'Profiles' },
+  { id: 'contact', name: 'Contact Submissions' },
+  { id: 'applications', name: 'Team Applications' },
+  { id: 'photos', name: 'Photos' }
+]
 
-    const loadData = async () => {
-      submissions.value = await getAllContactSubmissions()
-      applications.value = await getAllTeamApplications()
-      photos.value = await getAllPhotos()
+// Check authentication
+const checkAuth = async () => {
+  const token = localStorage.getItem('adminToken')
+  if (!token) {
+    router.push('/admin/login')
+    return
+  }
+}
+
+// Load data
+const loadData = async () => {
+  const token = localStorage.getItem('adminToken')
+  if (!token) {
+    router.push('/admin/login')
+    return
+  }
+
+  const headers = {
+    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+
+  try {
+    const [profilesRes, submissionsRes, applicationsRes, photosRes] = await Promise.all([
+      fetch('/api/profiles', { headers }),
+      fetch('/api/contact', { headers }),
+      fetch('/api/team-application', { headers }),
+      fetch('/api/photos', { headers })
+    ])
+
+    // Check if any response indicates unauthorized access
+    if ([profilesRes, submissionsRes, applicationsRes, photosRes].some(res => res.status === 401)) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
+      return
     }
 
-    const deleteSubmission = async (id) => {
-      if (confirm('Are you sure you want to delete this submission?')) {
-        await deleteContactSubmission(id)
-        await loadData()
-      }
-    }
-
-    const deleteApplication = async (id) => {
-      if (confirm('Are you sure you want to delete this application?')) {
-        await deleteTeamApplication(id)
-        await loadData()
-      }
-    }
-
-    const deletePhoto = async (id) => {
-      if (confirm('Are you sure you want to delete this photo?')) {
-        await deletePhoto(id)
-        await loadData()
-      }
-    }
-
-    const formatDate = (timestamp) => {
-      return new Date(timestamp).toLocaleDateString('en-US', {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-        hour: '2-digit',
-        minute: '2-digit'
-      })
-    }
-
-    const handleLogout = () => {
-      localStorage.removeItem('adminAuth')
-      router.push('/')
-    }
-
-    onMounted(() => {
-      loadData()
-    })
-
-    return {
-      currentTab,
-      tabs,
-      submissions,
-      applications,
-      photos,
-      deleteSubmission,
-      deleteApplication,
-      deletePhoto,
-      formatDate,
-      handleLogout
+    profiles.value = await profilesRes.json()
+    submissions.value = await submissionsRes.json()
+    applications.value = await applicationsRes.json()
+    photos.value = await photosRes.json()
+  } catch (error) {
+    console.error('Error loading data:', error)
+    if (error.message.includes('unauthorized') || error.message.includes('401')) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
     }
   }
 }
+
+// Delete functions
+const deleteProfile = async (id) => {
+  const token = localStorage.getItem('adminToken')
+  try {
+    const response = await fetch(`/api/profiles/${id}`, { 
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 401) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
+      return
+    }
+    profiles.value = profiles.value.filter(p => p.id !== id)
+  } catch (error) {
+    console.error('Error deleting profile:', error)
+  }
+}
+
+const deleteSubmission = async (id) => {
+  const token = localStorage.getItem('adminToken')
+  try {
+    const response = await fetch(`/api/contact/${id}`, { 
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 401) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
+      return
+    }
+    submissions.value = submissions.value.filter(s => s.id !== id)
+  } catch (error) {
+    console.error('Error deleting submission:', error)
+  }
+}
+
+const deleteApplication = async (id) => {
+  const token = localStorage.getItem('adminToken')
+  try {
+    const response = await fetch(`/api/team-application/${id}`, { 
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 401) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
+      return
+    }
+    applications.value = applications.value.filter(a => a.id !== id)
+  } catch (error) {
+    console.error('Error deleting application:', error)
+  }
+}
+
+const deletePhoto = async (id) => {
+  const token = localStorage.getItem('adminToken')
+  try {
+    const response = await fetch(`/api/photos/${id}`, { 
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      }
+    })
+    if (response.status === 401) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
+      return
+    }
+    photos.value = photos.value.filter(p => p.id !== id)
+  } catch (error) {
+    console.error('Error deleting photo:', error)
+  }
+}
+
+const updateApplicationStatus = async (application) => {
+  const token = localStorage.getItem('adminToken')
+  try {
+    const response = await fetch(`/api/team-application/${application.id}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ status: application.status })
+    })
+    if (response.status === 401) {
+      localStorage.removeItem('adminToken')
+      router.push('/admin/login')
+      return
+    }
+  } catch (error) {
+    console.error('Error updating application status:', error)
+  }
+}
+
+const logout = () => {
+  localStorage.removeItem('adminToken')
+  router.push('/admin/login')
+}
+
+onMounted(async () => {
+  await checkAuth()
+  await loadData()
+})
 </script>
 
 <style scoped>
 .admin-dashboard {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
-  color: #fff;
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
 }
 
 .admin-header {
-  background: rgba(0, 0, 0, 0.5);
-  padding: 1rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
+  margin-bottom: 20px;
 }
 
-.admin-header h1 {
-  margin: 0;
-  color: #fff;
-  font-size: 1.5rem;
-}
-
-.btn-logout {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.5rem 1rem;
-  background: #dc3545;
-  color: #fff;
+.logout-button {
+  padding: 8px 16px;
+  background-color: #ff4444;
+  color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
-}
-
-.btn-logout:hover {
-  background: #c82333;
 }
 
 .admin-content {
   display: flex;
-  min-height: calc(100vh - 64px);
+  gap: 20px;
 }
 
 .admin-nav {
-  width: 250px;
-  background: rgba(0, 0, 0, 0.5);
-  padding: 1rem;
-  box-shadow: 2px 0 4px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
-}
-
-.nav-btn {
+  width: 200px;
   display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  width: 100%;
-  padding: 0.75rem 1rem;
-  margin-bottom: 0.5rem;
-  background: none;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.admin-nav button {
+  padding: 10px;
   border: none;
-  border-radius: 0.5rem;
-  color: #ccc;
+  background: #f0f0f0;
   cursor: pointer;
-  transition: all 0.3s;
+  text-align: left;
 }
 
-.nav-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
-}
-
-.nav-btn.active {
+.admin-nav button.active {
   background: #007bff;
-  color: #fff;
+  color: white;
 }
 
 .admin-main {
   flex: 1;
-  padding: 2rem;
-  overflow-y: auto;
 }
 
 .tab-content {
-  background: rgba(0, 0, 0, 0.5);
-  padding: 2rem;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-  backdrop-filter: blur(10px);
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.section-instructions {
-  margin-bottom: 2rem;
-  padding: 1.5rem;
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.section-instructions h2 {
-  margin-top: 0;
-  color: #fff;
-  font-size: 1.5rem;
-}
-
-.section-instructions p {
-  color: #ccc;
-  margin-bottom: 1rem;
-}
-
-.section-instructions ul {
-  color: #ccc;
-  padding-left: 1.5rem;
-  margin: 0;
-}
-
-.section-instructions li {
-  margin-bottom: 0.5rem;
-}
-
-.tab-content h2 {
-  margin-top: 0;
-  color: #fff;
-  font-size: 1.5rem;
-}
-
-.no-data {
-  text-align: center;
-  padding: 2rem;
-  color: #ccc;
-}
-
-.submissions-list,
-.applications-list {
-  display: grid;
-  gap: 1rem;
-}
-
-.submission-card,
-.application-card {
-  background: rgba(0, 0, 0, 0.3);
-  padding: 1.5rem;
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
-}
-
-.submission-header,
-.application-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.timestamp {
-  color: #ccc;
-  font-size: 0.875rem;
-}
-
-.submission-details,
-.application-details {
-  color: #fff;
-}
-
-.submission-details p,
-.application-details p {
-  margin: 0.5rem 0;
-}
-
-.photos-grid {
+.data-grid, .photo-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 1.5rem;
+  gap: 20px;
+  margin-top: 20px;
 }
 
-.photo-card {
-  background: rgba(0, 0, 0, 0.3);
-  border-radius: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  overflow: hidden;
-  position: relative;
+.data-item, .photo-item {
+  padding: 15px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 
-.photo-preview {
+.photo-item img {
   width: 100%;
   height: 200px;
   object-fit: cover;
+  border-radius: 4px;
+  margin-bottom: 10px;
 }
 
-.photo-info {
-  padding: 1rem;
-}
-
-.photo-description {
-  font-weight: 500;
-  margin-bottom: 0.5rem;
-  color: #fff;
-}
-
-.photo-profile,
-.photo-date {
-  color: #ccc;
-  font-size: 0.875rem;
-  margin: 0.25rem 0;
-}
-
-.btn-delete {
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  background: rgba(220, 53, 69, 0.9);
-  color: #fff;
+.delete-button {
+  padding: 6px 12px;
+  background-color: #ff4444;
+  color: white;
   border: none;
-  border-radius: 0.25rem;
-  padding: 0.5rem;
+  border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s;
+  margin-top: 10px;
 }
 
-.btn-delete:hover {
-  background: #dc3545;
-}
-
-@media (max-width: 768px) {
-  .admin-content {
-    flex-direction: column;
-  }
-
-  .admin-nav {
-    width: 100%;
-    padding: 1rem;
-    display: flex;
-    overflow-x: auto;
-    gap: 0.5rem;
-  }
-
-  .nav-btn {
-    margin-bottom: 0;
-    white-space: nowrap;
-  }
-
-  .admin-main {
-    padding: 1rem;
-  }
+select {
+  padding: 6px 12px;
+  margin-top: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
 }
 </style> 

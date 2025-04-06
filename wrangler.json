@@ -1,0 +1,21 @@
+{
+  "name": "versaspotting",
+  "compatibility_date": "2025-04-05",
+  "main": "workers-site/index.js",
+  "assets": {
+    "directory": "./dist"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "versaspotting",
+      "database_id": "6768c0eb-cb79-4331-8e65-7a22b5b67b91"
+    }
+  ],
+  "kv_namespaces": [
+    {
+      "binding": "KV",
+      "id": "29d355a8d56e4c67bf8eb1014f284b4f"
+    }
+  ]
+} 

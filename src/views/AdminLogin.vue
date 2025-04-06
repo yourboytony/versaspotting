@@ -5,60 +5,82 @@
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="username">Username</label>
-          <input 
-            type="text" 
-            id="username" 
-            v-model="username" 
+          <input
+            type="text"
+            id="username"
+            v-model="username"
             required
-            placeholder="Enter username"
           >
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input 
-            type="password" 
-            id="password" 
-            v-model="password" 
+          <input
+            type="password"
+            id="password"
+            v-model="password"
             required
-            placeholder="Enter password"
           >
         </div>
-        <button type="submit" class="btn-login">Login</button>
-        <p v-if="error" class="error-message">{{ error }}</p>
+        <button type="submit" :disabled="loading">
+          {{ loading ? 'Logging in...' : 'Login' }}
+        </button>
+        <p v-if="error" class="error">{{ error }}</p>
       </form>
     </div>
   </div>
 </template>
 
-<script>
+<script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
-export default {
-  name: 'AdminLogin',
-  setup() {
-    const username = ref('')
-    const password = ref('')
-    const error = ref('')
-    const router = useRouter()
+const router = useRouter()
+const username = ref('')
+const password = ref('')
+const loading = ref(false)
+const error = ref('')
 
-    const handleLogin = () => {
-      if (username.value === 'VERSAadmin' && password.value === 'adminw8492$@') {
-        localStorage.setItem('adminAuth', 'true')
-        const redirectPath = localStorage.getItem('redirectAfterLogin') || '/admin'
-        localStorage.removeItem('redirectAfterLogin')
-        router.push(redirectPath)
-      } else {
-        error.value = 'Invalid username or password'
+const handleLogin = async () => {
+  loading.value = true
+  error.value = ''
+
+  if (!username.value || !password.value) {
+    error.value = 'Please enter both username and password'
+    loading.value = false
+    return
+  }
+
+  try {
+    const response = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      credentials: 'same-origin',
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value,
+      }),
+    })
+
+    const data = await response.json()
+
+    if (response.ok) {
+      if (!data.token) {
+        error.value = 'Server response missing authentication token'
+        return
       }
+      localStorage.setItem('adminToken', data.token)
+      router.push('/admin')
+    } else {
+      error.value = data.error || 'Invalid username or password'
     }
-
-    return {
-      username,
-      password,
-      error,
-      handleLogin
-    }
+  } catch (err) {
+    console.error('Login error:', err)
+    error.value = 'Unable to connect to the server. Please try again later.'
+  } finally {
+    loading.value = false
   }
 }
 </script>
@@ -67,81 +89,68 @@ export default {
 .admin-login {
   min-height: 100vh;
   display: flex;
-  justify-content: center;
   align-items: center;
-  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-  padding: 2rem;
+  justify-content: center;
+  background: #f5f5f5;
 }
 
 .login-container {
-  background: rgba(255, 255, 255, 0.1);
+  background: white;
   padding: 2rem;
-  border-radius: 1rem;
-  backdrop-filter: blur(10px);
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
 }
 
 h1 {
-  color: #fff;
   text-align: center;
   margin-bottom: 2rem;
-  font-size: 2rem;
+  color: #333;
 }
 
 .form-group {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1rem;
 }
 
 label {
   display: block;
-  color: #fff;
   margin-bottom: 0.5rem;
-  font-weight: 500;
+  color: #666;
 }
 
 input {
   width: 100%;
   padding: 0.75rem;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 0.5rem;
-  background: rgba(255, 255, 255, 0.1);
-  color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
   font-size: 1rem;
 }
 
-input::placeholder {
-  color: rgba(255, 255, 255, 0.5);
-}
-
-input:focus {
-  outline: none;
-  border-color: #007bff;
-  background: rgba(255, 255, 255, 0.15);
-}
-
-.btn-login {
+button {
   width: 100%;
   padding: 0.75rem;
   background: #007bff;
-  color: #fff;
+  color: white;
   border: none;
-  border-radius: 0.5rem;
+  border-radius: 4px;
   font-size: 1rem;
-  font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
 }
 
-.btn-login:hover {
+button:hover {
   background: #0056b3;
 }
 
-.error-message {
+button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.error {
   color: #dc3545;
-  text-align: center;
   margin-top: 1rem;
-  font-size: 0.9rem;
+  text-align: center;
 }
 </style> 
