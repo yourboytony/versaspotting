@@ -2,6 +2,17 @@
   <div class="home">
     <!-- Hero Section -->
     <section class="hero">
+      <div class="hero-background">
+        <div class="background-slider">
+          <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
+               :key="photo.id" 
+               class="background-image"
+               :class="{ active: currentBackgroundIndex === index }"
+               :style="{ backgroundImage: `url(${photo.imageUrl})` }">
+          </div>
+        </div>
+        <div class="hero-overlay"></div>
+      </div>
       <div class="hero-content">
         <h1 class="hero-title">VERSA Spotting Group</h1>
         <p class="hero-subtitle">Where Aviation Meets Artistry</p>
@@ -138,6 +149,8 @@ gsap.registerPlugin(ScrollTrigger)
 const dataStore = useDataStore()
 const selectedPhoto = ref(null)
 const isLoading = ref(true)
+const currentBackgroundIndex = ref(0)
+const backgroundInterval = ref(null)
 
 // Get recent photos with error handling
 const recentPhotos = computed(() => {
@@ -178,9 +191,21 @@ const totalPhotos = computed(() => dataStore.photos.length)
 const totalPhotographers = computed(() => dataStore.photographers.length)
 const totalLocations = ref(8)
 
+// Rotate background images
+const rotateBackground = () => {
+  if (recentPhotos.value.length > 0) {
+    currentBackgroundIndex.value = (currentBackgroundIndex.value + 1) % Math.min(3, recentPhotos.value.length)
+  }
+}
+
 onMounted(async () => {
   if (!dataStore.isInitialized) {
     await dataStore.initializeData()
+  }
+  
+  // Start background rotation
+  if (recentPhotos.value.length > 0) {
+    backgroundInterval.value = setInterval(rotateBackground, 5000)
   }
   
   // Hero section animations
@@ -314,6 +339,9 @@ onMounted(async () => {
 
 onUnmounted(() => {
   ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+  if (backgroundInterval.value) {
+    clearInterval(backgroundInterval.value)
+  }
 })
 
 const openPhotoModal = (photo) => {
@@ -358,12 +386,60 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   text-align: center;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: #ffffff;
   overflow: hidden;
 }
 
+.hero-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 0;
+}
+
+.background-slider {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.background-image {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  opacity: 0;
+  transition: opacity 1.5s ease-in-out;
+}
+
+.background-image.active {
+  opacity: 1;
+}
+
+.hero-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.7),
+    rgba(0, 0, 0, 0.9)
+  );
+  z-index: 1;
+}
+
 .hero-content {
+  position: relative;
+  z-index: 2;
   max-width: 1200px;
   width: 100%;
   padding: 0 2rem;
@@ -379,7 +455,7 @@ const closePhotoModal = () => {
   font-weight: 800;
   margin-bottom: 1rem;
   color: #fff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 20px rgba(130, 157, 80, 0.5);
   letter-spacing: -2px;
   line-height: 1.1;
 }
@@ -388,7 +464,7 @@ const closePhotoModal = () => {
   font-size: 2rem;
   margin-bottom: 3rem;
   color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
   font-weight: 500;
   letter-spacing: -0.5px;
 }
@@ -432,21 +508,21 @@ const closePhotoModal = () => {
 }
 
 .button.primary {
-  background: #fff;
-  color: var(--primary-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  background: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(130, 157, 80, 0.4);
 }
 
 .button.secondary {
   background: transparent;
-  border: 2px solid #fff;
-  color: #fff;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .button:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 15px 30px rgba(130, 157, 80, 0.4);
 }
 
 /* Recent Uploads Section */
