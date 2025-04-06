@@ -528,6 +528,7 @@ h2 {
   opacity: 0;
   transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1.1);
+  filter: brightness(0.8) saturate(1.2);
   z-index: 0;
 }
 
@@ -539,8 +540,24 @@ h2 {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.6));
+  background: linear-gradient(to bottom,
+    rgba(0,0,0,0.3),
+    rgba(0,0,0,0.5) 50%,
+    rgba(0,0,0,0.7)
+  );
   z-index: 1;
+}
+
+.hero-overlay::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(130, 157, 80, 0.2),
+    transparent 70%
+  );
+  z-index: -1;
 }
 
 .hero-content {
@@ -550,6 +567,7 @@ h2 {
   margin: 0 auto;
   padding: 0 var(--spacing-md);
   text-align: center;
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .welcome-text {
@@ -566,7 +584,8 @@ h2 {
   margin-bottom: var(--spacing-sm);
   letter-spacing: 0.2em;
   opacity: 1;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  text-shadow: 0 0 20px rgba(255,255,255,0.5);
+  animation: glowPulse 2s infinite;
 }
 
 h1 {
@@ -576,11 +595,20 @@ h1 {
   color: #ffffff;
   margin: var(--spacing-sm) 0;
   letter-spacing: -0.02em;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-  background: none;
-  -webkit-background-clip: unset;
-  -webkit-text-fill-color: #ffffff;
-  animation: none;
+  text-shadow: 
+    0 0 40px rgba(255,255,255,0.4),
+    0 0 80px rgba(255,255,255,0.2);
+  animation: textGlow 2s infinite alternate;
+  position: relative;
+}
+
+h1::after {
+  content: '';
+  position: absolute;
+  inset: -10px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  filter: blur(20px);
+  z-index: -1;
 }
 
 .hero-description {
@@ -589,9 +617,10 @@ h1 {
   margin: 0 auto var(--spacing-lg);
   opacity: 1;
   color: #ffffff;
-  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  text-shadow: 0 0 20px rgba(255,255,255,0.3);
   position: relative;
   z-index: 20;
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s backwards;
 }
 
 .hero-buttons {
@@ -601,6 +630,131 @@ h1 {
   margin-bottom: var(--spacing-xl);
   position: relative;
   z-index: 20;
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.6s backwards;
+}
+
+.btn {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.btn:hover::before {
+  transform: translateX(100%);
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+
+.btn:hover::after {
+  opacity: 1;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  border: none;
+}
+
+.btn-primary:hover {
+  transform: translateY(-4px) scale(1.02);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.3),
+    0 0 0 1px rgba(255,255,255,0.1),
+    0 0 20px rgba(130, 157, 80, 0.4);
+}
+
+.btn-outline:hover {
+  background: rgba(255,255,255,0.15);
+  border-color: rgba(255,255,255,0.4);
+  box-shadow: 
+    0 20px 40px rgba(0,0,0,0.3),
+    0 0 30px rgba(255,255,255,0.2);
+}
+
+/* Add new animations */
+@keyframes glowPulse {
+  0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
+  50% { text-shadow: 0 0 40px rgba(255,255,255,0.8); }
+}
+
+@keyframes textGlow {
+  from { text-shadow: 0 0 40px rgba(255,255,255,0.4), 0 0 80px rgba(255,255,255,0.2); }
+  to { text-shadow: 0 0 60px rgba(255,255,255,0.6), 0 0 100px rgba(255,255,255,0.3); }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 20;
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.9s backwards;
+}
+
+.scroll-line {
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(to bottom, #fff, transparent);
+  animation: scrollPulse 2s infinite;
+  position: relative;
+}
+
+.scroll-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: scrollDot 2s infinite;
+}
+
+@keyframes scrollDot {
+  0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, 40px) scale(0.5); opacity: 0; }
 }
 
 /* Featured Section */
@@ -1164,24 +1318,34 @@ h1 {
   font-weight: 500;
   letter-spacing: 0.2em;
   opacity: 0.7;
+  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.9s backwards;
 }
 
-.scroll-indicator::after {
-  content: '';
-  position: absolute;
-  bottom: -2rem;
-  left: 50%;
-  transform: translateX(-50%);
+.scroll-line {
   width: 2px;
   height: 50px;
   background: linear-gradient(to bottom, #fff, transparent);
   animation: scrollPulse 2s infinite;
+  position: relative;
 }
 
-@keyframes scrollPulse {
-  0% { transform: translateX(-50%) scaleY(0); opacity: 0; }
-  50% { transform: translateX(-50%) scaleY(1); opacity: 1; }
-  100% { transform: translateX(-50%) scaleY(0); opacity: 0; }
+.scroll-line::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: #fff;
+  border-radius: 50%;
+  filter: blur(2px);
+  animation: scrollDot 2s infinite;
+}
+
+@keyframes scrollDot {
+  0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, 40px) scale(0.5); opacity: 0; }
 }
 
 /* Add shimmer effect to featured images */
