@@ -49,7 +49,7 @@
           <span class="overline">Featured</span>
           <h2>Latest Captures</h2>
           <div class="featured-grid">
-            <div v-for="photo in recentPhotos.slice(0, 3)" 
+            <div v-for="photo in recentPhotos" 
                  :key="photo.id" 
                  class="featured-item"
                  @click="openPhotoModal(photo)">
@@ -60,6 +60,7 @@
                     <h3>{{ photo.title }}</h3>
                     <p>{{ photo.description }}</p>
                     <span class="photographer">By {{ photo.photographer }}</span>
+                    <span class="location">{{ photo.location }}</span>
                   </div>
                 </div>
               </div>
@@ -87,7 +88,7 @@
             <div class="stat">
               <div class="stat-number">{{ totalLocations }}</div>
               <div class="stat-label">Locations</div>
-              <div class="stat-description">Spotting locations around YVR</div>
+              <div class="stat-description">Premium spotting locations around YVR</div>
             </div>
           </div>
         </div>
@@ -100,22 +101,22 @@
           <h2>Vancouver's Premier Aviation Photography Community</h2>
           <div class="about-grid">
             <div class="about-text">
-              <p>VERSA Spotting Group is a community of passionate aviation photographers dedicated to capturing the beauty and power of aircraft at Vancouver International Airport (YVR). Our members range from enthusiastic beginners to seasoned professionals, all united by their love for aviation photography.</p>
+              <p>VERSA Spotting Group is Vancouver's leading community of aviation photographers, dedicated to capturing the beauty and power of aircraft at YVR International Airport. Our members range from enthusiastic beginners to seasoned professionals, all united by their passion for aviation photography.</p>
               <div class="features">
                 <div class="feature">
                   <div class="feature-icon">✈️</div>
-                  <h3>Aviation Excellence</h3>
-                  <p>Access to premium spotting locations and expert guidance</p>
+                  <h3>Premium Locations</h3>
+                  <p>Access to exclusive spotting locations around YVR</p>
                 </div>
                 <div class="feature">
                   <div class="feature-icon">📸</div>
-                  <h3>Photography Skills</h3>
-                  <p>Learn from experienced photographers and improve your craft</p>
+                  <h3>Expert Guidance</h3>
+                  <p>Learn from experienced aviation photographers</p>
                 </div>
                 <div class="feature">
                   <div class="feature-icon">🤝</div>
-                  <h3>Community</h3>
-                  <p>Join a supportive network of like-minded enthusiasts</p>
+                  <h3>Active Community</h3>
+                  <p>Join regular meetups and photography events</p>
                 </div>
               </div>
             </div>
@@ -213,9 +214,20 @@ const handleImageError = (event) => {
 }
 
 // Stats
-const totalPhotos = computed(() => dataStore.photos.length)
-const totalPhotographers = computed(() => dataStore.photographers.length)
-const totalLocations = ref(8)
+const totalPhotos = computed(() => {
+  const photos = dataStore.photos || []
+  return photos.length
+})
+
+const totalPhotographers = computed(() => {
+  const photographers = dataStore.photographers || []
+  return photographers.length
+})
+
+const totalLocations = computed(() => {
+  const locations = dataStore.spotterLocations || []
+  return locations.length
+})
 
 // Rotate background images
 const rotateBackground = () => {
@@ -653,6 +665,13 @@ h2 {
   opacity: 0.7;
 }
 
+.featured-info .location {
+  font-size: 0.875rem;
+  opacity: 0.7;
+  display: block;
+  margin-top: 0.25rem;
+}
+
 /* Stats Section */
 .stats {
   padding: var(--spacing-xl) 0;
@@ -672,6 +691,10 @@ h2 {
   border-radius: var(--border-radius);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 200px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stat:hover {

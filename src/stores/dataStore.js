@@ -58,8 +58,84 @@ const defaultPhotographer = {
 
 export const useDataStore = defineStore('data', {
   state: () => ({
-    photographers: [defaultPhotographer], // Initialize with default photographer
-    photos: [...samplePhotos], // Initialize with sample photos
+    photos: [
+      {
+        id: 1,
+        title: 'Air Canada 777-300ER Sunset Departure',
+        description: 'Beautiful departure shot of Air Canada\'s Boeing 777-300ER against the Vancouver sunset',
+        imageUrl: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05',
+        photographerId: 1,
+        date: '2024-04-06',
+        location: 'YVR North Runway'
+      },
+      {
+        id: 2,
+        title: 'WestJet 787 Dreamliner Arrival',
+        description: 'WestJet\'s Boeing 787-9 Dreamliner on final approach to YVR',
+        imageUrl: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e',
+        photographerId: 2,
+        date: '2024-04-05',
+        location: 'Larry Berg Flight Path Park'
+      },
+      {
+        id: 3,
+        title: 'Emirates A380 Morning Landing',
+        description: 'Emirates Airbus A380 touching down during a beautiful morning at YVR',
+        imageUrl: 'https://images.unsplash.com/photo-1570710891163-6d3b5c47248b',
+        photographerId: 3,
+        date: '2024-04-04',
+        location: 'Iona Beach'
+      }
+    ],
+    photographers: [
+      {
+        id: 1,
+        name: 'John Smith',
+        specialty: 'Commercial Aviation',
+        location: 'Vancouver, BC',
+        joinDate: '2023-01-15',
+        photoCount: 156,
+        status: 'active'
+      },
+      {
+        id: 2,
+        name: 'Sarah Johnson',
+        specialty: 'Aviation Photography',
+        location: 'Richmond, BC',
+        joinDate: '2023-03-22',
+        photoCount: 89,
+        status: 'active'
+      },
+      {
+        id: 3,
+        name: 'Michael Chen',
+        specialty: 'Aircraft Spotting',
+        location: 'Burnaby, BC',
+        joinDate: '2023-06-10',
+        photoCount: 234,
+        status: 'active'
+      }
+    ],
+    spotterLocations: [
+      {
+        id: 1,
+        name: 'Larry Berg Flight Path Park',
+        description: 'Popular spot for runway 26L arrivals',
+        coordinates: { lat: 49.197207, lng: -123.158796 }
+      },
+      {
+        id: 2,
+        name: 'Iona Beach Regional Park',
+        description: 'Great for departures from runway 26R',
+        coordinates: { lat: 49.222687, lng: -123.259649 }
+      },
+      {
+        id: 3,
+        name: 'North Runway Viewing Area',
+        description: 'Perfect for runway 08L operations',
+        coordinates: { lat: 49.195416, lng: -123.183458 }
+      }
+    ],
     applications: [],
     announcements: [
       {
@@ -71,8 +147,8 @@ export const useDataStore = defineStore('data', {
         readTime: '2 min'
       }
     ],
-    isInitialized: false,
-    isLoading: true,
+    isInitialized: true,
+    isLoading: false,
     error: null
   }),
 
