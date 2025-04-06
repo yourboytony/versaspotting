@@ -13,8 +13,8 @@
       <div class="container">
         <div class="mission-content">
           <h2>Our Mission</h2>
-          <p>VERSA Spotting Group is dedicated to capturing and sharing the beauty of aviation through our lenses. We bring together aviation enthusiasts and photographers who share a passion for aircraft and photography.</p>
-          <p>Our community is built on the principles of collaboration, learning, and respect for both aviation and photography.</p>
+          <p>VERSA Spotting Group is dedicated to sharing the beauty of aviation through our lenses. We bring together aviation enthusiasts and photographers who share a passion for aircraft and photography.</p>
+          <p>Our community is built on the principles of collaboration, learning, and a love for both aviation and photography.</p>
         </div>
         <div class="mission-image">
           <img :src="recentPhotos[1]?.imageUrl || 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png'" alt="VERSA Group">

@@ -6,7 +6,7 @@
       <div class="hero-background" :style="{ backgroundImage: `url(${currentBackground})` }"></div>
       <div class="hero-content">
         <h1 class="title">VERSA Spotting Group</h1>
-        <p class="subtitle">Capturing the beauty of aviation at YVR</p>
+        <p class="subtitle">Capturing the beauty of aviation around the world</p>
         <p class="description">Join our community of passionate aviation photographers and share your love for aviation photography</p>
         <div class="hero-buttons">
           <router-link to="/portfolio" class="button primary">View Portfolios</router-link>
@@ -103,7 +103,7 @@
           <div class="feature-icon">
             <i class="icon-location"></i>
           </div>
-          <h3>YVR Based</h3>
+          <h3>YVR-Based</h3>
           <p>Located at Vancouver International Airport, we have prime access to some of the most beautiful aircraft in the world.</p>
         </div>
       </div>
