@@ -2,7 +2,7 @@
   <main class="home">
     <nav class="main-nav" :class="{ 'nav-scrolled': isScrolled }">
       <div class="container">
-        <img src="@/assets/logo.svg" alt="VERSA" class="nav-logo">
+        <div class="nav-brand">VERSA</div>
         <div class="nav-links" :class="{ 'nav-open': isMenuOpen }">
           <a href="#" class="nav-link">Home</a>
           <a href="#latest" class="nav-link">Gallery</a>
@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 
 const isMenuOpen = ref(false)
 const isScrolled = ref(false)
@@ -75,10 +75,14 @@ onMounted(() => {
   window.addEventListener('scroll', handleScroll)
 })
 
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
+})
+
 const photos = [
-  { id: 1, title: 'Boeing 787 Sunset', photographer: 'John Doe', url: '/img/photo1.jpg' },
-  { id: 2, title: 'Airbus A350 Landing', photographer: 'Jane Smith', url: '/img/photo2.jpg' },
-  { id: 3, title: 'Airport Operations', photographer: 'Mike Johnson', url: '/img/photo3.jpg' }
+  { id: 1, title: 'Boeing 787 Sunset', photographer: 'John Doe', url: 'https://placehold.co/600x400' },
+  { id: 2, title: 'Airbus A350 Landing', photographer: 'Jane Smith', url: 'https://placehold.co/600x400' },
+  { id: 3, title: 'Airport Operations', photographer: 'Mike Johnson', url: 'https://placehold.co/600x400' }
 ]
 
 const features = [
@@ -118,6 +122,12 @@ body {
   background: var(--primary);
   padding: 1rem 0;
   z-index: 100;
+}
+
+.main-nav .container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .nav-logo {
@@ -207,6 +217,28 @@ body {
 .icon {
   font-size: 2rem;
   margin-bottom: 1rem;
+}
+
+.nav-toggle {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  margin: 4px 0;
+}
+
+.nav-brand {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
 }
 
 @media (max-width: 768px) {
