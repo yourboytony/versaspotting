@@ -89,7 +89,7 @@
           <div class="feature-icon">
             <i class="icon-camera"></i>
           </div>
-          <h3>Photography Excellence</h3>
+          <h3>Photographic Excellence</h3>
           <p>Our photographers are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
         </div>
         <div class="feature-card">
