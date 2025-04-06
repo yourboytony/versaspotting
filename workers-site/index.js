@@ -15,11 +15,17 @@ async function handleEvent(event) {
 
     // Handle static assets and SPA routing
     try {
+      // First try to serve the exact file
       return await getAssetFromKV(event)
     } catch (e) {
-      // If the asset is not found, serve index.html for SPA routing
+      // If the file is not found, serve index.html for SPA routing
+      // This ensures all routes, including /admin, work correctly
       return await getAssetFromKV(event, {
-        mapRequestToAsset: req => new Request(`${new URL(req.url).origin}/index.html`, req)
+        mapRequestToAsset: req => {
+          const url = new URL(req.url)
+          // Always serve index.html for the SPA
+          return new Request(`${url.origin}/index.html`, req)
+        }
       })
     }
   } catch (e) {
