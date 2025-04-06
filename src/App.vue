@@ -3,29 +3,30 @@
     <header class="header">
       <div class="container">
         <nav class="nav">
-          <router-link to="/" class="logo">
+          <router-link to="/" class="logo" @click="scrollToTop">
+            <img src="@/assets/logo.png" alt="VERSA Logo" class="logo-img">
             <span class="logo-text">VERSA</span>
             <span class="logo-subtext">Spotting Group</span>
           </router-link>
           
           <div class="nav-links" :class="{ 'active': mobileMenuOpen }">
-            <router-link to="/" class="nav-link">
+            <router-link to="/" @click="scrollToTop" class="nav-link">
               <span class="nav-text">Home</span>
               <span class="nav-dot"></span>
             </router-link>
-            <router-link to="/portfolio" class="nav-link">
+            <router-link to="/portfolio" @click="scrollToTop" class="nav-link">
               <span class="nav-text">Portfolio</span>
               <span class="nav-dot"></span>
             </router-link>
-            <router-link to="/news" class="nav-link">
+            <router-link to="/news" @click="scrollToTop" class="nav-link">
               <span class="nav-text">News</span>
               <span class="nav-dot"></span>
             </router-link>
-            <router-link to="/about" class="nav-link">
+            <router-link to="/about" @click="scrollToTop" class="nav-link">
               <span class="nav-text">About</span>
               <span class="nav-dot"></span>
             </router-link>
-            <router-link to="/apply" class="nav-link">
+            <router-link to="/apply" @click="scrollToTop" class="nav-link">
               <span class="nav-text">Apply</span>
               <span class="nav-dot"></span>
             </router-link>
@@ -75,29 +76,29 @@
             <h4>Quick Links</h4>
             <div class="quick-links-container">
               <div class="quick-links-column">
-                <router-link to="/" class="quick-link">
+                <router-link to="/" @click="scrollToTop" class="quick-link">
                   <i class="fas fa-home"></i>
                   <span>Home</span>
                 </router-link>
-                <router-link to="/portfolio" class="quick-link">
+                <router-link to="/portfolio" @click="scrollToTop" class="quick-link">
                   <i class="fas fa-images"></i>
                   <span>Portfolio</span>
                 </router-link>
-                <router-link to="/news" class="quick-link">
+                <router-link to="/news" @click="scrollToTop" class="quick-link">
                   <i class="fas fa-newspaper"></i>
                   <span>News</span>
                 </router-link>
               </div>
               <div class="quick-links-column">
-                <router-link to="/about" class="quick-link">
+                <router-link to="/about" @click="scrollToTop" class="quick-link">
                   <i class="fas fa-info-circle"></i>
                   <span>About</span>
                 </router-link>
-                <router-link to="/apply" class="quick-link">
+                <router-link to="/apply" @click="scrollToTop" class="quick-link">
                   <i class="fas fa-user-plus"></i>
                   <span>Apply</span>
                 </router-link>
-                <router-link to="/contact" class="quick-link">
+                <router-link to="/contact" @click="scrollToTop" class="quick-link">
                   <i class="fas fa-envelope"></i>
                   <span>Contact</span>
                 </router-link>
@@ -126,14 +127,25 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import gsap from 'gsap'
+import { useDataStore } from './stores/dataStore'
+import { storeToRefs } from 'pinia'
 
 const router = useRouter()
 const isAdmin = computed(() => localStorage.getItem('adminToken') !== null)
 const mobileMenuOpen = ref(false)
+const store = useDataStore()
+const { photographers, announcements } = storeToRefs(store)
 
 const toggleMobileMenu = () => {
   mobileMenuOpen.value = !mobileMenuOpen.value
   document.body.style.overflow = mobileMenuOpen.value ? 'hidden' : 'auto'
+}
+
+const scrollToTop = () => {
+  window.scrollTo({
+    top: 0,
+    behavior: 'smooth'
+  })
 }
 
 onMounted(() => {
