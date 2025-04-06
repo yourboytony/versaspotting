@@ -104,11 +104,6 @@
               <p>VERSA Spotting Group is Vancouver's leading community of aviation photographers, dedicated to capturing the beauty and power of aircraft at YVR International Airport. Our members range from enthusiastic beginners to seasoned professionals, all united by their passion for aviation photography.</p>
               <div class="features">
                 <div class="feature">
-                  <div class="feature-icon">✈️</div>
-                  <h3>Premium Locations</h3>
-                  <p>Access to exclusive spotting locations around YVR</p>
-                </div>
-                <div class="feature">
                   <div class="feature-icon">📸</div>
                   <h3>Expert Guidance</h3>
                   <p>Learn from experienced aviation photographers</p>
@@ -874,13 +869,25 @@ h2 {
 
 /* Scroll Indicator */
 .scroll-indicator {
-  position: relative;
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  z-index: 3;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.2em;
+  opacity: 0.7;
 }
 
 .scroll-indicator::after {
   content: '';
   position: absolute;
-  bottom: -10px;
+  bottom: -1.5rem;
   left: 50%;
   transform: translateX(-50%);
   width: 6px;
