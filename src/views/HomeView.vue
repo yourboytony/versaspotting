@@ -15,19 +15,15 @@
     </nav>
 
     <!-- Hero Section -->
-    <header class="hero" id="home">
+    <section class="hero">
       <div class="container">
         <h2>Vancouver's Aviation Photography Community</h2>
         <p>Join us at YVR's most exclusive spotting locations</p>
-        <div class="buttons">
-          <a href="#join" class="button primary">Join VERSA</a>
-          <a href="#gallery" class="button">View Gallery</a>
-        </div>
       </div>
-    </header>
+    </section>
 
     <!-- Gallery Section -->
-    <section class="gallery" id="gallery">
+    <section class="gallery">
       <div class="container">
         <h3>Latest Captures</h3>
         <div class="gallery-grid">
@@ -187,20 +183,13 @@ body {
 
 /* Hero */
 .hero {
-  padding: 8rem 0 4rem;
+  padding: 4rem 0;
   text-align: center;
 }
 
 .hero h2 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: 2.5rem;
   margin-bottom: 1rem;
-}
-
-.buttons {
-  display: flex;
-  gap: 1rem;
-  justify-content: center;
-  margin-top: 2rem;
 }
 
 /* Sections */
@@ -210,6 +199,7 @@ section {
 
 .gallery {
   background: var(--gray);
+  padding: 4rem 0;
 }
 
 h3 {
@@ -239,6 +229,11 @@ h3 {
 
 .photo-info {
   padding: 1rem;
+}
+
+.photo-info h4 {
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
 }
 
 /* Features */
@@ -313,13 +308,8 @@ h3 {
     display: flex;
   }
 
-  .buttons {
-    flex-direction: column;
-  }
-
-  .button {
-    width: 100%;
-    text-align: center;
+  .gallery-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>

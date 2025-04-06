@@ -1,6 +1,27 @@
 <template>
-  <router-view />
+  <div class="app">
+    <nav class="nav">
+      <div class="container">
+        <h1 class="logo">VERSA</h1>
+        <button class="menu-btn" @click="menuOpen = !menuOpen">Menu</button>
+        <div class="nav-menu" :class="{ 'is-open': menuOpen }">
+          <router-link to="/">Home</router-link>
+          <router-link to="/about">About</router-link>
+        </div>
+      </div>
+    </nav>
+
+    <main class="main">
+      <router-view />
+    </main>
+  </div>
 </template>
+
+<script setup>
+import { ref } from 'vue'
+
+const menuOpen = ref(false)
+</script>
 
 <style>
 :root {
@@ -32,7 +53,6 @@ body {
   padding: 0 var(--padding);
 }
 
-/* Navigation */
 .nav {
   background: var(--dark);
   padding: 1rem 0;
@@ -72,32 +92,10 @@ body {
   cursor: pointer;
 }
 
-/* Buttons */
-.button {
-  display: inline-block;
-  padding: 0.75rem 1.5rem;
-  border-radius: 0.5rem;
-  text-decoration: none;
-  font-weight: 600;
-  transition: opacity 0.2s;
+.main {
+  padding-top: 4rem;
 }
 
-.button:hover {
-  opacity: 0.9;
-}
-
-.primary {
-  background: var(--blue);
-  color: var(--dark);
-}
-
-.button:not(.primary) {
-  background: transparent;
-  color: var(--white);
-  border: 1px solid var(--white);
-}
-
-/* Mobile Styles */
 @media (max-width: 768px) {
   .menu-btn {
     display: block;
@@ -116,15 +114,6 @@ body {
 
   .nav-menu.is-open {
     display: flex;
-  }
-
-  .buttons {
-    flex-direction: column;
-  }
-
-  .button {
-    width: 100%;
-    text-align: center;
   }
 }
 </style> 
