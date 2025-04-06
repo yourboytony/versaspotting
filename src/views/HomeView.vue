@@ -233,22 +233,68 @@ const rotateBackground = () => {
 
 // Update the initializeAnimations function
 const initializeAnimations = () => {
-  // Remove stats section from general section animations
-  gsap.utils.toArray('.featured, .about').forEach((section, i) => {
-    gsap.to(section, {
-      backgroundPositionY: '10%',
+  // Subtle parallax for hero section
+  gsap.to('.background-image.active', {
+    y: '15%',
+    scale: 1.05,
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
+    }
+  })
+
+  // Floating animation for hero content
+  gsap.to('.hero-content', {
+    y: '-30px',
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 2
+    }
+  })
+
+  // Smooth section transitions
+  gsap.utils.toArray('section').forEach(section => {
+    gsap.from(section, {
       scrollTrigger: {
         trigger: section,
-        start: 'top bottom',
-        end: 'bottom top',
-        scrub: true
-      }
+        start: 'top 80%',
+      },
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      ease: 'power2.out'
     })
   })
 
-  // Remove all GSAP animations for stats, we'll use CSS only
-  
-  // Keep other animations...
+  // Featured items stagger reveal
+  gsap.from('.featured-item', {
+    scrollTrigger: {
+      trigger: '.featured-grid',
+      start: 'top 80%'
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.2,
+    ease: 'power2.out'
+  })
+
+  // Features stagger animation
+  gsap.from('.feature', {
+    scrollTrigger: {
+      trigger: '.features',
+      start: 'top 80%'
+    },
+    y: 30,
+    opacity: 0,
+    duration: 0.6,
+    stagger: 0.2,
+    ease: 'back.out(1.2)'
+  })
 }
 
 // Component lifecycle
@@ -448,6 +494,7 @@ h2 {
   -webkit-text-fill-color: transparent;
   background-size: 200% 100%;
   animation: shine 3s linear infinite;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
 }
 
 .hero-description {
@@ -455,6 +502,7 @@ h2 {
   max-width: 600px;
   margin: 0 auto var(--spacing-lg);
   opacity: 0.9;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 .hero-buttons {
@@ -508,17 +556,23 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .featured-item:hover img {
-  transform: translateZ(20px);
+  transform: scale(1.05) translateZ(30px);
 }
 
 .featured-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+  background: linear-gradient(
+    to top,
+    rgba(0,0,0,0.9) 0%,
+    rgba(0,0,0,0.4) 50%,
+    transparent 100%
+  );
   opacity: 0;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -578,10 +632,34 @@ h2 {
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(130, 157, 80, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
 }
 
 .stat:hover {
   transform: translateY(-5px);
+}
+
+.stat::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(130, 157, 80, 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all 0.6s ease;
+}
+
+.stat:hover::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .stat-number {
@@ -660,6 +738,8 @@ h2 {
   border-radius: var(--border-radius);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
 .feature:hover {
@@ -667,14 +747,33 @@ h2 {
   box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
+.feature::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.feature:hover::before {
+  transform: scaleX(1);
+}
+
 .feature-icon {
   font-size: 2.5rem;
   margin-bottom: var(--spacing-sm);
   transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  display: inline-block;
+  will-change: transform;
 }
 
 .feature:hover .feature-icon {
-  transform: scale(1.2) rotate(5deg);
+  transform: scale(1.2) rotate(10deg);
 }
 
 .feature h3 {
@@ -694,6 +793,8 @@ h2 {
   border-radius: var(--border-radius);
   overflow: hidden;
   aspect-ratio: 4/3;
+  position: relative;
+  overflow: hidden;
 }
 
 .about-image img {
@@ -702,12 +803,31 @@ h2 {
   object-fit: cover;
 }
 
+.about-image::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    45deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
+  );
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
+}
+
 /* CTA Section */
 .cta {
   padding: var(--spacing-xl) 0;
   background: var(--primary);
   color: #fff;
   text-align: center;
+  position: relative;
+  overflow: hidden;
 }
 
 .cta h2 {
@@ -742,6 +862,28 @@ h2 {
   transform: none !important;
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: transform;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    120deg,
+    transparent,
+    rgba(255,255,255,0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.btn:hover::before {
+  left: 100%;
 }
 
 .btn-primary {
@@ -789,7 +931,7 @@ h2 {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   overflow: hidden;
-  animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   transform-origin: center;
 }
 
@@ -808,11 +950,12 @@ h2 {
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background 0.3s ease;
+  transition: transform 0.3s ease, background-color 0.3s ease;
+  transform: rotate(0deg);
 }
 
 .modal-close:hover {
-  background: rgba(0,0,0,0.8);
+  transform: rotate(90deg);
 }
 
 .modal-content img {
@@ -856,16 +999,16 @@ h2 {
 .loading-spinner {
   width: 50px;
   height: 50px;
-  border: 4px solid var(--primary-light);
-  border-top: 4px solid var(--primary);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
+  border: 3px solid rgba(130, 157, 80, 0.1);
+  border-top: 3px solid var(--primary);
+  border-right: 3px solid var(--primary);
+  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   margin-bottom: var(--spacing-md);
 }
 
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
 /* Error State */
@@ -905,21 +1048,19 @@ h2 {
   font-weight: 500;
   letter-spacing: 0.2em;
   opacity: 0.7;
-  animation: float 3s ease-in-out infinite;
+  animation: float 4s ease-in-out infinite;
 }
 
 .scroll-indicator::after {
   content: '';
   position: absolute;
-  bottom: -1.5rem;
+  bottom: -2rem;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  background: currentColor;
-  border-radius: 50%;
-  opacity: 0.5;
-  animation: pulseAndFloat 2s infinite;
+  width: 2px;
+  height: 50px;
+  background: linear-gradient(to bottom, #fff, transparent);
+  animation: scrollPulse 2s infinite;
 }
 
 @keyframes float {
@@ -927,10 +1068,10 @@ h2 {
   50% { transform: translateX(-50%) translateY(-10px); }
 }
 
-@keyframes pulseAndFloat {
-  0% { transform: translateX(-50%) scale(1) translateY(0); opacity: 0.5; }
-  50% { transform: translateX(-50%) scale(1.5) translateY(-5px); opacity: 0.2; }
-  100% { transform: translateX(-50%) scale(1) translateY(0); opacity: 0.5; }
+@keyframes scrollPulse {
+  0% { transform: translateX(-50%) scaleY(0); opacity: 0; }
+  50% { transform: translateX(-50%) scaleY(1); opacity: 1; }
+  100% { transform: translateX(-50%) scaleY(0); opacity: 0; }
 }
 
 /* Add shimmer effect to featured images */
@@ -1012,6 +1153,7 @@ h2 {
   -webkit-text-fill-color: transparent;
   background-size: 200% 100%;
   animation: shine 3s linear infinite;
+  filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
 }
 
 @keyframes shine {
@@ -1021,11 +1163,11 @@ h2 {
 
 .modal-content {
   transform-origin: center;
-  animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 @keyframes modalPop {
-  from { transform: scale(0.8); opacity: 0; }
+  from { transform: scale(0.9); opacity: 0; }
   to { transform: scale(1); opacity: 1; }
 }
 
