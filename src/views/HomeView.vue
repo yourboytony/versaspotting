@@ -1,39 +1,40 @@
 <template>
-  <main class="home">
-    <nav class="main-nav" :class="{ 'nav-scrolled': isScrolled }">
+  <div class="home">
+    <!-- Simple Navigation -->
+    <nav class="nav">
       <div class="container">
-        <div class="nav-brand">VERSA</div>
-        <div class="nav-links" :class="{ 'nav-open': isMenuOpen }">
-          <a href="#" class="nav-link">Home</a>
-          <a href="#latest" class="nav-link">Gallery</a>
-          <a href="#about" class="nav-link">About</a>
-          <button class="btn-primary">Join VERSA</button>
+        <h1 class="logo">VERSA</h1>
+        <button class="menu-btn" @click="menuOpen = !menuOpen">Menu</button>
+        <div class="nav-menu" :class="{ 'is-open': menuOpen }">
+          <a href="#home">Home</a>
+          <a href="#gallery">Gallery</a>
+          <a href="#about">About</a>
+          <a href="#join" class="cta">Join Now</a>
         </div>
-        <button class="nav-toggle" @click="toggleMenu">
-          <span></span><span></span><span></span>
-        </button>
       </div>
     </nav>
 
-    <section class="hero">
+    <!-- Hero Section -->
+    <header class="hero" id="home">
       <div class="container">
-        <h1>Vancouver's Elite Aviation Photography Community</h1>
-        <p>Experience the art of aviation photography at YVR's most exclusive locations</p>
-        <div class="cta">
-          <button class="btn-primary">Join VERSA</button>
-          <button class="btn-secondary">View Gallery</button>
+        <h2>Vancouver's Aviation Photography Community</h2>
+        <p>Join us at YVR's most exclusive spotting locations</p>
+        <div class="buttons">
+          <a href="#join" class="button primary">Join VERSA</a>
+          <a href="#gallery" class="button">View Gallery</a>
         </div>
       </div>
-    </section>
+    </header>
 
-    <section id="latest" class="latest">
+    <!-- Gallery Section -->
+    <section class="gallery" id="gallery">
       <div class="container">
-        <h2>Latest Captures</h2>
-        <div class="grid">
-          <div v-for="photo in photos" :key="photo.id" class="card">
+        <h3>Latest Captures</h3>
+        <div class="gallery-grid">
+          <div v-for="photo in photos" :key="photo.id" class="photo-card">
             <img :src="photo.url" :alt="photo.title">
-            <div class="info">
-              <h3>{{ photo.title }}</h3>
+            <div class="photo-info">
+              <h4>{{ photo.title }}</h4>
               <p>{{ photo.photographer }}</p>
             </div>
           </div>
@@ -41,228 +42,284 @@
       </div>
     </section>
 
-    <section id="about" class="about">
+    <!-- About Section -->
+    <section class="about" id="about">
       <div class="container">
-        <h2>About VERSA</h2>
-        <p>Join Vancouver's most prestigious aviation photography community.</p>
-        <div class="grid">
-          <div v-for="feature in features" :key="feature.title" class="card">
-            <div class="icon">{{ feature.icon }}</div>
-            <h3>{{ feature.title }}</h3>
+        <h3>About Us</h3>
+        <div class="features">
+          <div v-for="feature in features" :key="feature.title" class="feature">
+            <span class="icon">{{ feature.icon }}</span>
+            <h4>{{ feature.title }}</h4>
             <p>{{ feature.description }}</p>
           </div>
         </div>
       </div>
     </section>
-  </main>
+
+    <!-- Join Section -->
+    <section class="join" id="join">
+      <div class="container">
+        <h3>Ready to Join?</h3>
+        <p>Start your journey with Vancouver's aviation photography community</p>
+        <a href="#" class="button primary">Apply Now</a>
+      </div>
+    </section>
+  </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref } from 'vue'
 
-const isMenuOpen = ref(false)
-const isScrolled = ref(false)
-
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value
-}
-
-const handleScroll = () => {
-  isScrolled.value = window.scrollY > 50
-}
-
-onMounted(() => {
-  window.addEventListener('scroll', handleScroll)
-})
-
-onUnmounted(() => {
-  window.removeEventListener('scroll', handleScroll)
-})
+const menuOpen = ref(false)
 
 const photos = [
-  { id: 1, title: 'Boeing 787 Sunset', photographer: 'John Doe', url: 'https://placehold.co/600x400' },
-  { id: 2, title: 'Airbus A350 Landing', photographer: 'Jane Smith', url: 'https://placehold.co/600x400' },
-  { id: 3, title: 'Airport Operations', photographer: 'Mike Johnson', url: 'https://placehold.co/600x400' }
+  {
+    id: 1,
+    title: 'Boeing 787 Sunset',
+    photographer: 'John Doe',
+    url: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05'
+  },
+  {
+    id: 2,
+    title: 'Airbus A350 Landing',
+    photographer: 'Jane Smith',
+    url: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e'
+  },
+  {
+    id: 3,
+    title: 'Airport Operations',
+    photographer: 'Mike Johnson',
+    url: 'https://images.unsplash.com/photo-1449155125655-df9336797796'
+  }
 ]
 
 const features = [
-  { icon: '🎯', title: 'Premium Locations', description: 'Access to exclusive spotting locations' },
-  { icon: '📸', title: 'Expert Guidance', description: 'Learn from top photographers' },
-  { icon: '👥', title: 'Community', description: 'Connect with aviation enthusiasts' }
+  {
+    icon: '📍',
+    title: 'Premium Locations',
+    description: 'Access to exclusive spotting locations'
+  },
+  {
+    icon: '📸',
+    title: 'Expert Guidance',
+    description: 'Learn from experienced photographers'
+  },
+  {
+    icon: '🤝',
+    title: 'Community',
+    description: 'Connect with fellow enthusiasts'
+  }
 ]
 </script>
 
 <style>
-:root {
-  --primary: #0f172a;
-  --secondary: #1e293b;
-  --accent: #38bdf8;
-  --text: #f8fafc;
+/* Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
+/* Variables */
+:root {
+  --dark: #0f172a;
+  --gray: #1e293b;
+  --blue: #38bdf8;
+  --white: #f8fafc;
+  --max-width: 1200px;
+  --padding: 1rem;
+}
+
+/* Base */
 body {
-  margin: 0;
-  font-family: system-ui, sans-serif;
-  background: var(--primary);
-  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+  background: var(--dark);
+  color: var(--white);
   line-height: 1.5;
 }
 
 .container {
-  max-width: 1200px;
+  width: 100%;
+  max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 1rem;
+  padding: 0 var(--padding);
 }
 
-.main-nav {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  background: var(--primary);
+/* Navigation */
+.nav {
+  background: var(--dark);
   padding: 1rem 0;
+  position: fixed;
+  width: 100%;
+  top: 0;
   z-index: 100;
 }
 
-.main-nav .container {
+.nav .container {
   display: flex;
-  justify-content: space-between;
   align-items: center;
+  justify-content: space-between;
 }
 
-.nav-logo {
-  height: 2rem;
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
 }
 
-.nav-links {
+.nav-menu {
   display: flex;
   gap: 2rem;
   align-items: center;
 }
 
-.nav-link {
-  color: var(--text);
+.nav-menu a {
+  color: var(--white);
   text-decoration: none;
 }
 
+.menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--white);
+  cursor: pointer;
+}
+
+/* Hero */
 .hero {
   padding: 8rem 0 4rem;
   text-align: center;
 }
 
-.hero h1 {
-  font-size: clamp(2rem, 5vw, 4rem);
+.hero h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
   margin-bottom: 1rem;
 }
 
-.cta {
+.buttons {
   display: flex;
   gap: 1rem;
   justify-content: center;
-  margin: 2rem 0;
+  margin-top: 2rem;
 }
 
-.btn-primary {
-  background: var(--accent);
-  color: var(--primary);
-  padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.btn-secondary {
-  background: transparent;
-  color: var(--text);
-  padding: 0.75rem 1.5rem;
-  border: 1px solid var(--text);
-  border-radius: 0.5rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.latest,
-.about {
+/* Sections */
+section {
   padding: 4rem 0;
 }
 
-.latest {
-  background: var(--secondary);
+.gallery {
+  background: var(--gray);
 }
 
-.grid {
+h3 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+/* Gallery Grid */
+.gallery-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  margin: 2rem 0;
 }
 
-.card {
-  background: var(--primary);
+.photo-card {
+  background: var(--dark);
   border-radius: 0.5rem;
   overflow: hidden;
 }
 
-.card img {
+.photo-card img {
   width: 100%;
   height: 200px;
   object-fit: cover;
 }
 
-.info {
-  padding: 1.5rem;
+.photo-info {
+  padding: 1rem;
+}
+
+/* Features */
+.features {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+}
+
+.feature {
+  text-align: center;
+  padding: 2rem;
+  background: var(--gray);
+  border-radius: 0.5rem;
 }
 
 .icon {
   font-size: 2rem;
   margin-bottom: 1rem;
+  display: inline-block;
 }
 
-.nav-toggle {
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0.5rem;
+/* Join Section */
+.join {
+  background: var(--gray);
+  text-align: center;
 }
 
-.nav-toggle span {
-  display: block;
-  width: 24px;
-  height: 2px;
-  background: var(--text);
-  margin: 4px 0;
+/* Buttons */
+.button {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  text-decoration: none;
+  font-weight: 600;
+  transition: opacity 0.2s;
 }
 
-.nav-brand {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--text);
+.button:hover {
+  opacity: 0.9;
 }
 
+.primary {
+  background: var(--blue);
+  color: var(--dark);
+}
+
+.button:not(.primary) {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid var(--white);
+}
+
+/* Mobile Styles */
 @media (max-width: 768px) {
-  .nav-links {
-    display: none;
+  .menu-btn {
+    display: block;
   }
 
-  .nav-links.nav-open {
-    display: flex;
-    position: fixed;
-    top: 4rem;
+  .nav-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
     left: 0;
     right: 0;
-    background: var(--primary);
+    background: var(--dark);
     padding: 1rem;
     flex-direction: column;
   }
 
-  .nav-toggle {
-    display: block;
+  .nav-menu.is-open {
+    display: flex;
   }
 
-  .cta {
+  .buttons {
     flex-direction: column;
+  }
+
+  .button {
+    width: 100%;
+    text-align: center;
   }
 }
 </style>
