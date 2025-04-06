@@ -1,7 +1,7 @@
 <template>
   <div class="admin-login">
     <div class="login-container">
-      <h1>Admin Login</h1>
+      <h2>Admin Login</h2>
       <form @submit.prevent="handleLogin">
         <div class="form-group">
           <label for="username">Username</label>
@@ -10,7 +10,8 @@
             id="username"
             v-model="username"
             required
-          >
+            autocomplete="username"
+          />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
@@ -19,12 +20,13 @@
             id="password"
             v-model="password"
             required
-          >
+            autocomplete="current-password"
+          />
         </div>
-        <button type="submit" :disabled="loading">
-          {{ loading ? 'Logging in...' : 'Login' }}
+        <div v-if="error" class="error-message">{{ error }}</div>
+        <button type="submit" :disabled="isLoading">
+          {{ isLoading ? 'Logging in...' : 'Login' }}
         </button>
-        <p v-if="error" class="error">{{ error }}</p>
       </form>
     </div>
   </div>
@@ -33,54 +35,45 @@
 <script setup>
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
+import { useMainStore } from '../stores/mainStore'
 
 const router = useRouter()
+const mainStore = useMainStore()
+
 const username = ref('')
 const password = ref('')
-const loading = ref(false)
 const error = ref('')
+const isLoading = ref(false)
 
 const handleLogin = async () => {
-  loading.value = true
   error.value = ''
-
-  if (!username.value || !password.value) {
-    error.value = 'Please enter both username and password'
-    loading.value = false
-    return
-  }
+  isLoading.value = true
 
   try {
-    const response = await fetch('/api/admin/login', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
-      },
-      credentials: 'same-origin',
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value,
-      }),
-    })
-
-    const data = await response.json()
-
-    if (response.ok) {
-      if (!data.token) {
-        error.value = 'Server response missing authentication token'
-        return
+    // Simple hash function for password verification
+    const hashPassword = (str) => {
+      let hash = 0
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i)
+        hash = ((hash << 5) - hash) + char
+        hash = hash & hash
       }
-      localStorage.setItem('adminToken', data.token)
+      return hash.toString()
+    }
+
+    // Check credentials
+    if (username.value === 'VERSAadmin' && hashPassword(password.value) === hashPassword('adminw8492$@')) {
+      // Generate a simple token (in a real app, use JWT or similar)
+      const token = btoa(`${username.value}:${Date.now()}`)
+      mainStore.setAdminToken(token)
       router.push('/admin')
     } else {
-      error.value = data.error || 'Invalid username or password'
+      error.value = 'Invalid credentials'
     }
   } catch (err) {
-    console.error('Login error:', err)
-    error.value = 'Unable to connect to the server. Please try again later.'
+    error.value = 'An error occurred during login'
   } finally {
-    loading.value = false
+    isLoading.value = false
   }
 }
 </script>
@@ -91,32 +84,33 @@ const handleLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f5f5f5;
+  background-color: #f5f5f5;
+  padding: 2rem;
 }
 
 .login-container {
   background: white;
   padding: 2rem;
   border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   width: 100%;
   max-width: 400px;
 }
 
-h1 {
+h2 {
+  color: var(--primary-color);
   text-align: center;
   margin-bottom: 2rem;
-  color: #333;
 }
 
 .form-group {
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 label {
   display: block;
   margin-bottom: 0.5rem;
-  color: #666;
+  color: var(--text-color);
 }
 
 input {
@@ -127,10 +121,15 @@ input {
   font-size: 1rem;
 }
 
+input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
 button {
   width: 100%;
   padding: 0.75rem;
-  background: #007bff;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -140,17 +139,23 @@ button {
 }
 
 button:hover {
-  background: #0056b3;
+  background-color: #7a8534;
 }
 
 button:disabled {
-  background: #ccc;
+  background-color: #ccc;
   cursor: not-allowed;
 }
 
-.error {
+.error-message {
   color: #dc3545;
-  margin-top: 1rem;
+  margin-bottom: 1rem;
   text-align: center;
+}
+
+@media (max-width: 480px) {
+  .login-container {
+    padding: 1.5rem;
+  }
 }
 </style> 

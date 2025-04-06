@@ -1,59 +1,17 @@
 import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import './assets/main.css'
-import { initializeDatabase } from '@/data/database'
+import { useMainStore } from './stores/mainStore'
 
-// Import Font Awesome
-import { library } from '@fortawesome/fontawesome-svg-core'
-import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
-
-// Import Font Awesome icons
-import { 
-  faBars,
-  faArrowRight,
-  faInfoCircle,
-  faCamera,
-  faUsers,
-  faPlane,
-  faEnvelope,
-  faPhone,
-  faMapMarkerAlt
-} from '@fortawesome/free-solid-svg-icons'
-
-import { 
-  faInstagram, 
-  faTwitter, 
-  faFacebook 
-} from '@fortawesome/free-brands-svg-icons'
-
-// Add icons to library
-library.add(
-  faBars,
-  faArrowRight,
-  faInfoCircle,
-  faCamera,
-  faUsers,
-  faPlane,
-  faEnvelope,
-  faPhone,
-  faMapMarkerAlt,
-  faInstagram,
-  faTwitter,
-  faFacebook
-)
-
-// Initialize database
-initializeDatabase()
-
-// Create and mount the app
 const app = createApp(App)
+const pinia = createPinia()
 
-// Use router
+app.use(pinia)
 app.use(router)
 
-// Register Font Awesome component
-app.component('font-awesome-icon', FontAwesomeIcon)
+// Initialize store and load data
+const mainStore = useMainStore()
+mainStore.loadFromLocalStorage()
 
-// Mount the app
 app.mount('#app') 

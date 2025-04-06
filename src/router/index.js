@@ -1,135 +1,73 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import PortfolioView from '../views/PortfolioView.vue'
-import AboutView from '../views/AboutView.vue'
-import ProfilePortfolio from '../views/ProfilePortfolio.vue'
-import ContactView from '../views/ContactView.vue'
-import AddPhotoView from '../views/AddPhotoView.vue'
-import ContactAdminView from '@/views/ContactAdminView.vue'
-import ApplicationAdminView from '../views/ApplicationAdminView.vue'
+import PhotographerPortfolio from '../views/PhotographerPortfolio.vue'
 import AdminView from '../views/AdminView.vue'
+import AnnouncementsView from '../views/AnnouncementsView.vue'
+import ApplicationsView from '../views/ApplicationsView.vue'
+import NewsView from '../views/NewsView.vue'
+import AboutView from '../views/AboutView.vue'
 import AdminLogin from '../views/AdminLogin.vue'
 
 const routes = [
   {
     path: '/',
     name: 'home',
-    component: HomeView,
-    meta: {
-      title: 'Home - VERSA Spotting'
-    }
+    component: HomeView
   },
   {
     path: '/portfolio',
     name: 'portfolio',
-    component: PortfolioView,
-    meta: {
-      title: 'Portfolio - VERSA Spotting'
-    }
+    component: PortfolioView
   },
   {
-    path: '/portfolio/:id',
-    name: 'profile-portfolio',
-    component: ProfilePortfolio,
-    props: true
+    path: '/photographer/:id',
+    name: 'photographer',
+    component: PhotographerPortfolio
   },
   {
     path: '/about',
     name: 'about',
-    component: AboutView,
-    meta: {
-      title: 'About - VERSA Spotting'
-    }
-  },
-  {
-    path: '/contact',
-    name: 'contact',
-    component: ContactView,
-    meta: {
-      title: 'Contact - VERSA Spotting'
-    }
-  },
-  {
-    path: '/addphoto',
-    name: 'add-photo',
-    component: AddPhotoView,
-    meta: {
-      title: 'Add Photo - VERSA Spotting',
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/contactadmin',
-    name: 'contactadmin',
-    component: ContactAdminView,
-    meta: {
-      requiresAuth: true
-    }
-  },
-  {
-    path: '/applicationadmin',
-    name: 'applicationadmin',
-    component: ApplicationAdminView,
-    meta: { 
-      requiresAuth: true,
-      title: 'Applications - VERSA Spotting'
-    }
-  },
-  {
-    path: '/admin/login',
-    name: 'admin-login',
-    component: AdminLogin,
-    meta: {
-      title: 'Admin Login - VERSA Spotting'
-    }
+    component: AboutView
   },
   {
     path: '/admin',
     name: 'admin',
     component: AdminView,
-    meta: { 
-      requiresAuth: true,
-      title: 'Admin Dashboard - VERSA Spotting'
-    }
+    meta: { requiresAuth: true }
   },
   {
-    path: '/:pathMatch(.*)*',
-    redirect: '/'
+    path: '/admin/login',
+    name: 'admin-login',
+    component: AdminLogin
+  },
+  {
+    path: '/announcements',
+    name: 'announcements',
+    component: AnnouncementsView
+  },
+  {
+    path: '/news',
+    name: 'news',
+    component: NewsView
+  },
+  {
+    path: '/apply',
+    name: 'apply',
+    component: ApplicationsView
   }
 ]
 
 const router = createRouter({
-  history: createWebHistory(),
-  routes,
-  scrollBehavior(to, from, savedPosition) {
-    if (to.hash) {
-      return {
-        el: to.hash,
-        behavior: 'smooth'
-      }
-    } else if (savedPosition) {
-      return savedPosition
-    } else {
-      return { top: 0 }
-    }
-  }
+  history: createWebHistory(import.meta.env.BASE_URL),
+  routes
 })
 
-// Authentication check function
-const checkAuth = () => {
-  return localStorage.getItem('adminAuth') === 'true'
-}
-
-// Update document title and handle authentication
+// Navigation guard for admin routes
 router.beforeEach((to, from, next) => {
-  // Update document title
-  document.title = to.meta.title || 'VERSA Spotting'
-
-  // Handle authentication
-  if (to.matched.some(record => record.meta.requiresAuth)) {
-    if (!checkAuth()) {
-      // Store the attempted URL for redirect after login
-      localStorage.setItem('redirectAfterLogin', to.fullPath)
+  if (to.meta.requiresAuth) {
+    const adminToken = localStorage.getItem('adminToken')
+    if (!adminToken) {
       next('/admin/login')
     } else {
       next()

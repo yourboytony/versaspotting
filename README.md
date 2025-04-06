@@ -1,59 +1,54 @@
-# Versa Spotting Group Website
+# VERSA Spotting Group Website
 
-A modern website for the Versa Spotting Group, built with Vue 3 and the Composition API.
+A modern website for the VERSA Spotting Group, a community of aviation photographers.
 
 ## Features
 
-- Responsive design for all devices
-- Modern and clean user interface
-- Interactive portfolio gallery
-- Contact form
-- Smooth page transitions
-- Mobile-friendly navigation
+- Beautiful, responsive design
+- Portfolio management system
+- Announcements and applications sections
+- Secure admin dashboard
+- Modern animations and transitions
 
-## Technologies Used
+## Tech Stack
 
 - Vue 3
 - Vue Router
-- Vite
-- Font Awesome
-- CSS Grid and Flexbox
-- Responsive Design
+- Pinia (State Management)
+- GSAP (Animations)
+- Vite (Build Tool)
 
-## Project Setup
+## Setup
 
-1. Clone the repository
+1. Clone the repository:
+```bash
+git clone https://github.com/yourusername/versa-spotting-group.git
+cd versa-spotting-group
+```
+
 2. Install dependencies:
-   ```bash
-   npm install
-   ```
+```bash
+npm install
+```
+
 3. Start the development server:
-   ```bash
-   npm run dev
-   ```
+```bash
+npm run dev
+```
+
 4. Build for production:
-   ```bash
-   npm run build
-   ```
-
-## Project Structure
-
-```
-src/
-├── assets/         # Static assets
-├── components/     # Reusable components
-├── views/          # Page components
-├── router/         # Vue Router configuration
-├── App.vue         # Root component
-└── main.js         # Application entry point
+```bash
+npm run build
 ```
 
-## Pages
+## Admin Access
 
-- Home: Welcome page with featured spottings
-- Portfolio: Gallery of aviation photography
-- About: Information about the group and team members
-- Contact: Contact form and information
+- Username: VERSAadmin
+- Password: adminw8492$@
+
+## Deployment
+
+The website is configured for deployment on Vercel. Simply connect your repository to Vercel and deploy.
 
 ## Contributing
 
@@ -65,10 +60,4 @@ src/
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Contact
-
-For any questions or suggestions, please contact:
-- Email: info@versaspotting.com
-- Website: www.versaspotting.com 
+This project is licensed under the MIT License - see the LICENSE file for details. 

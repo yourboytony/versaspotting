@@ -1,49 +1,53 @@
 <template>
   <div class="portfolio">
-    <section class="portfolio-header">
-      <h1>Our Portfolio</h1>
-      <p>Explore our collection of aviation photography</p>
-    </section>
-
-    <div v-if="isLoading" class="loading">
-      <div class="spinner"></div>
-      <p>Loading profiles...</p>
+    <div class="portfolio-header">
+      <h1>Our Photographers</h1>
+      <p>Meet the talented photographers behind VERSA</p>
     </div>
 
-    <section v-else class="portfolio-grid">
-      <div v-for="profile in profiles" :key="profile.id" class="profile-card" @click="openModal(profile)">
-        <div class="profile-icon">
-          <font-awesome-icon :icon="['fas', 'user']" />
+    <div class="photographers-grid">
+      <div v-for="photographer in photographers" :key="photographer.id" 
+           class="photographer-card" @click="selectPhotographer(photographer)">
+        <div class="photographer-image">
+          <img :src="photographer.avatar" :alt="photographer.name" 
+               class="profile-image" @error="handleImageError">
         </div>
-        <h3>{{ profile.name }}</h3>
-        <p>{{ profile.role }}</p>
-        <div class="profile-stats">
-          <span>{{ profile.photos?.length || 0 }} Photos</span>
+        <div class="photographer-info">
+          <h2>{{ photographer.name }}</h2>
+          <p class="specialty">{{ photographer.specialty }}</p>
+          <p class="location">{{ photographer.location }}</p>
+          <div class="photographer-stats">
+            <span>{{ getPhotoCount(photographer.id) }} photos</span>
+          </div>
         </div>
       </div>
-    </section>
+    </div>
 
-    <div class="modal" v-if="selectedProfile" @click.self="closeModal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>{{ selectedProfile.name }}</h2>
-          <p>{{ selectedProfile.role }}</p>
-          <button class="close-btn" @click="closeModal">
-            <font-awesome-icon :icon="['fas', 'times']" />
-          </button>
-        </div>
-        <div class="modal-body">
-          <div v-if="!selectedProfile.photos?.length" class="no-photos">
-            <font-awesome-icon :icon="['fas', 'camera']" />
-            <p>No photos available yet</p>
+    <!-- Photographer Modal -->
+    <div v-if="selectedPhotographer" class="photographer-modal" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <button class="close-btn" @click="closeModal">&times;</button>
+        <div class="photographer-header">
+          <img :src="selectedPhotographer.avatar" :alt="selectedPhotographer.name" 
+               class="profile-image" @error="handleImageError">
+          <div class="photographer-details">
+            <h2>{{ selectedPhotographer.name }}</h2>
+            <p class="specialty">{{ selectedPhotographer.specialty }}</p>
+            <p class="location">{{ selectedPhotographer.location }}</p>
+            <p class="bio">{{ selectedPhotographer.bio }}</p>
           </div>
-          <div v-else class="photos-grid">
-            <div v-for="photo in selectedProfile.photos" :key="photo.id" class="photo-item">
-              <img :src="photo.imageUrl" :alt="photo.caption" @click="openPhoto(photo)" />
-              <div class="photo-info">
-                <h3>{{ photo.caption }}</h3>
-                <p>{{ photo.location }}</p>
-                <span class="photo-date">{{ formatDate(photo.timestamp) }}</span>
+        </div>
+        
+        <div class="photos-grid">
+          <div v-for="photo in photographerPhotos" :key="photo.id" class="photo-card">
+            <img :src="photo.imageUrl" :alt="photo.title" @click="openPhoto(photo)" @error="handleImageError">
+            <div class="photo-info">
+              <h3>{{ photo.title }}</h3>
+              <p>{{ photo.description }}</p>
+              <div class="photo-meta">
+                <span>{{ photo.camera }}</span>
+                <span>{{ photo.lens }}</span>
+                <span>{{ formatDate(photo.date) }}</span>
               </div>
             </div>
           </div>
@@ -51,16 +55,19 @@
       </div>
     </div>
 
-    <div class="photo-modal" v-if="selectedPhoto" @click.self="closePhotoModal">
-      <div class="photo-modal-content">
-        <button class="close-btn" @click="closePhotoModal">
-          <font-awesome-icon :icon="['fas', 'times']" />
-        </button>
-        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.caption" />
+    <!-- Photo Modal -->
+    <div v-if="selectedPhoto" class="photo-modal" @click="selectedPhoto = null">
+      <div class="modal-content" @click.stop>
+        <button class="close-btn" @click="selectedPhoto = null">&times;</button>
+        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title" @error="handleImageError">
         <div class="photo-details">
-          <h3>{{ selectedPhoto.caption }}</h3>
-          <p>{{ selectedPhoto.location }}</p>
-          <span class="photo-date">{{ formatDate(selectedPhoto.timestamp) }}</span>
+          <h2>{{ selectedPhoto.title }}</h2>
+          <p>{{ selectedPhoto.description }}</p>
+          <div class="photo-meta">
+            <span>{{ selectedPhoto.camera }}</span>
+            <span>{{ selectedPhoto.lens }}</span>
+            <span>{{ formatDate(selectedPhoto.date) }}</span>
+          </div>
         </div>
       </div>
     </div>
@@ -68,327 +75,341 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { getAllProfiles } from '@/data/database';
+import { ref, computed, onMounted } from 'vue'
+import gsap from 'gsap'
+import { useDataStore } from '../stores/dataStore'
 
-const profiles = ref([]);
-const selectedProfile = ref(null);
-const selectedPhoto = ref(null);
-const isLoading = ref(true);
+const dataStore = useDataStore()
+const selectedPhotographer = ref(null)
+const selectedPhoto = ref(null)
 
-onMounted(async () => {
-  try {
-    profiles.value = await getAllProfiles();
-  } catch (error) {
-    console.error('Error loading profiles:', error);
-  } finally {
-    isLoading.value = false;
-  }
-});
+const photographers = computed(() => {
+  return dataStore.photographers.map(photographer => ({
+    ...photographer,
+    avatar: parseImageUrl(photographer.avatar)
+  }))
+})
 
-const openModal = (profile) => {
-  selectedProfile.value = profile;
-  document.body.style.overflow = 'hidden';
-};
+const photographerPhotos = computed(() => {
+  return dataStore.photos
+    .filter(photo => photo.photographerId === selectedPhotographer.value?.id)
+    .map(photo => ({
+      ...photo,
+      imageUrl: parseImageUrl(photo.imageUrl)
+    }))
+})
+
+const getPhotoCount = (photographerId) => {
+  return dataStore.photos.filter(photo => photo.photographerId === photographerId).length
+}
+
+const selectPhotographer = (photographer) => {
+  selectedPhotographer.value = photographer
+}
 
 const closeModal = () => {
-  selectedProfile.value = null;
-  document.body.style.overflow = '';
-};
+  selectedPhotographer.value = null
+}
 
 const openPhoto = (photo) => {
-  selectedPhoto.value = photo;
-};
-
-const closePhotoModal = () => {
-  selectedPhoto.value = null;
-};
+  selectedPhoto.value = photo
+}
 
 const formatDate = (dateString) => {
-  const date = new Date(dateString);
-  return date.toLocaleDateString('en-US', {
+  return new Date(dateString).toLocaleDateString('en-US', {
     year: 'numeric',
     month: 'long',
     day: 'numeric'
-  });
-};
+  })
+}
+
+const parseImageUrl = (url) => {
+  if (!url) return ''
+  
+  // Handle postimages.org URLs
+  if (url.includes('postimages.org')) {
+    // Extract the image ID from the URL
+    const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
+    if (match) {
+      return `https://i.postimg.cc/${match[1]}/image.jpg`
+    }
+  }
+  
+  // Handle direct image URLs
+  if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+    return url
+  }
+  
+  return url
+}
+
+const handleImageError = (event) => {
+  const img = event.target
+  if (img.classList.contains('profile-image')) {
+    img.src = 'https://via.placeholder.com/300x300?text=Profile+Image'
+  } else {
+    img.src = 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
+  }
+}
+
+onMounted(() => {
+  gsap.from('.photographer-card', {
+    scrollTrigger: {
+      trigger: '.photographers-grid',
+      start: 'top 80%',
+      toggleActions: 'play none none reverse'
+    },
+    duration: 0.8,
+    y: 50,
+    opacity: 0,
+    stagger: 0.1,
+    ease: 'power2.out'
+  })
+})
 </script>
 
 <style scoped>
 .portfolio {
+  padding: 4rem 2rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
   min-height: 100vh;
-  padding: var(--spacing-xl) 0;
 }
 
 .portfolio-header {
   text-align: center;
-  margin-bottom: var(--spacing-xl);
-  padding: 0 var(--spacing-md);
+  margin-bottom: 4rem;
+  position: relative;
+  background: rgba(0, 0, 0, 0.8);
+  padding: 3rem;
+  border-radius: 30px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(10px);
+  border: 1px solid var(--primary-color);
 }
 
 .portfolio-header h1 {
-  font-size: 3rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-md);
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 20px rgba(144, 153, 62, 0.5);
+  letter-spacing: -0.5px;
+  font-family: 'Montserrat', sans-serif;
 }
 
 .portfolio-header p {
-  font-size: 1.25rem;
-  color: var(--white);
-  opacity: 0.9;
+  font-size: 1.3rem;
+  color: #ffffff;
+  text-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
 }
 
-.portfolio-grid {
+.photographers-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: var(--spacing-xl);
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2.5rem;
+  position: relative;
 }
 
-.profile-card {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-lg);
-  padding: var(--spacing-xl);
-  text-align: center;
-  transition: var(--transition);
-  cursor: pointer;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  animation: fadeInUp 0.5s ease-out forwards;
-  opacity: 0;
+.photographer-card {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 30px;
+  overflow: hidden;
+  border: 1px solid var(--primary-color);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
 }
 
-.profile-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+.photographer-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
   border-color: var(--primary-color);
 }
 
-.profile-icon {
-  width: 80px;
-  height: 80px;
-  background-color: rgba(132, 155, 85, 0.2);
+.photographer-image {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.photographer-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto var(--spacing-md);
-  font-size: 2rem;
-  color: var(--primary-color);
+  padding: 10px;
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
-.profile-card h3 {
-  font-size: 1.5rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-sm);
+.photographer-card:hover .photographer-image img {
+  transform: scale(1.1) rotate(5deg);
 }
 
-.profile-card p {
-  color: var(--white);
-  opacity: 0.9;
-  margin-bottom: var(--spacing-md);
+.photographer-info {
+  padding: 2.5rem;
+  text-align: center;
 }
 
-.profile-stats {
+.photographer-info h2 {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #ffffff;
+  margin-bottom: 0.8rem;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.specialty {
   color: var(--primary-color);
   font-weight: 600;
+  margin-bottom: 0.5rem;
+  font-size: 1.1rem;
+  font-family: 'Inter', sans-serif;
 }
 
-.modal {
+.location {
+  color: #cccccc;
+  margin-bottom: 1rem;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.photographer-stats {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 2rem;
+  color: #cccccc;
+  font-size: 0.95rem;
+  font-family: 'Inter', sans-serif;
+  padding: 0 1rem;
+}
+
+.photographer-modal {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.8);
+  background: rgba(0, 0, 0, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
-  animation: fadeIn 0.3s ease-out;
+  padding: 2rem;
 }
 
-.modal-content {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-radius: var(--radius-lg);
-  width: 90%;
+.photographer-modal .modal-content {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 20px;
+  padding: 2rem;
   max-width: 1200px;
+  width: 100%;
   max-height: 90vh;
   overflow-y: auto;
-  position: relative;
-  animation: slideUp 0.3s ease-out;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--primary-color);
 }
 
-.modal-header {
-  padding: var(--spacing-xl);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-  position: relative;
+.photographer-header {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 2rem;
+  align-items: flex-start;
 }
 
-.modal-header h2 {
+.photographer-header img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--primary-color);
+  background: linear-gradient(145deg, #ffffff, #e6e6e6);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+.photographer-details {
+  flex: 1;
+}
+
+.photographer-details h2 {
   font-size: 2rem;
-  color: var(--white);
-  margin-bottom: var(--spacing-sm);
+  margin-bottom: 1rem;
+  color: #ffffff;
 }
 
-.modal-header p {
-  color: var(--white);
-  opacity: 0.9;
-}
-
-.close-btn {
-  position: absolute;
-  top: var(--spacing-md);
-  right: var(--spacing-md);
-  background: none;
-  border: none;
-  color: var(--white);
-  font-size: 1.5rem;
-  cursor: pointer;
-  transition: var(--transition);
-  padding: var(--spacing-sm);
-}
-
-.close-btn:hover {
+.photographer-details .specialty {
   color: var(--primary-color);
-  transform: rotate(90deg);
+  font-size: 1.2rem;
+  margin-bottom: 0.5rem;
 }
 
-.modal-body {
-  padding: var(--spacing-xl);
+.photographer-details .location {
+  color: #cccccc;
+  margin-bottom: 1rem;
 }
 
-.no-photos {
-  text-align: center;
-  padding: var(--spacing-xl);
-}
-
-.no-photos .fa-camera {
-  font-size: 3rem;
-  color: var(--primary-color);
-  margin-bottom: var(--spacing-md);
-}
-
-.no-photos p {
-  color: var(--white);
-  opacity: 0.9;
+.photographer-details .bio {
+  color: #ffffff;
+  line-height: 1.6;
 }
 
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: var(--spacing-md);
-  padding: var(--spacing-md);
+  gap: 2rem;
+  margin-top: 2rem;
 }
 
-.photo-item {
-  background-color: rgba(0, 0, 0, 0.4);
-  border-radius: var(--radius-md);
+.photo-card {
+  background: rgba(0, 0, 0, 0.8);
+  border-radius: 15px;
   overflow: hidden;
-  transition: var(--transition);
+  border: 1px solid var(--primary-color);
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-.photo-item:hover {
+.photo-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-.photo-item img {
+.photo-card img {
   width: 100%;
   height: 200px;
   object-fit: cover;
-  border-radius: var(--radius-md);
-  cursor: pointer;
   transition: transform 0.3s ease;
 }
 
-.photo-item img:hover {
-  transform: scale(1.02);
+.photo-card:hover img {
+  transform: scale(1.05);
 }
 
 .photo-info {
-  padding: var(--spacing-md);
-  background: rgba(0, 0, 0, 0.6);
-  border-radius: 0 0 var(--radius-md) var(--radius-md);
+  padding: 1.5rem;
 }
 
 .photo-info h3 {
-  color: var(--white);
-  margin-bottom: var(--spacing-xs);
+  color: #ffffff;
+  margin-bottom: 0.5rem;
 }
 
 .photo-info p {
-  color: var(--white);
-  opacity: 0.8;
-  margin-bottom: var(--spacing-xs);
+  color: #cccccc;
+  margin-bottom: 1rem;
 }
 
-.photo-date {
+.photo-meta {
+  display: flex;
+  gap: 1rem;
   color: var(--primary-color);
   font-size: 0.9rem;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-@keyframes slideUp {
-  from { transform: translateY(50px); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (max-width: 768px) {
-  .portfolio-header h1 {
-    font-size: 2.5rem;
-  }
-
-  .portfolio-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .modal-content {
-    width: 95%;
-  }
-}
-
-.loading {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  min-height: 50vh;
-  gap: var(--spacing-md);
-}
-
-.spinner {
-  width: 40px;
-  height: 40px;
-  border: 4px solid rgba(255, 255, 255, 0.1);
-  border-left-color: var(--primary-color);
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 .photo-modal {
@@ -397,63 +418,58 @@ const formatDate = (dateString) => {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.9);
+  background: rgba(0, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1001;
 }
 
-.photo-modal-content {
-  position: relative;
-  max-width: 90%;
+.photo-modal .modal-content {
+  max-width: 90vw;
   max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.photo-modal-content img {
+.photo-modal img {
   max-width: 100%;
   max-height: 80vh;
   object-fit: contain;
 }
 
 .photo-details {
+  color: #ffffff;
+  text-align: center;
+}
+
+.close-btn {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: rgba(0, 0, 0, 0.8);
-  padding: var(--spacing-md);
-  color: var(--white);
-}
-
-.photo-details h3 {
-  margin-bottom: var(--spacing-xs);
-}
-
-.photo-details p {
-  opacity: 0.8;
-  margin-bottom: var(--spacing-xs);
-}
-
-.photo-details .photo-date {
-  color: var(--primary-color);
-}
-
-.photo-modal-content .close-btn {
-  position: absolute;
-  top: -40px;
-  right: 0;
+  top: 1rem;
+  right: 1rem;
   background: none;
   border: none;
-  color: var(--white);
-  font-size: 1.5rem;
+  color: #ffffff;
+  font-size: 2rem;
   cursor: pointer;
-  transition: var(--transition);
-  padding: var(--spacing-sm);
+  z-index: 1002;
 }
 
-.photo-modal-content .close-btn:hover {
-  color: var(--primary-color);
-  transform: rotate(90deg);
+@media (max-width: 768px) {
+  .photographer-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .photographer-header img {
+    width: 150px;
+    height: 150px;
+  }
+
+  .photos-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style> 
