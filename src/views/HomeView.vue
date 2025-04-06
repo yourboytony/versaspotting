@@ -358,6 +358,19 @@ const closePhotoModal = () => {
 </script>
 
 <style scoped>
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
 /* Variables */
 :root {
   --primary: #829d50;
@@ -377,6 +390,11 @@ const closePhotoModal = () => {
 }
 
 /* Global Styles */
+.home {
+  margin: 0;
+  padding: 0;
+}
+
 .section-content {
   max-width: 1200px;
   margin: 0 auto;
@@ -409,17 +427,23 @@ h2 {
   align-items: center;
   color: #fff;
   overflow: hidden;
+  margin: 0;
+  padding: 0;
 }
 
 .hero-background {
   position: absolute;
   inset: 0;
   z-index: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .background-slider {
   position: absolute;
   inset: 0;
+  margin: 0;
+  padding: 0;
 }
 
 .background-image {
@@ -430,6 +454,8 @@ h2 {
   opacity: 0;
   transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1.1);
+  margin: 0;
+  padding: 0;
 }
 
 .background-image.active {
