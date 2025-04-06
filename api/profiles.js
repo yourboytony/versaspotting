@@ -24,16 +24,16 @@ export default async function handler(req, res) {
     return
   }
 
-  // Verify MongoDB connection first
-  const isConnected = await verifyConnection()
-  if (!isConnected) {
-    return res.status(500).json({ 
-      error: 'Database Connection Error',
-      message: 'Unable to connect to the database'
-    })
-  }
-
   try {
+    // Verify MongoDB connection first
+    const isConnected = await verifyConnection()
+    if (!isConnected) {
+      return res.status(500).json({ 
+        error: 'Database Connection Error',
+        message: 'Unable to connect to the database. Please try again later.'
+      })
+    }
+
     const { db } = await connectToDatabase()
     const profilesCollection = db.collection('profiles')
 
@@ -46,7 +46,7 @@ export default async function handler(req, res) {
           console.error('Error fetching profiles:', error)
           return res.status(500).json({ 
             error: 'Failed to fetch profiles',
-            message: error.message
+            message: error.message || 'An unexpected error occurred'
           })
         }
 
@@ -86,7 +86,7 @@ export default async function handler(req, res) {
           console.error('Error creating profile:', error)
           return res.status(500).json({ 
             error: 'Failed to create profile',
-            message: error.message
+            message: error.message || 'An unexpected error occurred'
           })
         }
 
@@ -116,7 +116,7 @@ export default async function handler(req, res) {
           console.error('Error updating profile:', error)
           return res.status(500).json({ 
             error: 'Failed to update profile',
-            message: error.message
+            message: error.message || 'An unexpected error occurred'
           })
         }
 
@@ -137,7 +137,7 @@ export default async function handler(req, res) {
           console.error('Error deleting profile:', error)
           return res.status(500).json({ 
             error: 'Failed to delete profile',
-            message: error.message
+            message: error.message || 'An unexpected error occurred'
           })
         }
 
@@ -147,9 +147,13 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('Error in profiles API:', error)
+    // Handle MongoDB connection errors
+    if (error.error === 'Database Connection Error') {
+      return res.status(500).json(error)
+    }
     return res.status(500).json({ 
       error: 'Internal Server Error',
-      message: error.message
+      message: error.message || 'An unexpected error occurred'
     })
   }
 } 

@@ -18,13 +18,24 @@ let cachedDb = null
 
 export async function connectToDatabase() {
   if (cachedClient && cachedDb) {
-    return { client: cachedClient, db: cachedDb }
+    try {
+      // Verify the connection is still alive
+      await cachedClient.db('versaspotting').command({ ping: 1 })
+      return { client: cachedClient, db: cachedDb }
+    } catch (error) {
+      // If the connection is dead, clear the cache and create a new one
+      cachedClient = null
+      cachedDb = null
+    }
   }
 
   try {
     const client = new MongoClient(uri, options)
     await client.connect()
     const db = client.db('versaspotting')
+
+    // Verify the connection
+    await db.command({ ping: 1 })
 
     cachedClient = client
     cachedDb = db
@@ -33,7 +44,11 @@ export async function connectToDatabase() {
     return { client, db }
   } catch (error) {
     console.error('MongoDB connection error:', error)
-    throw error
+    throw {
+      error: 'Database Connection Error',
+      message: error.message,
+      code: error.code
+    }
   }
 }
 
