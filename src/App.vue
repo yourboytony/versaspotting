@@ -128,6 +128,8 @@ import { useRouter } from 'vue-router'
 import gsap from 'gsap'
 import { useDataStore } from './stores/dataStore'
 import { storeToRefs } from 'pinia'
+import NavBar from './components/NavBar.vue'
+import Footer from './components/Footer.vue'
 
 const router = useRouter()
 const isAdmin = computed(() => localStorage.getItem('adminToken') !== null)
@@ -147,7 +149,9 @@ const scrollToTop = () => {
   })
 }
 
-onMounted(() => {
+onMounted(async () => {
+  await store.initializeData()
+
   // Animate logo on mount
   gsap.from('.logo-text', {
     duration: 0.5,

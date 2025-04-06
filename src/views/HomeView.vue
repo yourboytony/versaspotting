@@ -25,40 +25,30 @@
         <h2>Recent Uploads</h2>
         <p>Check out our latest aviation photography</p>
       </div>
-      
-      <!-- Loading State -->
-      <div v-if="isLoading" class="loading-state">
-        <i class="fas fa-spinner fa-spin"></i>
-        <p>Loading photos...</p>
-      </div>
-      
-      <!-- Photos Grid -->
-      <div v-else class="photos-grid">
-        <div v-for="photo in recentPhotos" :key="photo.id" class="photo-card" @click="viewPhoto(photo)">
-          <div class="photo-image">
-            <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
+      <div class="photos-container">
+        <div v-if="recentPhotos.length === 0" class="no-photos">
+          <span>No photos available</span>
+        </div>
+        <div v-else class="photos-grid">
+          <div v-for="photo in recentPhotos" 
+               :key="photo.id" 
+               class="photo-card"
+               @click="openPhotoModal(photo)">
+            <img :src="photo.imageUrl" 
+                 :alt="photo.title"
+                 @error="handleImageError">
             <div class="photo-overlay">
               <div class="photo-info">
                 <h3>{{ photo.title }}</h3>
                 <p class="photographer">By {{ photo.photographer }}</p>
-                <div class="photo-meta">
-                  <span v-if="photo.camera"><i class="fas fa-camera"></i> {{ photo.camera }}</span>
-                  <span><i class="fas fa-calendar"></i> {{ formatDate(photo.date) }}</span>
-                </div>
+                <p class="date">{{ formatDate(photo.date) }}</p>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      
-      <!-- Empty State -->
-      <div v-if="!isLoading && recentPhotos.length === 0" class="empty-state">
-        <i class="fas fa-camera"></i>
-        <p>No photos uploaded yet</p>
-      </div>
-      
-      <div class="view-all">
-        <router-link to="/portfolio" class="view-all-btn">View All Photos</router-link>
+        <div class="view-all">
+          <router-link to="/portfolio" class="view-all-btn">View All Photos</router-link>
+        </div>
       </div>
     </section>
 
@@ -72,8 +62,8 @@
           <p class="photographer">By {{ selectedPhoto.photographer }}</p>
           <p class="description">{{ selectedPhoto.description }}</p>
           <div class="photo-details">
-            <span><i class="fas fa-camera"></i> {{ selectedPhoto.camera }}</span>
-            <span><i class="fas fa-camera-retro"></i> {{ selectedPhoto.lens }}</span>
+            <span v-if="selectedPhoto.camera"><i class="fas fa-camera"></i> {{ selectedPhoto.camera }}</span>
+            <span v-if="selectedPhoto.lens"><i class="fas fa-camera-retro"></i> {{ selectedPhoto.lens }}</span>
             <span><i class="fas fa-calendar"></i> {{ formatDate(selectedPhoto.date) }}</span>
           </div>
         </div>
@@ -213,23 +203,15 @@ const startBackgroundRotation = () => {
 
 // Recent photos with URL parsing and error handling
 const recentPhotos = computed(() => {
-  try {
-    if (!dataStore.isInitialized) {
-      return []
-    }
-    const photos = [...dataStore.photos]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 6)
-      .map(photo => ({
-        ...photo,
-        imageUrl: parseImageUrl(photo.imageUrl),
-        photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
-      }))
-    return photos
-  } catch (error) {
-    console.error('Error loading recent photos:', error)
-    return []
-  }
+  const photos = dataStore.photos || []
+  return photos
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 6)
+    .map(photo => ({
+      ...photo,
+      photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
+    }))
 })
 
 // Watch for data initialization
@@ -264,8 +246,7 @@ const parseImageUrl = (url) => {
 
 // Error handling for images
 const handleImageError = (event) => {
-  const img = event.target
-  img.src = 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
+  event.target.src = 'https://via.placeholder.com/400x300?text=Photo+Not+Available'
 }
 
 // Format date
@@ -425,7 +406,7 @@ onUnmounted(() => {
   }
 })
 
-const viewPhoto = (photo) => {
+const openPhotoModal = (photo) => {
   selectedPhoto.value = photo
   document.body.style.overflow = 'hidden'
 }
@@ -541,9 +522,7 @@ const closePhotoModal = () => {
 .recent-uploads {
   padding: 6rem 2rem;
   background: rgba(0, 0, 0, 0.3);
-  position: relative;
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  min-height: 400px;
 }
 
 .section-header {
@@ -552,108 +531,64 @@ const closePhotoModal = () => {
 }
 
 .section-header h2 {
-  font-size: 3rem;
-  font-weight: 700;
+  font-size: 2.5rem;
   margin-bottom: 1rem;
-  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.section-header p {
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 1.2rem;
-}
-
-/* Loading State */
-.loading-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem;
   color: var(--primary-color);
 }
 
-.loading-state i {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+.section-header p {
+  color: #fff;
+  opacity: 0.8;
 }
 
-/* Empty State */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 4rem;
-  color: rgba(255, 255, 255, 0.6);
+.photos-container {
+  max-width: 1400px;
+  margin: 0 auto;
 }
 
-.empty-state i {
-  font-size: 3rem;
-  margin-bottom: 1rem;
-}
-
-/* Enhanced Photos Grid */
 .photos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 2rem;
-  max-width: 1400px;
-  margin: 0 auto 3rem;
-  padding: 0 1rem;
+  margin-bottom: 4rem;
 }
 
 .photo-card {
   position: relative;
   border-radius: 12px;
   overflow: hidden;
+  aspect-ratio: 4/3;
   cursor: pointer;
-  background: #000;
-  aspect-ratio: 3/2;
-  transform: translateY(0);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 0;
+  transform: translateY(50px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.photo-card.visible {
   opacity: 1;
+  transform: translateY(0);
 }
 
-.photo-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
-}
-
-.photo-image {
-  position: relative;
-  width: 100%;
-  height: 100%;
-}
-
-.photo-image img {
+.photo-card img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   transition: transform 0.5s ease;
 }
 
-.photo-card:hover .photo-image img {
+.photo-card:hover img {
   transform: scale(1.05);
 }
 
 .photo-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.95) 0%,
-    rgba(0,0,0,0.5) 50%,
-    rgba(0,0,0,0.1) 100%
-  );
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
   opacity: 0;
-  transition: opacity 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s ease;
   display: flex;
   align-items: flex-end;
-  padding: 2rem;
+  padding: 1.5rem;
 }
 
 .photo-card:hover .photo-overlay {
@@ -663,8 +598,7 @@ const closePhotoModal = () => {
 .photo-info {
   color: #fff;
   transform: translateY(20px);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  width: 100%;
+  transition: transform 0.3s ease;
 }
 
 .photo-card:hover .photo-info {
@@ -672,50 +606,47 @@ const closePhotoModal = () => {
 }
 
 .photo-info h3 {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.2rem;
   margin-bottom: 0.5rem;
 }
 
 .photo-info .photographer {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.8);
-  margin-bottom: 1rem;
-}
-
-.photo-meta {
-  display: flex;
-  gap: 1rem;
   font-size: 0.9rem;
-  color: rgba(255, 255, 255, 0.6);
+  opacity: 0.9;
+  margin-bottom: 0.25rem;
 }
 
-.photo-meta span {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.photo-info .date {
+  font-size: 0.8rem;
+  opacity: 0.7;
+}
+
+.no-photos {
+  text-align: center;
+  padding: 4rem;
+  color: #fff;
+  opacity: 0.6;
 }
 
 .view-all {
   text-align: center;
-  margin-top: 4rem;
+  margin-top: 2rem;
 }
 
 .view-all-btn {
   display: inline-block;
-  padding: 1.2rem 2.5rem;
-  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
+  padding: 1rem 2rem;
+  background: var(--primary-color);
   color: #000;
-  font-weight: 600;
-  border-radius: 12px;
   text-decoration: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 4px 6px rgba(144, 153, 62, 0.2);
+  border-radius: 8px;
+  font-weight: 600;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .view-all-btn:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 0 12px 24px rgba(144, 153, 62, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(144, 153, 62, 0.2);
 }
 
 /* Photo Modal */
@@ -817,37 +748,6 @@ const closePhotoModal = () => {
   display: flex;
   align-items: center;
   gap: 0.5rem;
-}
-
-@media (max-width: 768px) {
-  .photos-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .section-header h2 {
-    font-size: 2.5rem;
-  }
-
-  .photo-modal {
-    padding: 1rem;
-  }
-
-  .modal-content {
-    width: 100%;
-  }
-
-  .modal-info {
-    padding: 1.5rem;
-  }
-
-  .modal-info h2 {
-    font-size: 1.5rem;
-  }
-
-  .photo-details {
-    flex-direction: column;
-    gap: 1rem;
-  }
 }
 
 /* About Section */
