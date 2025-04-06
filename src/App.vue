@@ -73,13 +73,36 @@
           
           <div class="footer-section">
             <h4>Quick Links</h4>
-            <ul class="footer-links">
-              <li><router-link to="/">Home</router-link></li>
-              <li><router-link to="/portfolio">Portfolio</router-link></li>
-              <li><router-link to="/news">News</router-link></li>
-              <li><router-link to="/about">About</router-link></li>
-              <li><router-link to="/apply">Apply</router-link></li>
-            </ul>
+            <div class="quick-links-container">
+              <div class="quick-links-column">
+                <router-link to="/" class="quick-link">
+                  <i class="icon-home"></i>
+                  <span>Home</span>
+                </router-link>
+                <router-link to="/portfolio" class="quick-link">
+                  <i class="icon-portfolio"></i>
+                  <span>Portfolio</span>
+                </router-link>
+                <router-link to="/news" class="quick-link">
+                  <i class="icon-news"></i>
+                  <span>News</span>
+                </router-link>
+              </div>
+              <div class="quick-links-column">
+                <router-link to="/about" class="quick-link">
+                  <i class="icon-about"></i>
+                  <span>About</span>
+                </router-link>
+                <router-link to="/apply" class="quick-link">
+                  <i class="icon-apply"></i>
+                  <span>Apply</span>
+                </router-link>
+                <router-link to="/contact" class="quick-link">
+                  <i class="icon-contact"></i>
+                  <span>Contact</span>
+                </router-link>
+              </div>
+            </div>
           </div>
           
           <div class="footer-section">
@@ -881,6 +904,11 @@ body {
     flex-direction: column;
     align-items: center;
   }
+
+  .quick-links-container {
+    flex-direction: column;
+    gap: var(--spacing-md);
+  }
 }
 
 /* Scrollbar Styling */
@@ -1034,5 +1062,69 @@ body {
   animation: gradientShift 10s infinite;
   pointer-events: none;
   z-index: -1;
+}
+
+/* New Quick Links Styles */
+.quick-links-container {
+  display: flex;
+  gap: var(--spacing-lg);
+}
+
+.quick-links-column {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  color: var(--text-secondary);
+  text-decoration: none;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-md);
+  transition: all var(--transition-normal);
+  position: relative;
+  overflow: hidden;
+}
+
+.quick-link::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, 
+    rgba(144, 153, 62, 0.1),
+    rgba(176, 185, 94, 0.1)
+  );
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+}
+
+.quick-link:hover::before {
+  opacity: 1;
+}
+
+.quick-link i {
+  color: var(--primary-color);
+  font-size: 1.2rem;
+  transition: transform var(--transition-normal);
+}
+
+.quick-link:hover i {
+  transform: scale(1.2);
+}
+
+.quick-link span {
+  position: relative;
+  z-index: 1;
+}
+
+.quick-link:hover {
+  color: var(--text-color);
+  transform: translateX(5px);
 }
 </style> 
