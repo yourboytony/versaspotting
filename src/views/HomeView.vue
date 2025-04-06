@@ -2,59 +2,42 @@
   <div class="home">
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-background">
-        <video autoplay loop muted playsinline class="hero-video">
-          <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35f1a9e7c02d&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
-        </video>
-        <div class="hero-overlay"></div>
-      </div>
       <div class="hero-content">
-        <div class="hero-text">
-          <h1 class="title">VERSA Spotting Group</h1>
-          <p class="subtitle">Where Aviation Meets Artistry</p>
-          <p class="description">Join Vancouver's premier aviation photography community</p>
-          <div class="hero-buttons">
-            <router-link to="/portfolio" class="button primary">View Portfolios</router-link>
-            <router-link to="/applications" class="button secondary">Join Us</router-link>
-          </div>
+        <h1 class="hero-title">VERSA Spotting Group</h1>
+        <p class="hero-subtitle">Where Aviation Meets Artistry</p>
+        <div class="hero-buttons">
+          <router-link to="/portfolio" class="button primary">View Portfolios</router-link>
+          <router-link to="/applications" class="button secondary">Join Us</router-link>
         </div>
-        <div class="scroll-indicator">
-          <span class="scroll-text">Scroll to explore</span>
-          <div class="scroll-arrow"></div>
-        </div>
+      </div>
+      <div class="scroll-indicator">
+        <span>Scroll to explore</span>
+        <div class="scroll-arrow"></div>
       </div>
     </section>
 
-    <!-- Recent Uploads Section -->
+    <!-- Recent Uploads -->
     <section class="recent-uploads">
       <div class="section-header">
         <h2>Recent Uploads</h2>
         <p>Discover our latest captures</p>
       </div>
-      <div class="photos-container">
-        <div v-if="recentPhotos.length === 0" class="no-photos">
-          <span>No photos available</span>
-        </div>
-        <div v-else class="photos-grid">
-          <div v-for="photo in recentPhotos" 
-               :key="photo.id" 
-               class="photo-card"
-               @click="openPhotoModal(photo)">
-            <img :src="photo.imageUrl" 
-                 :alt="photo.title"
-                 @error="handleImageError">
-            <div class="photo-overlay">
-              <div class="photo-info">
-                <h3>{{ photo.title }}</h3>
-                <p class="photographer">By {{ photo.photographer }}</p>
-                <p class="date">{{ formatDate(photo.date) }}</p>
-              </div>
-            </div>
+      <div class="photos-grid">
+        <div v-for="photo in recentPhotos" 
+             :key="photo.id" 
+             class="photo-card"
+             @click="openPhotoModal(photo)">
+          <img :src="photo.imageUrl" 
+               :alt="photo.title"
+               @error="handleImageError">
+          <div class="photo-info">
+            <h3>{{ photo.title }}</h3>
+            <p>By {{ photo.photographer }}</p>
           </div>
         </div>
-        <div class="view-all">
-          <router-link to="/portfolio" class="view-all-btn">View All Photos</router-link>
-        </div>
+      </div>
+      <div class="view-all">
+        <router-link to="/portfolio" class="button primary">View All Photos</router-link>
       </div>
     </section>
 
@@ -63,22 +46,21 @@
       <div class="about-content">
         <div class="about-text">
           <h2>About VERSA</h2>
-          <p class="about-subtitle">Vancouver's Premier Aviation Photography Community</p>
+          <p>Vancouver's Premier Aviation Photography Community</p>
           <div class="about-description">
             <p>VERSA Spotting Group is a community of aviation enthusiasts and photographers based in Vancouver, Canada. We are dedicated to capturing and sharing the beauty of aviation through our lenses.</p>
-            <p>Our members are passionate about aviation photography and are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
           </div>
         </div>
-        <div class="about-stats">
-          <div class="stat-box">
+        <div class="stats">
+          <div class="stat">
             <span class="stat-value">{{ totalPhotographers }}</span>
             <span class="stat-label">Members</span>
           </div>
-          <div class="stat-box">
+          <div class="stat">
             <span class="stat-value">{{ totalPhotos }}</span>
             <span class="stat-label">Photos</span>
           </div>
-          <div class="stat-box">
+          <div class="stat">
             <span class="stat-value">{{ totalLocations }}</span>
             <span class="stat-label">Locations</span>
           </div>
@@ -86,28 +68,28 @@
       </div>
     </section>
 
-    <!-- Features Section -->
+    <!-- Features -->
     <section class="features">
       <div class="section-header">
         <h2>Why Join VERSA</h2>
         <p>Experience the difference</p>
       </div>
       <div class="features-grid">
-        <div class="feature-card">
+        <div class="feature">
           <div class="feature-icon">
             <i class="fas fa-camera"></i>
           </div>
           <h3>Photographic Excellence</h3>
           <p>Our photographers are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature">
           <div class="feature-icon">
             <i class="fas fa-users"></i>
           </div>
           <h3>Community Focus</h3>
           <p>We believe in building a strong community of aviation enthusiasts and photographers who support and inspire each other.</p>
         </div>
-        <div class="feature-card">
+        <div class="feature">
           <div class="feature-icon">
             <i class="fas fa-map-marker-alt"></i>
           </div>
@@ -117,14 +99,16 @@
       </div>
     </section>
 
-    <!-- Latest Announcements -->
+    <!-- Announcements -->
     <section class="announcements">
       <div class="section-header">
         <h2>Latest Announcements</h2>
         <p>Stay updated with our latest news and events</p>
       </div>
       <div class="announcements-grid">
-        <div v-for="announcement in announcements" :key="announcement.id" class="announcement-card">
+        <div v-for="announcement in announcements" 
+             :key="announcement.id" 
+             class="announcement">
           <div class="announcement-date">{{ formatDate(announcement.date) }}</div>
           <h3>{{ announcement.title }}</h3>
           <p>{{ announcement.content }}</p>
@@ -132,7 +116,7 @@
       </div>
     </section>
 
-    <!-- CTA Section -->
+    <!-- CTA -->
     <section class="cta">
       <div class="cta-content">
         <h2>Ready to Join VERSA?</h2>
@@ -153,10 +137,9 @@ gsap.registerPlugin(ScrollTrigger)
 
 const dataStore = useDataStore()
 const selectedPhoto = ref(null)
-const mainContainer = ref(null)
 const isLoading = ref(true)
 
-// Get recent photos for background with error handling
+// Get recent photos with error handling
 const recentPhotos = computed(() => {
   const photos = dataStore.photos || []
   return photos
@@ -175,29 +158,6 @@ watchEffect(() => {
     isLoading.value = false
   }
 })
-
-// URL parsing function with better error handling
-const parseImageUrl = (url) => {
-  if (!url) return 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
-  
-  try {
-    if (url.includes('postimages.org')) {
-      const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
-      if (match) {
-        return `https://i.postimg.cc/${match[1]}`
-      }
-    }
-    
-    if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
-      return url
-    }
-    
-    return url
-  } catch (error) {
-    console.error('Error parsing image URL:', error)
-    return 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
-  }
-}
 
 // Error handling for images
 const handleImageError = (event) => {
@@ -224,12 +184,20 @@ onMounted(async () => {
   }
   
   // Hero section animations
-  gsap.from('.hero-text', {
+  gsap.from('.hero-title', {
     duration: 1.5,
     y: 100,
     opacity: 0,
     ease: 'power4.out',
     delay: 0.5
+  })
+  
+  gsap.from('.hero-subtitle', {
+    duration: 1.5,
+    y: 50,
+    opacity: 0,
+    ease: 'power3.out',
+    delay: 1
   })
   
   gsap.from('.hero-buttons', {
@@ -238,14 +206,6 @@ onMounted(async () => {
     opacity: 0,
     ease: 'power3.out',
     delay: 1.5
-  })
-  
-  gsap.from('.scroll-indicator', {
-    duration: 1.5,
-    y: 30,
-    opacity: 0,
-    ease: 'power3.out',
-    delay: 2
   })
   
   // Recent Uploads section
@@ -269,12 +229,6 @@ onMounted(async () => {
     duration: 1,
     ease: 'back.out(1.7)'
   }, '-=0.5')
-  .from('.view-all-btn', {
-    scale: 0.8,
-    opacity: 0,
-    duration: 1,
-    ease: 'elastic.out(1, 0.5)'
-  }, '-=0.5')
   
   // About section
   gsap.timeline({
@@ -290,9 +244,10 @@ onMounted(async () => {
     opacity: 0,
     duration: 1
   })
-  .from('.about-stats', {
-    x: 100,
+  .from('.stat', {
+    y: 50,
     opacity: 0,
+    stagger: 0.2,
     duration: 1
   }, '-=0.5')
   
@@ -310,7 +265,7 @@ onMounted(async () => {
     opacity: 0,
     duration: 1
   })
-  .from('.feature-card', {
+  .from('.feature', {
     y: 100,
     opacity: 0,
     stagger: 0.2,
@@ -332,7 +287,7 @@ onMounted(async () => {
     opacity: 0,
     duration: 1
   })
-  .from('.announcement-card', {
+  .from('.announcement', {
     y: 100,
     opacity: 0,
     stagger: 0.2,
@@ -358,7 +313,6 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
-  // Clean up ScrollTrigger instances
   ScrollTrigger.getAll().forEach(trigger => trigger.kill())
 })
 
@@ -378,9 +332,9 @@ const closePhotoModal = () => {
   --primary-color: #829d50;
   --primary-light: #a3b97a;
   --primary-dark: #6a823f;
-  --background-color: #f5f7f0;
+  --background-color: #ffffff;
   --text-color: #333333;
-  --card-background: #ffffff;
+  --card-background: #f5f7f0;
   --border-color: rgba(130, 157, 80, 0.2);
   --spacing-sm: 0.5rem;
   --spacing-md: 1rem;
@@ -404,43 +358,12 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   text-align: center;
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
   color: #ffffff;
   overflow: hidden;
 }
 
-.hero-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-}
-
-.hero-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
-}
-
-.hero-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.7),
-    rgba(0, 0, 0, 0.9)
-  );
-  z-index: 1;
-}
-
 .hero-content {
-  position: relative;
-  z-index: 2;
   max-width: 1200px;
   width: 100%;
   padding: 0 2rem;
@@ -451,36 +374,23 @@ const closePhotoModal = () => {
   min-height: 100vh;
 }
 
-.hero-text {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-.title {
+.hero-title {
   font-size: 5rem;
   font-weight: 800;
   margin-bottom: 1rem;
   color: #fff;
-  text-shadow: 0 0 20px rgba(130, 157, 80, 0.5);
+  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
   letter-spacing: -2px;
   line-height: 1.1;
 }
 
-.subtitle {
+.hero-subtitle {
   font-size: 2rem;
-  margin-bottom: 1rem;
+  margin-bottom: 3rem;
   color: #fff;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
   font-weight: 500;
   letter-spacing: -0.5px;
-}
-
-.description {
-  font-size: 1.4rem;
-  margin-bottom: 3rem;
-  color: rgba(255, 255, 255, 0.8);
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
-  font-weight: 400;
 }
 
 .hero-buttons {
@@ -522,27 +432,27 @@ const closePhotoModal = () => {
 }
 
 .button.primary {
-  background: var(--primary-color);
-  color: #fff;
-  box-shadow: 0 5px 15px rgba(130, 157, 80, 0.4);
+  background: #fff;
+  color: var(--primary-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .button.secondary {
   background: transparent;
-  border: 2px solid var(--primary-color);
-  color: var(--primary-color);
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+  border: 2px solid #fff;
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .button:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(130, 157, 80, 0.4);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 /* Recent Uploads Section */
 .recent-uploads {
   padding: 8rem 2rem;
-  background: #fff;
+  background: var(--card-background);
 }
 
 .section-header {
@@ -578,13 +488,9 @@ const closePhotoModal = () => {
   font-weight: 400;
 }
 
-.photos-container {
+.photos-grid {
   max-width: 1400px;
   margin: 0 auto;
-  width: 100%;
-}
-
-.photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
   gap: 2rem;
@@ -614,7 +520,7 @@ const closePhotoModal = () => {
   transform: scale(1.1);
 }
 
-.photo-overlay {
+.photo-info {
   position: absolute;
   inset: 0;
   background: linear-gradient(to top, rgba(130, 157, 80, 0.9) 0%, rgba(130, 157, 80, 0.5) 50%, transparent 100%);
@@ -627,18 +533,8 @@ const closePhotoModal = () => {
   -webkit-backdrop-filter: blur(10px);
 }
 
-.photo-card:hover .photo-overlay {
-  opacity: 1;
-}
-
-.photo-info {
-  color: #fff;
-  transform: translateY(20px);
-  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
 .photo-card:hover .photo-info {
-  transform: translateY(0);
+  opacity: 1;
 }
 
 .photo-info h3 {
@@ -646,64 +542,19 @@ const closePhotoModal = () => {
   margin-bottom: 0.5rem;
   font-weight: 600;
   letter-spacing: -0.5px;
+  color: #fff;
 }
 
-.photo-info .photographer {
+.photo-info p {
   font-size: 1rem;
   opacity: 0.9;
-  margin-bottom: 0.25rem;
+  color: #fff;
   font-weight: 500;
-}
-
-.photo-info .date {
-  font-size: 0.9rem;
-  opacity: 0.7;
-  font-weight: 400;
 }
 
 .view-all {
   text-align: center;
   margin-top: 2rem;
-}
-
-.view-all-btn {
-  display: inline-block;
-  padding: 1.2rem 3rem;
-  background: var(--primary-color);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 50px;
-  font-weight: 600;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  font-size: 1.2rem;
-  letter-spacing: -0.5px;
-}
-
-.view-all-btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
-  transition: 0.5s;
-}
-
-.view-all-btn:hover::before {
-  left: 100%;
-}
-
-.view-all-btn:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(130, 157, 80, 0.4);
 }
 
 /* About Section */
@@ -733,7 +584,7 @@ const closePhotoModal = () => {
   letter-spacing: -1px;
 }
 
-.about-subtitle {
+.about-text p {
   font-size: 1.5rem;
   color: var(--text-color);
   margin-bottom: 2rem;
@@ -747,22 +598,14 @@ const closePhotoModal = () => {
   color: var(--text-color);
 }
 
-.about-description p {
-  margin-bottom: 1.5rem;
-}
-
-.about-description p:last-child {
-  margin-bottom: 0;
-}
-
-.about-stats {
+.stats {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
 }
 
-.stat-box {
-  background: #fff;
+.stat {
+  background: var(--card-background);
   padding: 2.5rem;
   border-radius: 20px;
   text-align: center;
@@ -771,7 +614,7 @@ const closePhotoModal = () => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
-.stat-box:hover {
+.stat:hover {
   transform: translateY(-10px);
   box-shadow: 0 30px 50px rgba(130, 157, 80, 0.2);
   border-color: var(--primary-color);
@@ -797,7 +640,7 @@ const closePhotoModal = () => {
 /* Features Section */
 .features {
   padding: 8rem 2rem;
-  background: #fff;
+  background: var(--card-background);
 }
 
 .features-grid {
@@ -808,9 +651,9 @@ const closePhotoModal = () => {
   gap: 2rem;
 }
 
-.feature-card {
+.feature {
   position: relative;
-  background: #fff;
+  background: var(--background-color);
   padding: 3rem;
   border-radius: 20px;
   border: 1px solid var(--border-color);
@@ -824,7 +667,7 @@ const closePhotoModal = () => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
-.feature-card:hover {
+.feature:hover {
   transform: translateY(-10px);
   box-shadow: 0 30px 50px rgba(130, 157, 80, 0.2);
   border-color: var(--primary-color);
@@ -852,16 +695,16 @@ const closePhotoModal = () => {
   transition: all 0.5s ease;
 }
 
-.feature-card:hover .feature-icon {
+.feature:hover .feature-icon {
   transform: scale(1.2) rotate(5deg);
 }
 
-.feature-card:hover .feature-icon::after {
+.feature:hover .feature-icon::after {
   transform: translate(-50%, -50%) scale(1.5);
   background: rgba(130, 157, 80, 0.2);
 }
 
-.feature-card h3 {
+.feature h3 {
   font-size: 1.8rem;
   color: var(--primary-color);
   margin-bottom: 1rem;
@@ -869,7 +712,7 @@ const closePhotoModal = () => {
   letter-spacing: -0.5px;
 }
 
-.feature-card p {
+.feature p {
   color: var(--text-color);
   font-size: 1.1rem;
   line-height: 1.6;
@@ -891,9 +734,9 @@ const closePhotoModal = () => {
   gap: 2rem;
 }
 
-.announcement-card {
+.announcement {
   position: relative;
-  background: #fff;
+  background: var(--card-background);
   padding: 3rem;
   border-radius: 20px;
   border: 1px solid var(--border-color);
@@ -901,7 +744,7 @@ const closePhotoModal = () => {
   box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
-.announcement-card:hover {
+.announcement:hover {
   transform: translateY(-10px);
   box-shadow: 0 30px 50px rgba(130, 157, 80, 0.2);
   border-color: var(--primary-color);
@@ -914,7 +757,7 @@ const closePhotoModal = () => {
   font-weight: 500;
 }
 
-.announcement-card h3 {
+.announcement h3 {
   color: var(--text-color);
   font-size: 1.5rem;
   margin-bottom: 1rem;
@@ -922,7 +765,7 @@ const closePhotoModal = () => {
   letter-spacing: -0.5px;
 }
 
-.announcement-card p {
+.announcement p {
   color: var(--text-color);
   line-height: 1.6;
   font-weight: 400;
@@ -955,7 +798,7 @@ const closePhotoModal = () => {
   margin-bottom: 2.5rem;
   font-weight: 400;
   letter-spacing: -0.5px;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .cta .button {
@@ -986,7 +829,7 @@ const closePhotoModal = () => {
   z-index: 10;
 }
 
-.scroll-text {
+.scroll-indicator span {
   font-size: 0.9rem;
   margin-bottom: 0.5rem;
   text-transform: uppercase;
@@ -1016,11 +859,11 @@ const closePhotoModal = () => {
 
 /* Responsive Design */
 @media (max-width: 1200px) {
-  .title {
+  .hero-title {
     font-size: 4rem;
   }
   
-  .subtitle {
+  .hero-subtitle {
     font-size: 1.8rem;
   }
   
@@ -1040,11 +883,11 @@ const closePhotoModal = () => {
 }
 
 @media (max-width: 768px) {
-  .title {
+  .hero-title {
     font-size: 3rem;
   }
   
-  .subtitle {
+  .hero-subtitle {
     font-size: 1.4rem;
   }
   
@@ -1052,15 +895,15 @@ const closePhotoModal = () => {
     flex-direction: column;
   }
   
-  .about-title h2 {
+  .about-text h2 {
     font-size: 2.5rem;
   }
   
-  .about-subtitle {
+  .about-text p {
     font-size: 1.2rem;
   }
   
-  .about-stats {
+  .stats {
     grid-template-columns: 1fr;
   }
   
