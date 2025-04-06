@@ -233,46 +233,8 @@ const rotateBackground = () => {
 
 // Update the initializeAnimations function
 const initializeAnimations = () => {
-  // Enhanced hero parallax with depth effect
-  gsap.to('.background-image.active', {
-    y: '15%',
-    scale: 1.1,
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1
-    }
-  })
-
-  // Floating animation for hero content
-  gsap.to('.hero-content', {
-    y: '-20px',
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 2
-    }
-  })
-
-  // Text reveal animations
-  gsap.utils.toArray('h2, .overline').forEach(element => {
-    gsap.from(element, {
-      scrollTrigger: {
-        trigger: element,
-        start: 'top 85%',
-        end: 'top 65%',
-        scrub: 0.5
-      },
-      y: 20,
-      opacity: 0.3,
-      duration: 0.5
-    })
-  })
-
-  // Enhanced section parallax
-  gsap.utils.toArray('.featured, .stats, .about').forEach((section, i) => {
+  // Remove stats section from general section animations
+  gsap.utils.toArray('.featured, .about').forEach((section, i) => {
     gsap.to(section, {
       backgroundPositionY: '10%',
       scrollTrigger: {
@@ -282,83 +244,11 @@ const initializeAnimations = () => {
         scrub: true
       }
     })
-
-    // Stagger children animations
-    const items = section.querySelectorAll('.featured-item, .stat, .feature')
-    gsap.from(items, {
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 80%'
-      },
-      y: 30,
-      opacity: 0,
-      duration: 0.8,
-      stagger: 0.1,
-      ease: 'power2.out'
-    })
   })
 
-  // Remove the complex stats counter animation and replace with simpler reveal
-  gsap.utils.toArray('.stat').forEach((stat, i) => {
-    gsap.from(stat, {
-      scrollTrigger: {
-        trigger: stat,
-        start: 'top 85%',
-      },
-      y: 30,
-      opacity: 0,
-      duration: 0.6,
-      delay: i * 0.2,
-      ease: 'power2.out'
-    })
-  })
-
-  // Magnetic effect for buttons
-  gsap.utils.toArray('.btn').forEach(btn => {
-    btn.addEventListener('mousemove', (e) => {
-      const rect = btn.getBoundingClientRect()
-      const x = e.clientX - rect.left
-      const y = e.clientY - rect.top
-      
-      gsap.to(btn, {
-        x: (x - rect.width / 2) / rect.width * 20,
-        y: (y - rect.height / 2) / rect.height * 20,
-        duration: 0.3,
-        ease: 'power2.out'
-      })
-    })
-    
-    btn.addEventListener('mouseleave', () => {
-      gsap.to(btn, {
-        x: 0,
-        y: 0,
-        duration: 0.5,
-        ease: 'elastic.out(1, 0.3)'
-      })
-    })
-  })
-
-  // Smooth parallax for about image
-  gsap.to('.about-image', {
-    y: '20%',
-    scrollTrigger: {
-      trigger: '.about',
-      start: 'top bottom',
-      end: 'bottom top',
-      scrub: 1
-    }
-  })
-
-  // Enhanced CTA section reveal
-  gsap.from('.cta', {
-    scrollTrigger: {
-      trigger: '.cta',
-      start: 'top 80%'
-    },
-    backgroundColor: 'rgba(130, 157, 80, 0)',
-    duration: 1,
-    ease: 'power2.inOut'
-  })
+  // Remove all GSAP animations for stats, we'll use CSS only
+  
+  // Keep other animations...
 }
 
 // Component lifecycle
@@ -669,75 +559,36 @@ h2 {
   padding: var(--spacing-xl) 0;
   background: var(--background);
   position: relative;
-  overflow: hidden;
-}
-
-.stats::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
-}
-
-.stats::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 1px;
-  background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+  border-top: 1px solid rgba(130, 157, 80, 0.1);
+  border-bottom: 1px solid rgba(130, 157, 80, 0.1);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-lg);
-  position: relative;
+  margin-top: var(--spacing-md);
 }
 
 .stat {
   text-align: center;
   padding: var(--spacing-lg);
-  background: linear-gradient(145deg, var(--card-bg), rgba(255, 255, 255, 0.9));
+  background: var(--card-bg);
   border-radius: var(--border-radius);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
   border: 1px solid rgba(130, 157, 80, 0.1);
-  position: relative;
-  overflow: hidden;
-}
-
-.stat::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 40px rgba(130, 157, 80, 0.15);
-}
-
-.stat:hover::before {
-  opacity: 1;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .stat-number {
   font-size: 3.5rem;
   font-weight: 800;
-  background: linear-gradient(45deg, var(--primary), var(--primary-dark));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
+  color: var(--primary);
   margin-bottom: var(--spacing-xs);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1;
@@ -756,6 +607,14 @@ h2 {
   max-width: 200px;
   margin: 0 auto;
   line-height: 1.5;
+}
+
+/* Remove all complex animations for stats */
+.stat, .stat-number {
+  animation: none;
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: unset;
 }
 
 /* About Section */
