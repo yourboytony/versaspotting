@@ -6,16 +6,28 @@ addEventListener('fetch', event => {
 
 async function handleEvent(event) {
   try {
+    const url = new URL(event.request.url)
+    
     // Handle API requests
-    if (event.request.url.includes('/api/')) {
+    if (url.pathname.startsWith('/api/')) {
       return handleAPIRequest(event)
     }
 
-    // Handle static assets
-    return await getAssetFromKV(event)
+    // Handle static assets and SPA routing
+    try {
+      return await getAssetFromKV(event)
+    } catch (e) {
+      // If the asset is not found, serve index.html for SPA routing
+      return await getAssetFromKV(event, {
+        mapRequestToAsset: req => new Request(`${new URL(req.url).origin}/index.html`, req)
+      })
+    }
   } catch (e) {
     // Handle errors
-    return new Response(e.message || 'An error occurred', {
+    return new Response(JSON.stringify({
+      error: 'Internal Server Error',
+      message: e.message || 'An error occurred'
+    }), {
       status: 500,
       headers: {
         'Content-Type': 'application/json',
@@ -47,7 +59,13 @@ async function handleAPIRequest(event) {
     case 'profiles':
       return handleProfilesRequest(event)
     default:
-      return new Response('Not Found', { status: 404 })
+      return new Response(JSON.stringify({ error: 'Not Found' }), {
+        status: 404,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
   }
 }
 
@@ -82,6 +100,12 @@ async function handleProfilesRequest(event) {
       })
 
     default:
-      return new Response('Method Not Allowed', { status: 405 })
+      return new Response(JSON.stringify({ error: 'Method Not Allowed' }), {
+        status: 405,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*'
+        }
+      })
   }
 } 

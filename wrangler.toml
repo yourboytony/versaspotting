@@ -11,6 +11,7 @@ entry-point = "workers-site"
 
 [build]
 command = "npm run build"
+cwd = "."
 
 [env.production]
 name = "versaspotting-prod"
@@ -18,4 +19,7 @@ route = "versaspotting.com/*"
 zone_id = ""
 
 [env.production.vars]
-MONGODB_URI = "mongodb+srv://VERSAadmin:adminw8492%24%40@versaspotting.qrtcdft.mongodb.net/?retryWrites=true&w=majority&appName=versaspotting" 
+MONGODB_URI = "mongodb+srv://VERSAadmin:adminw8492%24%40@versaspotting.qrtcdft.mongodb.net/?retryWrites=true&w=majority&appName=versaspotting"
+
+[build.upload]
+format = "service-worker" 
