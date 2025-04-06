@@ -238,7 +238,7 @@ const rotateBackground = () => {
 
 // Update the initializeAnimations function
 const initializeAnimations = () => {
-  // Subtle hero parallax effect only
+  // Subtle hero parallax effect
   gsap.to('.background-image.active', {
     y: '10%',
     scrollTrigger: {
@@ -247,6 +247,33 @@ const initializeAnimations = () => {
       end: 'bottom top',
       scrub: true
     }
+  })
+
+  // Subtle text reveal on scroll
+  gsap.utils.toArray('h2, .overline').forEach(element => {
+    gsap.from(element, {
+      scrollTrigger: {
+        trigger: element,
+        start: 'top 85%',
+        end: 'top 65%',
+        scrub: 0.5
+      },
+      color: 'rgba(var(--text-color-rgb), 0.3)',
+      duration: 0.5
+    })
+  })
+
+  // Subtle background parallax for sections
+  gsap.utils.toArray('.featured, .stats, .about').forEach(section => {
+    gsap.to(section, {
+      backgroundPositionY: '10%',
+      scrollTrigger: {
+        trigger: section,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: true
+      }
+    })
   })
 
   // Simple fade in for sections
@@ -266,21 +293,35 @@ const initializeAnimations = () => {
     })
   })
 
-  // Subtle hover animations for cards
-  gsap.utils.toArray('.featured-item, .stat, .feature').forEach(element => {
-    element.addEventListener('mouseenter', () => {
-      gsap.to(element, {
-        y: -5,
-        duration: 0.3,
-        ease: 'power2.out'
-      })
+  // Subtle image scale on hover
+  gsap.utils.toArray('.featured-item img, .about-image').forEach(img => {
+    const tl = gsap.timeline({ paused: true })
+    tl.to(img, {
+      scale: 1.05,
+      duration: 0.5,
+      ease: 'power2.out'
     })
-    element.addEventListener('mouseleave', () => {
-      gsap.to(element, {
-        y: 0,
-        duration: 0.3,
-        ease: 'power2.out'
-      })
+    
+    img.addEventListener('mouseenter', () => tl.play())
+    img.addEventListener('mouseleave', () => tl.reverse())
+  })
+
+  // Stats counter animation
+  gsap.utils.toArray('.stat-number').forEach(stat => {
+    const value = parseInt(stat.textContent)
+    gsap.from(stat, {
+      scrollTrigger: {
+        trigger: stat,
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      },
+      textContent: 0,
+      duration: 1.5,
+      ease: 'power1.out',
+      snap: { textContent: 1 },
+      onUpdate: () => {
+        stat.textContent = Math.round(gsap.getProperty(stat, 'textContent'))
+      }
     })
   })
 }
@@ -833,47 +874,146 @@ h2 {
 
 /* Scroll Indicator */
 .scroll-indicator {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  animation: float 4s ease-in-out infinite;
-  opacity: 0.7;
+  position: relative;
 }
 
-.scroll-line {
-  width: 1px;
-  height: 32px;
-  background: #fff;
+.scroll-indicator::after {
+  content: '';
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 6px;
+  height: 6px;
+  background: currentColor;
+  border-radius: 50%;
+  opacity: 0.5;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+  50% { transform: translateX(-50%) scale(1.5); opacity: 0.2; }
+  100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+}
+
+/* Add smooth transitions for images */
+.featured-item img,
+.about-image {
+  transition: transform 0.5s ease, filter 0.5s ease;
+  will-change: transform;
+  transform-origin: center center;
+}
+
+/* Enhance hover effects */
+.featured-item {
   position: relative;
   overflow: hidden;
 }
 
-.scroll-line::after {
+.featured-item::after {
   content: '';
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: #fff;
-  animation: scroll 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  background: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.2) 100%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-@keyframes scroll {
-  0% { transform: translateY(-100%); }
-  50% { transform: translateY(100%); }
-  51% { transform: translateY(-100%); }
-  100% { transform: translateY(-100%); }
+.featured-item:hover::after {
+  opacity: 1;
 }
 
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0); }
-  50% { transform: translateX(-50%) translateY(-5px); }
+/* Enhance stat cards */
+.stat {
+  position: relative;
+  overflow: hidden;
+}
+
+.stat::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transform: scale(0.5);
+  transition: transform 0.6s ease, opacity 0.6s ease;
+}
+
+.stat:hover::before {
+  opacity: 1;
+  transform: scale(1);
+}
+
+/* Enhance CTA section */
+.cta {
+  position: relative;
+  overflow: hidden;
+}
+
+.cta::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(
+    circle at center,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 70%
+  );
+  opacity: 0;
+  transition: opacity 0.6s ease;
+}
+
+.cta:hover::before {
+  opacity: 1;
+}
+
+/* Enhance buttons */
+.btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.btn::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 150%;
+  height: 150%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.2) 0%,
+    transparent 70%
+  );
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.4s ease;
+}
+
+.btn:hover::after {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Add subtle text animations */
+h2, .overline {
+  transition: color 0.3s ease;
 }
 
 /* Responsive Design */
