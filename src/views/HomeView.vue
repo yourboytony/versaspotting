@@ -18,6 +18,26 @@
       <!-- Hero Section -->
       <section class="hero">
         <div class="hero-background">
+          <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
+               :key="photo.id" 
+               class="hero-slide"
+               :class="{ active: currentSlide === index }"
+               :style="{ backgroundImage: `url(${photo.imageUrl})` }">
+          </div>
+          <div class="hero-gradient"></div>
+        </div>
+
+        <div class="hero-content">
+          <div class="brand-tag">VERSA Spotting Group</div>
+          <h1 class="hero-title">
+            <span class="line">Capturing the Magic</span>
+            <span class="line">of Aviation at YVR</span>
+          </h1>
+          <p class="hero-description">Join Vancouver's elite community of aviation photographers and experience spotting like never before.</p>
+          <div class="hero-cta">
+            <button class="btn-primary">Explore Gallery</button>
+            <button class="btn-secondary">Join VERSA</button>
+          </div>
           <div class="background-slider">
             <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
                  :key="photo.id" 
