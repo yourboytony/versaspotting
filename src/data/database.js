@@ -262,40 +262,28 @@ export async function deletePhoto(profileId, photoId) {
 // Add a new profile
 export async function addProfile(profileData) {
   try {
-    console.log('Adding profile with data:', profileData)
-    
     const response = await fetch(`${API_BASE}/profiles`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify(profileData)
     })
 
-    console.log('Response status:', response.status)
-    
+    const data = await response.json()
+
     if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Error response:', errorText)
-      
-      let errorMessage
-      try {
-        const errorData = JSON.parse(errorText)
-        errorMessage = errorData.error || errorData.message || 'Failed to add profile'
-      } catch (e) {
-        errorMessage = errorText || 'Failed to add profile'
+      throw {
+        response: {
+          data: data
+        }
       }
-      
-      throw new Error(errorMessage)
     }
 
-    const data = await response.json()
-    console.log('Successfully added profile:', data)
     return data
   } catch (error) {
-    console.error('Error in addProfile:', error)
-    throw new Error(error.message || 'Failed to add profile')
+    console.error('Error adding profile:', error)
+    throw error
   }
 }
 

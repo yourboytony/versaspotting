@@ -169,7 +169,16 @@ export default {
         await loadProfiles()
       } catch (err) {
         console.error('Error adding profile:', err)
-        error.value = typeof err === 'string' ? err : (err.message || 'Failed to add profile')
+        // Handle different types of errors
+        if (err.response && err.response.data) {
+          error.value = err.response.data.error || err.response.data.message || 'Failed to add profile'
+        } else if (err.message) {
+          error.value = err.message
+        } else if (typeof err === 'string') {
+          error.value = err
+        } else {
+          error.value = 'Failed to add profile. Please try again.'
+        }
       }
     }
 
