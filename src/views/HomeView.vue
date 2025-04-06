@@ -112,9 +112,7 @@
     <!-- Features Section -->
     <section class="features">
       <div class="features-background">
-        <div class="features-particles">
-          <div v-for="n in 20" :key="n" class="particle"></div>
-        </div>
+        <div class="features-pattern"></div>
       </div>
       <div class="section-header">
         <h2>Why Join VERSA</h2>
@@ -127,7 +125,6 @@
           </div>
           <h3>Photographic Excellence</h3>
           <p>Our photographers are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
-          <div class="feature-glow"></div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
@@ -135,7 +132,6 @@
           </div>
           <h3>Community Focus</h3>
           <p>We believe in building a strong community of aviation enthusiasts and photographers who support and inspire each other.</p>
-          <div class="feature-glow"></div>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
@@ -143,7 +139,6 @@
           </div>
           <h3>YVR-Based</h3>
           <p>Located at Vancouver International Airport, we have prime access to some of the most beautiful aircraft in the world.</p>
-          <div class="feature-glow"></div>
         </div>
       </div>
     </section>
@@ -151,9 +146,7 @@
     <!-- Latest Announcements -->
     <section class="announcements">
       <div class="announcements-background">
-        <div class="announcements-particles">
-          <div v-for="n in 15" :key="n" class="particle"></div>
-        </div>
+        <div class="announcements-pattern"></div>
       </div>
       <div class="section-header">
         <h2>Latest Announcements</h2>
@@ -164,7 +157,6 @@
           <div class="announcement-date">{{ formatDate(announcement.date) }}</div>
           <h3>{{ announcement.title }}</h3>
           <p>{{ announcement.content }}</p>
-          <div class="announcement-glow"></div>
         </div>
       </div>
     </section>
@@ -535,11 +527,25 @@ const closePhotoModal = () => {
 </script>
 
 <style scoped>
+:root {
+  --primary-color: #829d50;
+  --primary-light: #a3b97a;
+  --primary-dark: #6a823f;
+  --background-color: #f5f7f0;
+  --text-color: #333333;
+  --card-background: #ffffff;
+  --border-color: rgba(130, 157, 80, 0.2);
+  --spacing-sm: 0.5rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 2rem;
+  --spacing-xl: 4rem;
+}
+
 .home {
   min-height: 100vh;
   overflow-x: hidden;
-  background: #000;
-  color: #fff;
+  background: var(--background-color);
+  color: var(--text-color);
 }
 
 /* Hero Section */
@@ -597,7 +603,7 @@ const closePhotoModal = () => {
   font-weight: 800;
   margin-bottom: 1rem;
   color: #fff;
-  text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+  text-shadow: 0 0 20px rgba(130, 157, 80, 0.5);
   letter-spacing: -1px;
   line-height: 1.1;
 }
@@ -658,21 +664,21 @@ const closePhotoModal = () => {
 }
 
 .button.primary {
-  background: #fff;
-  color: #000;
-  box-shadow: 0 5px 15px rgba(255, 255, 255, 0.2);
+  background: var(--primary-color);
+  color: #fff;
+  box-shadow: 0 5px 15px rgba(130, 157, 80, 0.4);
 }
 
 .button.secondary {
   background: transparent;
-  border: 2px solid #fff;
-  color: #fff;
+  border: 2px solid var(--primary-color);
+  color: var(--primary-color);
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .button:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 15px 30px rgba(130, 157, 80, 0.4);
 }
 
 /* Recent Uploads Section */
@@ -684,7 +690,7 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   padding: 6rem 2rem;
-  background: #000;
+  background: var(--background-color);
 }
 
 .section-header {
@@ -695,13 +701,27 @@ const closePhotoModal = () => {
 .section-header h2 {
   font-size: 3rem;
   margin-bottom: 1rem;
-  color: #fff;
+  color: var(--primary-color);
   font-weight: 700;
   letter-spacing: -1px;
+  position: relative;
+  display: inline-block;
+}
+
+.section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 3px;
 }
 
 .section-header p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
   font-size: 1.2rem;
   font-weight: 400;
 }
@@ -726,7 +746,7 @@ const closePhotoModal = () => {
   aspect-ratio: 4/3;
   cursor: pointer;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
   transform-style: preserve-3d;
   perspective: 1000px;
 }
@@ -745,7 +765,7 @@ const closePhotoModal = () => {
 .photo-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.5) 50%, transparent 100%);
+  background: linear-gradient(to top, rgba(130, 157, 80, 0.9) 0%, rgba(130, 157, 80, 0.5) 50%, transparent 100%);
   opacity: 0;
   transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
@@ -797,7 +817,7 @@ const closePhotoModal = () => {
 .view-all-btn {
   display: inline-block;
   padding: 1rem 2.5rem;
-  background: transparent;
+  background: var(--primary-color);
   color: #fff;
   text-decoration: none;
   border-radius: 30px;
@@ -805,7 +825,6 @@ const closePhotoModal = () => {
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  border: 2px solid #fff;
   font-size: 1.1rem;
   letter-spacing: -0.5px;
 }
@@ -832,8 +851,7 @@ const closePhotoModal = () => {
 
 .view-all-btn:hover {
   transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(255, 255, 255, 0.1);
-  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 15px 30px rgba(130, 157, 80, 0.4);
 }
 
 /* About Section */
@@ -845,7 +863,7 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   padding: 6rem 2rem;
-  background: #000;
+  background: #fff;
 }
 
 .about-wrapper {
@@ -869,7 +887,7 @@ const closePhotoModal = () => {
 
 .about-title h2 {
   font-size: 3.5rem;
-  color: #fff;
+  color: var(--primary-color);
   font-weight: 700;
   margin: 0;
   letter-spacing: -1px;
@@ -878,13 +896,13 @@ const closePhotoModal = () => {
 .title-line {
   width: 100px;
   height: 3px;
-  background: #fff;
+  background: var(--primary-color);
   border-radius: 3px;
 }
 
 .about-subtitle {
   font-size: 1.5rem;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
   margin: 0;
   font-weight: 500;
   letter-spacing: -0.5px;
@@ -900,7 +918,7 @@ const closePhotoModal = () => {
 .about-text {
   font-size: 1.2rem;
   line-height: 1.8;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
 }
 
 .about-text p {
@@ -918,33 +936,33 @@ const closePhotoModal = () => {
 }
 
 .stat-box {
-  background: rgba(255, 255, 255, 0.05);
+  background: #fff;
   padding: 2rem;
   border-radius: 20px;
   text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
 .stat-box:hover {
   transform: translateY(-10px);
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 30px 50px rgba(130, 157, 80, 0.2);
+  border-color: var(--primary-color);
 }
 
 .stat-value {
   display: block;
   font-size: 3.5rem;
   font-weight: 700;
-  color: #fff;
+  color: var(--primary-color);
   margin-bottom: 0.5rem;
   line-height: 1;
   letter-spacing: -1px;
 }
 
 .stat-label {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
   font-size: 1.1rem;
   font-weight: 500;
   letter-spacing: -0.5px;
@@ -959,7 +977,7 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   padding: 6rem 2rem;
-  background: #000;
+  background: var(--background-color);
   overflow: hidden;
 }
 
@@ -969,54 +987,19 @@ const closePhotoModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, #000000, #1a1a1a);
+  background: #fff;
   z-index: 0;
 }
 
-.features-particles {
+.features-pattern {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
-}
-
-.particle {
-  position: absolute;
-  width: 3px;
-  height: 3px;
-  background: rgba(255, 255, 255, 0.5);
-  border-radius: 50%;
-  animation: float 15s infinite linear;
-}
-
-.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
-.particle:nth-child(2) { left: 20%; top: 60%; animation-delay: 1s; }
-.particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 2s; }
-.particle:nth-child(4) { left: 40%; top: 80%; animation-delay: 3s; }
-.particle:nth-child(5) { left: 50%; top: 30%; animation-delay: 4s; }
-.particle:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; }
-.particle:nth-child(7) { left: 70%; top: 50%; animation-delay: 6s; }
-.particle:nth-child(8) { left: 80%; top: 90%; animation-delay: 7s; }
-.particle:nth-child(9) { left: 90%; top: 10%; animation-delay: 8s; }
-.particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 9s; }
-
-@keyframes float {
-  0% {
-    transform: translateY(0) rotate(0deg);
-    opacity: 0;
-  }
-  10% {
-    opacity: 1;
-  }
-  90% {
-    opacity: 1;
-  }
-  100% {
-    transform: translateY(-100vh) rotate(360deg);
-    opacity: 0;
-  }
+  background-image: radial-gradient(var(--primary-color) 1px, transparent 1px);
+  background-size: 30px 30px;
+  opacity: 0.1;
 }
 
 .features-grid {
@@ -1032,10 +1015,10 @@ const closePhotoModal = () => {
 
 .feature-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.05);
+  background: #fff;
   padding: 2.5rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
   text-align: center;
   height: 100%;
   display: flex;
@@ -1043,35 +1026,18 @@ const closePhotoModal = () => {
   justify-content: flex-start;
   align-items: center;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.feature-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.feature-card:hover .feature-glow {
-  opacity: 1;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
 .feature-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-10px);
+  box-shadow: 0 30px 50px rgba(130, 157, 80, 0.2);
+  border-color: var(--primary-color);
 }
 
 .feature-icon {
   font-size: 2.5rem;
-  color: #fff;
+  color: var(--primary-color);
   margin-bottom: 1.5rem;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
@@ -1082,7 +1048,7 @@ const closePhotoModal = () => {
   position: absolute;
   width: 50px;
   height: 50px;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(130, 157, 80, 0.1);
   border-radius: 50%;
   top: 50%;
   left: 50%;
@@ -1097,19 +1063,19 @@ const closePhotoModal = () => {
 
 .feature-card:hover .feature-icon::after {
   transform: translate(-50%, -50%) scale(1.5);
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(130, 157, 80, 0.2);
 }
 
 .feature-card h3 {
   font-size: 1.5rem;
-  color: #fff;
+  color: var(--primary-color);
   margin-bottom: 1rem;
   font-weight: 600;
   letter-spacing: -0.5px;
 }
 
 .feature-card p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
   font-size: 1.1rem;
   line-height: 1.6;
   margin: 0;
@@ -1125,7 +1091,7 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   padding: 6rem 2rem;
-  background: #000;
+  background: #fff;
   overflow: hidden;
 }
 
@@ -1135,17 +1101,23 @@ const closePhotoModal = () => {
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(135deg, #000000, #1a1a1a);
+  background: var(--background-color);
   z-index: 0;
 }
 
-.announcements-particles {
+.announcements-pattern {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  overflow: hidden;
+  background-image: linear-gradient(45deg, var(--primary-color) 25%, transparent 25%), 
+                    linear-gradient(-45deg, var(--primary-color) 25%, transparent 25%), 
+                    linear-gradient(45deg, transparent 75%, var(--primary-color) 75%), 
+                    linear-gradient(-45deg, transparent 75%, var(--primary-color) 75%);
+  background-size: 60px 60px;
+  background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
+  opacity: 0.05;
 }
 
 .announcements-grid {
@@ -1161,46 +1133,29 @@ const closePhotoModal = () => {
 
 .announcement-card {
   position: relative;
-  background: rgba(255, 255, 255, 0.05);
+  background: #fff;
   padding: 2.5rem;
   border-radius: 20px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid var(--border-color);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
-  overflow: hidden;
-}
-
-.announcement-glow {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
-  opacity: 0;
-  transition: opacity 0.5s ease;
-}
-
-.announcement-card:hover .announcement-glow {
-  opacity: 1;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
 }
 
 .announcement-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  box-shadow: 0 30px 50px rgba(0, 0, 0, 0.3);
-  background: rgba(255, 255, 255, 0.1);
+  transform: translateY(-10px);
+  box-shadow: 0 30px 50px rgba(130, 157, 80, 0.2);
+  border-color: var(--primary-color);
 }
 
 .announcement-date {
-  color: rgba(255, 255, 255, 0.6);
+  color: var(--primary-color);
   font-size: 0.9rem;
   margin-bottom: 1rem;
   font-weight: 500;
 }
 
 .announcement-card h3 {
-  color: #fff;
+  color: var(--text-color);
   font-size: 1.3rem;
   margin-bottom: 1rem;
   font-weight: 600;
@@ -1208,7 +1163,7 @@ const closePhotoModal = () => {
 }
 
 .announcement-card p {
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-color);
   line-height: 1.6;
   font-weight: 400;
 }
@@ -1222,7 +1177,7 @@ const closePhotoModal = () => {
   justify-content: center;
   align-items: center;
   padding: 6rem 2rem;
-  background: #000;
+  background: var(--primary-color);
   text-align: center;
   overflow: hidden;
 }
@@ -1241,6 +1196,7 @@ const closePhotoModal = () => {
   height: 100%;
   object-fit: cover;
   transform: scale(1.1);
+  opacity: 0.3;
 }
 
 .cta-overlay {
@@ -1251,8 +1207,8 @@ const closePhotoModal = () => {
   bottom: 0;
   background: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0.8),
-    rgba(0, 0, 0, 0.95)
+    rgba(130, 157, 80, 0.8),
+    rgba(130, 157, 80, 0.95)
   );
   z-index: 1;
 }
@@ -1286,7 +1242,7 @@ const closePhotoModal = () => {
   font-size: 1.2rem;
   padding: 1.2rem 3rem;
   background: #fff;
-  color: #000;
+  color: var(--primary-color);
   border: none;
   box-shadow: 0 10px 30px rgba(255, 255, 255, 0.2);
 }
