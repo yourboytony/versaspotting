@@ -69,7 +69,14 @@ import { useDataStore } from '@/stores/dataStore'
 const router = useRouter()
 const store = useDataStore()
 const searchQuery = ref('')
-const photographers = ref([])
+
+const photographers = computed(() => 
+  store.photographers.map(p => ({
+    ...p,
+    tags: [p.specialty, p.location].filter(Boolean),
+    coverImage: store.photos.find(photo => photo.photographerId === p.id)?.imageUrl || '/placeholder.jpg'
+  }))
+)
 
 const filteredPhotographers = computed(() => {
   if (!searchQuery.value) return photographers.value
@@ -94,12 +101,13 @@ const viewPortfolio = (id) => {
 }
 
 onMounted(async () => {
-  // Load photographers from the store
-  photographers.value = store.photographers.map(p => ({
-    ...p,
-    tags: [p.specialty, p.location].filter(Boolean),
-    coverImage: store.photos.find(photo => photo.photographerId === p.id)?.imageUrl || '/placeholder.jpg'
-  }))
+  try {
+    if (!store.isInitialized) {
+      await store.initializeData()
+    }
+  } catch (error) {
+    console.error('Error loading photographers:', error)
+  }
 })
 </script>
 
