@@ -1,1346 +1,608 @@
 <template>
-  <div class="home">
-    <!-- Loading State -->
-    <div v-if="isLoading" class="loading-state">
-      <div class="loading-spinner"></div>
-      <p>Loading VERSA Spotting Group...</p>
-    </div>
-
-    <!-- Error State -->
-    <div v-else-if="error" class="error-state">
-      <h2>Oops! Something went wrong</h2>
-      <p>{{ error }}</p>
-      <button @click="retryInitialization" class="btn">Retry</button>
-    </div>
-
-    <!-- Content -->
-    <template v-else>
-      <!-- Hero Section -->
-      <section class="hero">
-        <div class="hero-background">
-          <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
-               :key="photo.id" 
-               class="hero-slide"
-               :class="{ active: currentSlide === index }"
-               :style="{ backgroundImage: `url(${photo.imageUrl})` }">
-          </div>
-          <div class="hero-gradient"></div>
+  <main class="home">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-media">
+        <div class="hero-image-container" 
+             v-for="(photo, index) in featuredPhotos" 
+             :key="photo.id"
+             :class="{ active: currentSlide === index }">
+          <img :src="photo.imageUrl" :alt="photo.title" class="hero-image">
         </div>
+        <div class="hero-overlay"></div>
+      </div>
 
-        <div class="hero-content">
-          <div class="brand-tag">VERSA Spotting Group</div>
-          <h1 class="hero-title">
-            <span class="line">Capturing the Magic</span>
-            <span class="line">of Aviation at YVR</span>
+      <div class="hero-content container">
+        <div class="hero-text">
+          <h1 class="glide-in">
+            <span class="line">Vancouver's Elite</span>
+            <span class="line accent">Aviation Photography</span>
+            <span class="line">Community</span>
           </h1>
-          <p class="hero-description">Join Vancouver's elite community of aviation photographers and experience spotting like never before.</p>
-          <div class="hero-cta">
-            <button class="btn-primary">Explore Gallery</button>
-            <button class="btn-secondary">Join VERSA</button>
-          </div>
-          <div class="background-slider">
-            <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
-                 :key="photo.id" 
-                 class="background-image"
-                 :class="{ active: currentBackgroundIndex === index }"
-                 :style="{ backgroundImage: `url(${photo.imageUrl})` }">
-            </div>
-          </div>
-          <div class="hero-overlay"></div>
-        </div>
-        <div class="hero-content">
-          <div class="welcome-text">
-            <h2 class="pre-title">WELCOME TO</h2>
-            <h1>VERSA<br>Spotting Group</h1>
-          </div>
-          <p class="hero-description">Capturing the extraordinary at Vancouver International Airport. Join our community of passionate aviation photographers.</p>
-          <div class="hero-buttons">
-            <router-link to="/portfolio" class="btn btn-primary">Explore Gallery</router-link>
-            <router-link to="/applications" class="btn btn-outline">Join VERSA</router-link>
+          <p class="hero-subtitle fade-in">
+            Experience the art of aviation photography at YVR's most exclusive locations
+          </p>
+          <div class="hero-cta fade-in">
+            <button class="btn-primary">Join VERSA</button>
+            <button class="btn-secondary">View Gallery</button>
           </div>
         </div>
-        <div class="scroll-indicator">
-          <span>SCROLL TO EXPLORE</span>
-          <div class="scroll-line"></div>
-        </div>
-      </section>
 
-      <!-- Featured Section -->
-      <section class="featured">
-        <div class="section-content">
-          <div class="section-header">
-            <span class="overline">Featured</span>
+        <div class="hero-counter">
+          <div class="counter-item" v-for="stat in stats" :key="stat.label">
+            <div class="counter-number">{{ stat.value }}</div>
+            <div class="counter-label">{{ stat.label }}</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="scroll-indicator">
+        <span>Scroll to Explore</span>
+        <div class="scroll-line"></div>
+      </div>
+    </section>
+
+    <!-- Latest Captures -->
+    <section class="latest">
+      <div class="container">
+        <div class="section-header">
+          <div class="header-content">
+            <span class="overline">Featured Work</span>
             <h2>Latest Captures</h2>
+            <p>Discover our most recent premium aviation photographs</p>
           </div>
-          <div class="featured-grid">
-            <div v-for="photo in recentPhotos" 
-                 :key="photo.id" 
-                 class="featured-item"
-                 @click="openPhotoModal(photo)">
-              <div class="featured-image">
-                <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
-                <div class="featured-overlay">
-                  <div class="featured-info">
-                    <h3>{{ photo.title }}</h3>
-                    <p>{{ photo.description }}</p>
-                    <span class="photographer">By {{ photo.photographer }}</span>
-                    <span class="location">{{ photo.location }}</span>
-                  </div>
-                </div>
+        </div>
+
+        <div class="photo-grid">
+          <div v-for="photo in recentPhotos" 
+               :key="photo.id" 
+               class="photo-card"
+               @mouseenter="hoverPhoto(photo)"
+               @mouseleave="unhoverPhoto">
+            <div class="photo-image">
+              <img :src="photo.imageUrl" :alt="photo.title">
+            </div>
+            <div class="photo-info">
+              <h3>{{ photo.title }}</h3>
+              <p>{{ photo.description }}</p>
+              <div class="photo-meta">
+                <span class="photographer">{{ photo.photographer }}</span>
+                <span class="location">{{ photo.location }}</span>
               </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Stats Section -->
-      <section class="stats">
-        <div class="section-content">
-          <span class="overline">Our Community</span>
-          <h2>VERSA in Numbers</h2>
-          <div class="stats-grid">
-            <div class="stat">
-              <div class="stat-number">{{ totalPhotographers }}</div>
-              <div class="stat-label">Photographers</div>
-              <div class="stat-description">Active members capturing aviation moments</div>
-            </div>
-            <div class="stat">
-              <div class="stat-number">{{ totalPhotos }}</div>
-              <div class="stat-label">Photos</div>
-              <div class="stat-description">High-quality aviation photographs</div>
-            </div>
-            <div class="stat">
-              <div class="stat-number">{{ totalLocations }}</div>
-              <div class="stat-label">Locations</div>
-              <div class="stat-description">Premium spotting locations around YVR</div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- About Section -->
-      <section class="about">
-        <div class="section-content">
-          <span class="overline">About Us</span>
-          <h2>Vancouver's Premier Aviation Photography Community</h2>
-          <div class="about-grid">
-            <div class="about-text">
-              <p>VERSA Spotting Group is Vancouver's leading community of aviation photographers, dedicated to capturing the beauty and power of aircraft at YVR International Airport. Our members range from enthusiastic beginners to seasoned professionals, all united by their passion for aviation photography.</p>
-              <div class="features">
-                <div class="feature">
-                  <div class="feature-icon">📸</div>
-                  <h3>Expert Guidance</h3>
-                  <p>Learn from experienced aviation photographers</p>
-                </div>
-                <div class="feature">
-                  <div class="feature-icon">🤝</div>
-                  <h3>Active Community</h3>
-                  <p>Join regular meetups and photography events</p>
-                </div>
-              </div>
-            </div>
-            <div class="about-image">
-              <img :src="recentPhotos[0]?.imageUrl" alt="Aviation Photography" @error="handleImageError">
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- CTA Section -->
-      <section class="cta">
-        <div class="section-content">
-          <span class="overline">Join Us</span>
-          <h2>Ready to Start Your Journey?</h2>
-          <p>Become part of Vancouver's most passionate aviation photography community. Share your work, learn from others, and capture extraordinary moments.</p>
-          <div class="cta-buttons">
-            <router-link to="/applications" class="btn btn-primary">Apply Now</router-link>
-            <router-link to="/portfolio" class="btn btn-outline">View Gallery</router-link>
-          </div>
-        </div>
-      </section>
-
-      <!-- Photo Modal -->
-      <div v-if="selectedPhoto" class="photo-modal" @click="closePhotoModal">
-        <div class="modal-content" @click.stop>
-          <button class="modal-close" @click="closePhotoModal">&times;</button>
-          <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title">
-          <div class="modal-info">
-            <h3>{{ selectedPhoto.title }}</h3>
-            <p>{{ selectedPhoto.description }}</p>
-            <div class="modal-meta">
-              <span>By {{ selectedPhoto.photographer }}</span>
-              <span>{{ formatDate(selectedPhoto.date) }}</span>
             </div>
           </div>
         </div>
       </div>
-    </template>
-  </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+      <div class="container">
+        <div class="about-grid">
+          <div class="about-content">
+            <span class="overline">About VERSA</span>
+            <h2>Premium Aviation Photography Experience</h2>
+            <p class="about-lead">
+              Join Vancouver's most prestigious aviation photography community and elevate your spotting experience.
+            </p>
+            <div class="feature-grid">
+              <div class="feature-item" v-for="feature in features" :key="feature.title">
+                <div class="feature-icon">{{ feature.icon }}</div>
+                <h3>{{ feature.title }}</h3>
+                <p>{{ feature.description }}</p>
+              </div>
+            </div>
+          </div>
+          <div class="about-media">
+            <div class="media-stack">
+              <img :src="aboutImages[0]" alt="Aviation photography" class="stack-image main">
+              <img :src="aboutImages[1]" alt="Aviation photography" class="stack-image accent">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Join Section -->
+    <section class="join">
+      <div class="container">
+        <div class="join-content">
+          <h2>Ready to Join VERSA?</h2>
+          <p>Start your journey with Vancouver's most exclusive aviation photography community</p>
+          <button class="btn-primary">Apply Now</button>
+        </div>
+      </div>
+    </section>
+  </main>
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useDataStore } from '../stores/dataStore'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
-import { useDataStore } from '../stores/dataStore'
 import SplitType from 'split-type'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const dataStore = useDataStore()
-const selectedPhoto = ref(null)
-const isLoading = ref(true)
-const currentBackgroundIndex = ref(0)
-const backgroundInterval = ref(null)
-const error = ref(null)
+const currentSlide = ref(0)
 
-// Format date helper
-const formatDate = (date) => {
-  return new Date(date).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  })
-}
+// Computed properties
+const featuredPhotos = computed(() => dataStore.photos?.slice(0, 3) || [])
+const recentPhotos = computed(() => dataStore.photos?.slice(0, 6) || [])
+const aboutImages = computed(() => dataStore.photos?.slice(0, 2).map(p => p.imageUrl) || [])
 
-// Get recent photos with error handling
-const recentPhotos = computed(() => {
-  const photos = dataStore.photos || []
-  return photos
-    .slice()
-    .sort((a, b) => new Date(b.date) - new Date(a.date))
-    .slice(0, 6)
-    .map(photo => ({
-      ...photo,
-      photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
-    }))
-})
+const stats = computed(() => [
+  { value: dataStore.photographers?.length || 0, label: 'Photographers' },
+  { value: dataStore.photos?.length || 0, label: 'Premium Captures' },
+  { value: dataStore.spotterLocations?.length || 0, label: 'Elite Locations' }
+])
 
-// Watch for data initialization
-watchEffect(() => {
-  if (dataStore.isInitialized) {
-    if (recentPhotos.value.length > 0) {
-      isLoading.value = false
-    } else {
-      error.value = 'No photos available'
-      isLoading.value = false
-    }
+const features = [
+  {
+    icon: '🎯',
+    title: 'Premium Locations',
+    description: 'Access to exclusive spotting locations around YVR'
+  },
+  {
+    icon: '📸',
+    title: 'Expert Guidance',
+    description: 'Learn from Vancouver\'s top aviation photographers'
+  },
+  {
+    icon: '🌟',
+    title: 'Quality Focus',
+    description: 'Premium equipment and advanced techniques'
+  },
+  {
+    icon: '👥',
+    title: 'Elite Community',
+    description: 'Connect with passionate aviation enthusiasts'
   }
-})
+]
 
-// Error handling for images
-const handleImageError = (event) => {
-  event.target.src = 'https://via.placeholder.com/800x600?text=Photo+Not+Available'
-}
-
-// Stats
-const totalPhotos = computed(() => {
-  const photos = dataStore.photos || []
-  return photos.length
-})
-
-const totalPhotographers = computed(() => {
-  const photographers = dataStore.photographers || []
-  return photographers.length
-})
-
-const totalLocations = computed(() => {
-  const locations = dataStore.spotterLocations || []
-  return locations.length
-})
-
-// Rotate background images
-const rotateBackground = () => {
-  if (recentPhotos.value.length > 0) {
-    currentBackgroundIndex.value = (currentBackgroundIndex.value + 1) % Math.min(3, recentPhotos.value.length)
-  }
-}
-
-// Update the initializeAnimations function
-const initializeAnimations = () => {
-  // Typing animation for hero description
-  const heroText = new SplitType('.hero-description', { types: 'words,chars' })
-  gsap.from(heroText.chars, {
-    opacity: 0,
-    y: 20,
-    rotateX: -90,
-    stagger: 0.02,
-    duration: 0.8,
-    ease: 'back.out(1.7)',
-    scrollTrigger: {
-      trigger: '.hero-description',
-      start: 'top 80%',
-    }
-  })
-
-  // Enhanced hero title animation
-  const titleText = new SplitType('.hero-content h1', { types: 'words,chars' })
-  gsap.from(titleText.chars, {
-    opacity: 0,
-    scale: 0,
-    y: 100,
-    rotateX: -60,
-    transformOrigin: '50% 50% -50',
-    stagger: 0.05,
-    duration: 1,
-    ease: 'back.out(1.7)',
-    scrollTrigger: {
-      trigger: '.hero-content h1',
-      start: 'top 80%',
-    }
-  })
-
-  // Subtle parallax for hero section
-  gsap.to('.background-image.active', {
-    y: '15%',
-    scale: 1.05,
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 1
-    }
-  })
-
-  // Floating animation for hero content with depth
-  gsap.to('.hero-content', {
-    y: '-30px',
-    rotateX: '5deg',
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: 'bottom top',
-      scrub: 2
-    }
-  })
-
-  // Enhanced section transitions with 3D effect
-  gsap.utils.toArray('section').forEach(section => {
-    gsap.from(section, {
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 80%',
-      },
-      y: 60,
-      rotateX: '5deg',
+// Animation functions
+const initAnimations = () => {
+  // Split text for hero title
+  const heroTitle = new SplitType('.hero-text h1', { types: 'lines' })
+  
+  // Hero animations
+  const heroTL = gsap.timeline({ delay: 0.5 })
+  heroTL
+    .from(heroTitle.lines, {
+      y: 100,
       opacity: 0,
-      duration: 1.2,
-      ease: 'power4.out'
+      duration: 1,
+      stagger: 0.2,
+      ease: 'power3.out'
     })
-  })
+    .from('.hero-subtitle', {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.5')
+    .from('.hero-cta', {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.7')
+    .from('.hero-counter', {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.5')
 
-  // Featured items stagger with 3D hover
-  gsap.from('.featured-item', {
+  // Scroll animations
+  gsap.from('.photo-card', {
     scrollTrigger: {
-      trigger: '.featured-grid',
+      trigger: '.photo-grid',
       start: 'top 80%'
     },
     y: 100,
-    rotateX: '15deg',
     opacity: 0,
     duration: 1,
-    stagger: 0.15,
-    ease: 'power4.out'
-  })
-
-  // Stats counter animation
-  gsap.utils.toArray('.stat-number').forEach(stat => {
-    const endValue = parseInt(stat.textContent)
-    gsap.from(stat, {
-      textContent: 0,
-      duration: 2,
-      ease: 'power1.out',
-      snap: { textContent: 1 },
-      scrollTrigger: {
-        trigger: stat,
-        start: 'top 80%',
-      }
-    })
-  })
-
-  // Features enhanced animation
-  gsap.from('.feature', {
-    scrollTrigger: {
-      trigger: '.features',
-      start: 'top 80%'
-    },
-    y: 60,
-    opacity: 0,
-    rotateX: '10deg',
-    duration: 0.8,
     stagger: 0.2,
-    ease: 'back.out(1.4)'
+    ease: 'power3.out'
   })
 
-  // Typing animation for section titles
-  gsap.utils.toArray('section h2').forEach(title => {
-    const titleText = new SplitType(title, { types: 'words,chars' })
-    gsap.from(titleText.chars, {
-      opacity: 0,
-      y: 20,
-      rotateX: -90,
-      stagger: 0.02,
-      duration: 0.6,
-      ease: 'back.out(1.7)',
-      scrollTrigger: {
-        trigger: title,
-        start: 'top 80%',
-      }
-    })
+  gsap.from('.feature-item', {
+    scrollTrigger: {
+      trigger: '.feature-grid',
+      start: 'top 80%'
+    },
+    y: 50,
+    opacity: 0,
+    duration: 0.8,
+    stagger: 0.1,
+    ease: 'power3.out'
+  })
+
+  gsap.from('.media-stack img', {
+    scrollTrigger: {
+      trigger: '.about-media',
+      start: 'top 80%'
+    },
+    y: 100,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.3,
+    ease: 'power3.out'
   })
 }
 
-// Component lifecycle
-onMounted(async () => {
-  try {
-    await dataStore.initializeData()
-    
-    if (recentPhotos.value.length > 0) {
-      backgroundInterval.value = setInterval(rotateBackground, 5000)
-    }
-    
-    if (!error.value) {
-      initializeAnimations()
-    }
-
-    // Handle navigation background on scroll
-    const handleScroll = () => {
-      const nav = document.querySelector('nav')
-      if (nav) {
-        if (window.scrollY > 50) {
-          nav.classList.add('scrolled')
-        } else {
-          nav.classList.remove('scrolled')
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll)
-    handleScroll() // Initial check
-  } catch (e) {
-    error.value = e.message
-  }
-})
-
-onUnmounted(() => {
-  ScrollTrigger.getAll().forEach(trigger => trigger.kill())
-  if (backgroundInterval.value) {
-    clearInterval(backgroundInterval.value)
-  }
-  // Remove scroll listener
-  window.removeEventListener('scroll', handleScroll)
-})
-
-// Modal handlers
-const openPhotoModal = (photo) => {
-  selectedPhoto.value = photo
-  document.body.style.overflow = 'hidden'
+// Slide rotation
+const rotateSlides = () => {
+  setInterval(() => {
+    currentSlide.value = (currentSlide.value + 1) % 3
+  }, 5000)
 }
 
-const closePhotoModal = () => {
-  selectedPhoto.value = null
-  document.body.style.overflow = 'auto'
-}
+onMounted(() => {
+  initAnimations()
+  rotateSlides()
+})
 </script>
 
 <style scoped>
-/* CSS Reset */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-/* Variables */
+/* Base Styles */
 :root {
-  --primary: #829d50;
-  --primary-light: #a3b97a;
-  --primary-dark: #6a823f;
-  --text: #1d1d1f;
-  --text-secondary: #86868b;
-  --background: #ffffff;
-  --section-bg: #f5f5f7;
-  --card-bg: #ffffff;
-  --border-radius: 14px;
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 1rem;
-  --spacing-md: 2rem;
-  --spacing-lg: 4rem;
-  --spacing-xl: 8rem;
+  --primary: #1e1e1e;
+  --secondary: #292929;
+  --accent: #64ffda;
+  --text: #ffffff;
+  --text-secondary: rgba(255, 255, 255, 0.7);
+  --spacing: clamp(1rem, 5vw, 2rem);
+  --radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Global Styles */
-.home {
-  margin: 0;
-  padding: 0;
-  position: relative;
-  min-height: 100vh;
-  overflow-x: hidden;
-}
-
-.section-content {
-  max-width: 1200px;
+.container {
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
+  padding: 0 var(--spacing);
+}
+
+/* Typography */
+h1, h2, h3 {
+  margin: 0;
+  line-height: 1.2;
 }
 
 .overline {
-  display: block;
-  font-size: 1rem;
-  font-weight: 600;
+  font-size: 0.875rem;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--primary);
-  margin-bottom: var(--spacing-sm);
-}
-
-h2 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
-  font-weight: 700;
-  line-height: 1.1;
-  margin-bottom: var(--spacing-lg);
-  color: var(--text);
+  letter-spacing: 0.2em;
+  color: var(--accent);
+  margin-bottom: 1rem;
+  display: block;
 }
 
 /* Hero Section */
 .hero {
   height: 100vh;
-  width: 100%;
   position: relative;
   display: flex;
   align-items: center;
-  color: #fff;
+  color: var(--text);
   overflow: hidden;
-  margin: 0;
-  padding: 0;
-  top: 0;
-  left: 0;
-  right: 0;
 }
 
-.hero-background {
+.hero-media {
   position: absolute;
   inset: 0;
   z-index: 0;
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
 }
 
-.background-slider {
+.hero-image-container {
   position: absolute;
   inset: 0;
-  margin: 0;
-  padding: 0;
-}
-
-.background-image {
-  position: absolute;
-  inset: 0;
-  background-size: cover;
-  background-position: center;
   opacity: 0;
-  transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1.1);
-  filter: brightness(0.8) saturate(1.2);
-  z-index: 0;
+  transition: opacity 1s ease-out, transform 6s ease-out;
 }
 
-.background-image.active {
+.hero-image-container.active {
   opacity: 1;
   transform: scale(1);
+}
+
+.hero-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom,
-    rgba(0,0,0,0.3),
-    rgba(0,0,0,0.5) 50%,
-    rgba(0,0,0,0.7)
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.4) 0%,
+    rgba(0, 0, 0, 0.8) 100%
   );
   z-index: 1;
-}
-
-.hero-overlay::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(
-    circle at 50% 0%,
-    rgba(130, 157, 80, 0.2),
-    transparent 70%
-  );
-  z-index: -1;
 }
 
 .hero-content {
   position: relative;
-  z-index: 20;
-  max-width: 1000px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-  text-align: center;
-  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.welcome-text {
-  text-align: center;
-  margin-bottom: var(--spacing-lg);
-  position: relative;
-  z-index: 20;
-}
-
-.pre-title {
-  font-size: 1.5rem;
-  font-weight: 500;
-  color: #ffffff;
-  margin-bottom: var(--spacing-sm);
-  letter-spacing: 0.2em;
-  opacity: 1;
-  text-shadow: 0 0 20px rgba(255,255,255,0.5);
-  animation: glowPulse 2s infinite;
-}
-
-h1 {
-  font-size: clamp(3rem, 10vw, 6rem);
-  font-weight: 800;
-  line-height: 1;
-  color: #ffffff;
-  margin: var(--spacing-sm) 0;
-  letter-spacing: -0.02em;
-  text-shadow: 
-    0 0 40px rgba(255,255,255,0.4),
-    0 0 80px rgba(255,255,255,0.2);
-  animation: textGlow 2s infinite alternate;
-  position: relative;
-}
-
-h1::after {
-  content: '';
-  position: absolute;
-  inset: -10px;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  filter: blur(20px);
-  z-index: -1;
-}
-
-.hero-description {
-  font-size: clamp(1.25rem, 3vw, 1.5rem);
-  max-width: 600px;
-  margin: 0 auto var(--spacing-lg);
-  opacity: 1;
-  color: #ffffff;
-  text-shadow: 0 0 20px rgba(255,255,255,0.3);
-  position: relative;
-  z-index: 20;
-  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.3s backwards;
-}
-
-.hero-buttons {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
-  margin-bottom: var(--spacing-xl);
-  position: relative;
-  z-index: 20;
-  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.6s backwards;
-}
-
-.btn {
-  position: relative;
-  overflow: hidden;
-  background: rgba(255,255,255,0.1);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.2);
-  box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-  transform: translateX(-100%);
-  transition: transform 0.6s;
-}
-
-.btn:hover::before {
-  transform: translateX(100%);
-}
-
-.btn::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
-  opacity: 0;
-  transition: opacity 0.4s;
-}
-
-.btn:hover::after {
-  opacity: 1;
-}
-
-.btn-primary {
-  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-  border: none;
-}
-
-.btn-primary:hover {
-  transform: translateY(-4px) scale(1.02);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.3),
-    0 0 0 1px rgba(255,255,255,0.1),
-    0 0 20px rgba(130, 157, 80, 0.4);
-}
-
-.btn-outline:hover {
-  background: rgba(255,255,255,0.15);
-  border-color: rgba(255,255,255,0.4);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.3),
-    0 0 30px rgba(255,255,255,0.2);
-}
-
-/* Add new animations */
-@keyframes glowPulse {
-  0%, 100% { text-shadow: 0 0 20px rgba(255,255,255,0.5); }
-  50% { text-shadow: 0 0 40px rgba(255,255,255,0.8); }
-}
-
-@keyframes textGlow {
-  from { text-shadow: 0 0 40px rgba(255,255,255,0.4), 0 0 80px rgba(255,255,255,0.2); }
-  to { text-shadow: 0 0 60px rgba(255,255,255,0.6), 0 0 100px rgba(255,255,255,0.3); }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.scroll-indicator {
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4rem;
   align-items: center;
-  gap: 0.75rem;
-  z-index: 20;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  opacity: 0.7;
-  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.9s backwards;
 }
 
-.scroll-line {
-  width: 2px;
-  height: 50px;
-  background: linear-gradient(to bottom, #fff, transparent);
-  animation: scrollPulse 2s infinite;
-  position: relative;
+.hero-text {
+  max-width: 800px;
 }
 
-.scroll-line::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
-  background: #fff;
-  border-radius: 50%;
-  filter: blur(2px);
-  animation: scrollDot 2s infinite;
+.hero-text h1 {
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-weight: 800;
+  margin-bottom: 2rem;
 }
 
-@keyframes scrollDot {
-  0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
-  100% { transform: translate(-50%, 40px) scale(0.5); opacity: 0; }
+.hero-text h1 .line {
+  display: block;
+  overflow: hidden;
 }
 
-/* Featured Section */
-.featured {
-  padding: var(--spacing-xl) 0;
-  background: var(--section-bg);
-  position: relative;
-  z-index: 10;
-  margin-top: 100vh;
+.hero-text h1 .accent {
+  color: var(--accent);
+}
+
+.hero-subtitle {
+  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
+  max-width: 600px;
+}
+
+.hero-counter {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 2rem;
+}
+
+.counter-item {
+  text-align: right;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  border-radius: var(--radius);
+}
+
+.counter-number {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.counter-label {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Latest Section */
+.latest {
+  padding: 8rem 0;
+  background: var(--primary);
+  color: var(--text);
 }
 
 .section-header {
-  text-align: center;
-  margin-bottom: var(--spacing-xl);
-}
-
-.featured .overline {
-  display: block;
-  font-size: 1rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--primary);
-  margin-bottom: var(--spacing-sm);
-  opacity: 1;
+  margin-bottom: 4rem;
   text-align: center;
 }
 
-.featured h2 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  font-weight: 800;
-  color: var(--text);
-  margin-bottom: var(--spacing-lg);
-  line-height: 1.1;
-  position: relative;
-  z-index: 10;
-  text-align: center;
+.section-header h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 1rem;
 }
 
-.featured-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-lg);
-  position: relative;
-  z-index: 10;
-  max-width: 1200px;
+.section-header p {
+  color: var(--text-secondary);
+  max-width: 600px;
   margin: 0 auto;
-  padding: 0 var(--spacing-md);
 }
 
-.featured-item {
+.photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 2rem;
+}
+
+.photo-card {
   position: relative;
-  border-radius: var(--border-radius);
+  border-radius: var(--radius);
   overflow: hidden;
+  background: var(--secondary);
+  transition: var(--transition);
+}
+
+.photo-card:hover {
+  transform: translateY(-10px);
+}
+
+.photo-image {
   aspect-ratio: 16/9;
-  cursor: pointer;
-  transform: none;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  transform-style: preserve-3d;
-  perspective: 2000px;
-  background: var(--card-bg);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+  overflow: hidden;
 }
 
-.featured-item:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 
-    0 30px 60px rgba(0,0,0,0.2),
-    0 0 0 1px rgba(255,255,255,0.1);
-}
-
-.featured-image {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.featured-image img {
+.photo-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
+  transition: var(--transition);
 }
 
-.featured-item:hover .featured-image img {
-  transform: scale(1.05) translateZ(50px);
+.photo-card:hover .photo-image img {
+  transform: scale(1.1);
 }
 
-/* Add gradient overlay */
-.featured::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(130, 157, 80, 0.05),
-    rgba(130, 157, 80, 0.02)
-  );
-  z-index: 1;
+.photo-info {
+  padding: 2rem;
 }
 
-/* Responsive adjustments */
-@media (max-width: 768px) {
-  .featured-grid {
-    grid-template-columns: 1fr;
-  }
-  
-  .featured {
-    margin-top: 100vh;
-    padding: var(--spacing-lg) 0;
-  }
+.photo-info h3 {
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
 }
 
-/* Stats Section */
-.stats {
-  padding: var(--spacing-xl) 0;
-  background: var(--background);
-  position: relative;
-  border-top: 1px solid rgba(130, 157, 80, 0.1);
-  border-bottom: 1px solid rgba(130, 157, 80, 0.1);
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: var(--spacing-lg);
-  margin-top: var(--spacing-md);
-}
-
-.stat {
-  text-align: center;
-  padding: var(--spacing-lg);
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  border: 1px solid rgba(130, 157, 80, 0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  position: relative;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.8);
-}
-
-.stat:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.1),
-    0 0 0 1px rgba(255,255,255,0.2);
-}
-
-.stat::after {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(130, 157, 80, 0.1) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transform: scale(0.5);
-  transition: all 0.6s ease;
-}
-
-.stat:hover::after {
-  opacity: 1;
-  transform: scale(1);
-}
-
-.stat-number {
-  font-size: 3.5rem;
-  font-weight: 800;
-  color: var(--primary);
-  margin-bottom: var(--spacing-xs);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  line-height: 1;
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: var(--primary) !important;
-  animation: none !important;
-}
-
-.stat-label {
-  font-size: 1.25rem;
-  font-weight: 600;
-  margin-bottom: var(--spacing-xs);
-  color: var(--text);
-}
-
-.stat-description {
-  font-size: 1rem;
+.photo-info p {
   color: var(--text-secondary);
-  max-width: 200px;
-  margin: 0 auto;
-  line-height: 1.5;
+  margin-bottom: 1.5rem;
 }
 
-/* Remove all animations and effects from stats */
-.stat {
-  animation: none !important;
-}
-
-/* Remove the gradient animation styles */
-.stat-number {
-  background: none !important;
-  -webkit-background-clip: unset !important;
-  -webkit-text-fill-color: var(--primary) !important;
-  animation: none !important;
+.photo-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.875rem;
+  color: var(--accent);
 }
 
 /* About Section */
 .about {
-  padding: var(--spacing-xl) 0;
-  background: var(--section-bg);
+  padding: 8rem 0;
+  background: var(--secondary);
+  color: var(--text);
 }
 
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-lg);
+  gap: 4rem;
   align-items: center;
 }
 
-.about-text {
-  font-size: 1.125rem;
-  line-height: 1.6;
+.about-content h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 1.5rem;
 }
 
-.about-text p {
-  margin-bottom: var(--spacing-lg);
+.about-lead {
+  font-size: 1.25rem;
+  color: var(--text-secondary);
+  margin-bottom: 3rem;
 }
 
-.features {
+.feature-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  gap: var(--spacing-md);
+  gap: 2rem;
 }
 
-.feature {
-  text-align: center;
-  padding: var(--spacing-md);
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.8);
+.feature-item {
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius);
+  transition: var(--transition);
 }
 
-.feature:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg) scale(1.02);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.1),
-    0 0 0 1px rgba(255,255,255,0.2);
-}
-
-.feature::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 4px;
-  background: linear-gradient(90deg, var(--primary), var(--primary-light));
-  transform: scaleX(0);
-  transform-origin: left;
-  transition: transform 0.4s ease;
-}
-
-.feature:hover::before {
-  transform: scaleX(1);
+.feature-item:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .feature-icon {
-  font-size: 2.5rem;
-  margin-bottom: var(--spacing-sm);
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  display: inline-block;
-  will-change: transform;
+  font-size: 2rem;
+  margin-bottom: 1rem;
 }
 
-.feature:hover .feature-icon {
-  transform: scale(1.2) rotate(5deg);
-}
-
-.feature h3 {
+.feature-item h3 {
   font-size: 1.25rem;
-  margin-bottom: var(--spacing-xs);
-  color: var(--primary);
+  margin-bottom: 0.5rem;
 }
 
-.feature p {
-  font-size: 1rem;
+.feature-item p {
   color: var(--text-secondary);
-  margin: 0;
+  font-size: 0.875rem;
 }
 
-.about-image {
+.media-stack {
   position: relative;
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  aspect-ratio: 4/3;
-  position: relative;
-  overflow: hidden;
+  padding-top: 2rem;
+  padding-left: 2rem;
 }
 
-.about-image img {
+.stack-image {
+  border-radius: var(--radius);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.stack-image.main {
   width: 100%;
-  height: 100%;
+  aspect-ratio: 4/3;
   object-fit: cover;
+  position: relative;
+  z-index: 2;
 }
 
-.about-image::after {
-  content: '';
+.stack-image.accent {
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  transform: translateX(-100%);
-  animation: shimmer 3s infinite;
+  width: 80%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  z-index: 1;
 }
 
-/* CTA Section */
-.cta {
-  padding: var(--spacing-xl) 0;
-  background: var(--primary);
-  color: #fff;
+/* Join Section */
+.join {
+  padding: 8rem 0;
+  background: var(--accent);
+  color: var(--primary);
   text-align: center;
-  position: relative;
-  overflow: hidden;
 }
 
-.cta h2 {
-  color: #fff;
-}
-
-.cta p {
-  font-size: 1.25rem;
+.join-content {
   max-width: 600px;
-  margin: 0 auto var(--spacing-lg);
-  opacity: 0.9;
+  margin: 0 auto;
 }
 
-.cta-buttons {
-  display: flex;
-  gap: var(--spacing-md);
-  justify-content: center;
+.join h2 {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 1.5rem;
+}
+
+.join p {
+  margin-bottom: 2rem;
+  opacity: 0.8;
 }
 
 /* Buttons */
-.btn {
-  display: inline-block;
-  padding: 1rem 2rem;
-  font-size: 1.125rem;
+.btn-primary,
+.btn-secondary {
+  padding: 1rem 2.5rem;
+  font-size: 1rem;
   font-weight: 600;
-  text-decoration: none;
   border-radius: 50px;
-  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border: none;
   cursor: pointer;
-  text-shadow: none;
-  opacity: 1 !important;
-  transform: none !important;
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-  position: relative;
-  overflow: hidden;
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-.btn::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    120deg,
-    transparent,
-    rgba(255,255,255,0.2),
-    transparent
-  );
-  transition: 0.5s;
-}
-
-.btn:hover::before {
-  left: 100%;
+  transition: var(--transition);
 }
 
 .btn-primary {
-  background: var(--primary);
-  color: #fff;
-  border: 2px solid var(--primary);
-}
-
-.btn-outline {
-  background: transparent;
-  border: 2px solid #fff;
-  color: #fff;
-}
-
-.btn:hover {
-  transform: translateY(-4px) scale(1.02) translateZ(20px) !important;
-  box-shadow: 
-    0 15px 30px rgba(0,0,0,0.2),
-    0 0 0 1px rgba(255,255,255,0.1);
-}
-
-.btn-primary:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
-}
-
-.btn-outline:hover {
-  background: rgba(255,255,255,0.1);
-}
-
-/* Photo Modal */
-.photo-modal {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.9);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-  padding: var(--spacing-md);
-}
-
-.modal-content {
-  position: relative;
-  max-width: 1200px;
-  width: 90%;
-  background: var(--card-bg);
-  border-radius: var(--border-radius);
-  overflow: hidden;
-  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-  transform-origin: center;
-  transform-style: preserve-3d;
-  perspective: 2000px;
-}
-
-.modal-close {
-  position: absolute;
-  top: var(--spacing-sm);
-  right: var(--spacing-sm);
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: rgba(0,0,0,0.5);
-  color: #fff;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: transform 0.3s ease, background-color 0.3s ease;
-  transform: rotate(0deg);
-}
-
-.modal-close:hover {
-  transform: rotate(90deg);
-}
-
-.modal-content img {
-  width: 100%;
-  height: auto;
-  display: block;
-}
-
-.modal-info {
-  padding: var(--spacing-md);
-}
-
-.modal-info h3 {
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-xs);
-}
-
-.modal-info p {
-  font-size: 1.125rem;
-  margin-bottom: var(--spacing-sm);
-  color: var(--text-secondary);
-}
-
-.modal-meta {
-  display: flex;
-  gap: var(--spacing-md);
-  font-size: 0.875rem;
-  color: var(--text-secondary);
-}
-
-/* Loading State */
-.loading-state {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--background);
-}
-
-.loading-spinner {
-  width: 50px;
-  height: 50px;
-  border: 3px solid rgba(130, 157, 80, 0.1);
-  border-top: 3px solid var(--primary);
-  border-right: 3px solid var(--primary);
-  animation: spin 1s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-  margin-bottom: var(--spacing-md);
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-@keyframes spin {
-  from { 
-    transform: rotate(0deg) rotateX(30deg) rotateY(30deg); 
-  }
-  to { 
-    transform: rotate(360deg) rotateX(30deg) rotateY(30deg); 
-  }
-}
-
-/* Error State */
-.error-state {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: var(--background);
-  padding: var(--spacing-md);
-  text-align: center;
-}
-
-.error-state h2 {
+  background: var(--accent);
   color: var(--primary);
-  margin-bottom: var(--spacing-sm);
+  margin-right: 1rem;
 }
 
-.error-state p {
-  margin-bottom: var(--spacing-md);
-  max-width: 600px;
+.btn-secondary {
+  background: transparent;
+  border: 2px solid var(--text);
+  color: var(--text);
+}
+
+.btn-primary:hover,
+.btn-secondary:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 /* Scroll Indicator */
@@ -1349,28 +611,21 @@ h1::after {
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
-  z-index: 20;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.2em;
-  opacity: 0.7;
-  animation: fadeInUp 1s cubic-bezier(0.4, 0, 0.2, 1) 0.9s backwards;
+  text-align: center;
+  z-index: 2;
+  color: var(--text);
+  font-size: 0.875rem;
 }
 
 .scroll-line {
-  width: 2px;
-  height: 50px;
-  background: linear-gradient(to bottom, #fff, transparent);
-  animation: scrollPulse 2s infinite;
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, var(--text), transparent);
+  margin: 1rem auto 0;
   position: relative;
 }
 
-.scroll-line::before {
+.scroll-line::after {
   content: '';
   position: absolute;
   top: 0;
@@ -1378,300 +633,67 @@ h1::after {
   transform: translateX(-50%);
   width: 6px;
   height: 6px;
-  background: #fff;
+  background: var(--text);
   border-radius: 50%;
-  filter: blur(2px);
   animation: scrollDot 2s infinite;
 }
 
 @keyframes scrollDot {
-  0% { transform: translate(-50%, 0) scale(1); opacity: 1; }
-  100% { transform: translate(-50%, 40px) scale(0.5); opacity: 0; }
-}
-
-/* Add shimmer effect to featured images */
-.featured-image::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    rgba(255, 255, 255, 0.1) 50%,
-    transparent 100%
-  );
-  transform: translateX(-100%);
-  animation: shimmer 3s infinite;
-}
-
-@keyframes shimmer {
-  0% { 
-    transform: translateX(-100%) rotateZ(-45deg); 
-    opacity: 0;
-  }
-  10% { opacity: 1; }
-  90% { opacity: 1; }
-  100% { 
-    transform: translateX(100%) rotateZ(-45deg);
-    opacity: 0;
-  }
-}
-
-/* Enhanced Animations */
-.featured-item {
-  transform-style: preserve-3d;
-  perspective: 2000px;
-}
-
-.featured-image {
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.featured-item:hover .featured-image {
-  transform: translateZ(50px);
-}
-
-.stat {
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.stat:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
-}
-
-/* Remove gradient animation for stat numbers */
-.feature {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.feature:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg) scale(1.02);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.1),
-    0 0 0 1px rgba(255,255,255,0.2);
-}
-
-.feature-icon {
-  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.feature:hover .feature-icon {
-  transform: scale(1.2) rotate(5deg);
-}
-
-.btn {
-  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-  will-change: transform;
-}
-
-.btn:hover {
-  transform: translateY(-4px) scale(1.02) translateZ(20px) !important;
-  box-shadow: 
-    0 15px 30px rgba(0,0,0,0.2),
-    0 0 0 1px rgba(255,255,255,0.1);
-}
-
-.hero-content h1 {
-  color: #ffffff;
-  -webkit-text-fill-color: #ffffff;
-  background: none;
-  animation: none;
-  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
-}
-
-@keyframes shine {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.modal-content {
-  transform-origin: center;
-  animation: modalPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-}
-
-@keyframes modalPop {
-  from { 
-    transform: scale(0.9) rotateX(5deg); 
-    opacity: 0; 
-  }
-  to { 
-    transform: scale(1) rotateX(0deg); 
-    opacity: 1; 
-  }
+  0% { transform: translate(-50%, 0); opacity: 1; }
+  100% { transform: translate(-50%, 20px); opacity: 0; }
 }
 
 /* Responsive Design */
-@media (max-width: 1200px) {
+@media (max-width: 1024px) {
+  .hero-content {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+
+  .hero-counter {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .counter-item {
+    text-align: center;
+  }
+
   .about-grid {
     grid-template-columns: 1fr;
   }
-  
-  .about-image {
+
+  .about-media {
     order: -1;
   }
 }
 
 @media (max-width: 768px) {
-  :root {
-    --spacing-xl: 4rem;
-    --spacing-lg: 2rem;
-  }
-  
-  .hero-buttons,
-  .cta-buttons {
+  .hero-cta {
     flex-direction: column;
+    align-items: center;
   }
-  
-  .stats-grid {
+
+  .btn-primary {
+    margin-right: 0;
+    margin-bottom: 1rem;
+  }
+
+  .hero-counter {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .photo-grid {
     grid-template-columns: 1fr;
-    max-width: 400px;
-    margin: 0 auto;
   }
-  
-  .features {
+}
+
+@media (max-width: 480px) {
+  .hero-counter {
     grid-template-columns: 1fr;
   }
-  
-  .stat {
-    padding: var(--spacing-md);
-  }
-  
-  .stat-number {
-    font-size: 3rem;
-  }
-}
 
-/* Navigation styles to prevent spacing issues */
-:deep(nav) {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  background: transparent;
-  transition: background-color 0.3s ease;
-}
-
-:deep(nav.scrolled) {
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
-}
-
-/* Enhanced 3D Hover Effects */
-.featured-item {
-  transform-style: preserve-3d;
-  perspective: 2000px;
-}
-
-.featured-item:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.2),
-    0 0 0 1px rgba(255,255,255,0.1);
-}
-
-.featured-image {
-  transform-style: preserve-3d;
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.featured-item:hover .featured-image {
-  transform: translateZ(50px);
-}
-
-/* Enhanced Button Animations */
-.btn {
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-.btn:hover {
-  transform: translateY(-4px) scale(1.02) translateZ(20px) !important;
-  box-shadow: 
-    0 15px 30px rgba(0,0,0,0.2),
-    0 0 0 1px rgba(255,255,255,0.1);
-}
-
-/* Enhanced Stats Cards */
-.stat {
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.8);
-}
-
-.stat:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.1),
-    0 0 0 1px rgba(255,255,255,0.2);
-}
-
-/* Enhanced Feature Cards */
-.feature {
-  transform-style: preserve-3d;
-  perspective: 1000px;
-  backdrop-filter: blur(10px);
-  background: rgba(255,255,255,0.8);
-}
-
-.feature:hover {
-  transform: translateY(-8px) rotateX(5deg) rotateY(5deg) scale(1.02);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.1),
-    0 0 0 1px rgba(255,255,255,0.2);
-}
-
-/* Enhanced Modal Animation */
-.modal-content {
-  transform-style: preserve-3d;
-  perspective: 2000px;
-}
-
-@keyframes modalPop {
-  from { 
-    transform: scale(0.9) rotateX(5deg); 
-    opacity: 0; 
-  }
-  to { 
-    transform: scale(1) rotateX(0deg); 
-    opacity: 1; 
-  }
-}
-
-/* Typing Cursor Effect */
-.hero-description::after,
-section h2::after {
-  content: '|';
-  animation: cursor 1s infinite;
-  opacity: 0;
-}
-
-@keyframes cursor {
-  0%, 100% { opacity: 0; }
-  50% { opacity: 1; }
-}
-
-/* Smooth Scroll Behavior */
-html {
-  scroll-behavior: smooth;
-}
-
-/* Enhanced Loading Spinner */
-.loading-spinner {
-  transform-style: preserve-3d;
-  perspective: 1000px;
-}
-
-@keyframes spin {
-  from { 
-    transform: rotate(0deg) rotateX(30deg) rotateY(30deg); 
-  }
-  to { 
-    transform: rotate(360deg) rotateX(30deg) rotateY(30deg); 
+  .feature-grid {
+    grid-template-columns: 1fr;
   }
 }
 </style>
