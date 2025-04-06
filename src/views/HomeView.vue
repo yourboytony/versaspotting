@@ -48,8 +48,10 @@
       <!-- Featured Section -->
       <section class="featured">
         <div class="section-content">
-          <span class="overline">Featured</span>
-          <h2>Latest Captures</h2>
+          <div class="section-header">
+            <span class="overline">Featured</span>
+            <h2>Latest Captures</h2>
+          </div>
           <div class="featured-grid">
             <div v-for="photo in recentPhotos" 
                  :key="photo.id" 
@@ -761,13 +763,46 @@ h1::after {
 .featured {
   padding: var(--spacing-xl) 0;
   background: var(--section-bg);
+  position: relative;
+  z-index: 10;
+}
+
+.section-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
+  position: relative;
+  z-index: 10;
+}
+
+.featured .overline {
+  display: block;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--primary);
+  margin-bottom: var(--spacing-sm);
+  opacity: 1;
+}
+
+.featured h2 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  color: var(--text);
+  margin-bottom: var(--spacing-lg);
+  line-height: 1.1;
+  position: relative;
+  z-index: 10;
 }
 
 .featured-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   gap: var(--spacing-md);
   margin-top: var(--spacing-lg);
+  position: relative;
+  z-index: 10;
 }
 
 .featured-item {
@@ -780,13 +815,30 @@ h1::after {
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   transform-style: preserve-3d;
   perspective: 2000px;
+  background: var(--card-bg);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
 }
 
-.featured-item:hover {
-  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
-  box-shadow: 
-    0 20px 40px rgba(0,0,0,0.2),
-    0 0 0 1px rgba(255,255,255,0.1);
+/* Add a subtle gradient background to the featured section */
+.featured::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(130, 157, 80, 0.05),
+    rgba(130, 157, 80, 0.02)
+  );
+  z-index: 1;
+}
+
+/* Ensure text is visible */
+.featured .overline,
+.featured h2 {
+  color: var(--text);
+  text-shadow: none;
+  position: relative;
+  z-index: 10;
 }
 
 .featured-image {
