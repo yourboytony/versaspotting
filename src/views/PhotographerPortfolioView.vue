@@ -1,19 +1,24 @@
 <template>
-  <div class="photographer-portfolio">
+  <div v-if="loading" class="loading-state">
+    <i class="fas fa-spinner fa-spin"></i>
+    <p>Loading portfolio...</p>
+  </div>
+
+  <div v-else-if="photographer" class="photographer-portfolio">
     <div class="portfolio-header">
       <div class="photographer-info">
         <div class="photographer-avatar">
-          <img :src="photographer?.avatar || '/default-avatar.jpg'" :alt="photographer?.name">
+          <img :src="photographer.avatar || '/default-avatar.jpg'" :alt="photographer.name">
         </div>
         <div class="photographer-details">
-          <h1>{{ photographer?.name }}</h1>
-          <p class="specialty">{{ photographer?.specialty }}</p>
+          <h1>{{ photographer.name }}</h1>
+          <p class="specialty">{{ photographer.specialty }}</p>
           <div class="stats">
-            <span><i class="fas fa-camera"></i> {{ photographer?.photoCount }} Photos</span>
-            <span><i class="fas fa-map-marker-alt"></i> {{ photographer?.location }}</span>
+            <span><i class="fas fa-camera"></i> {{ photographer.photoCount }} Photos</span>
+            <span><i class="fas fa-map-marker-alt"></i> {{ photographer.location }}</span>
           </div>
           <div class="tags">
-            <span v-for="tag in photographer?.tags" :key="tag" class="tag">
+            <span v-for="tag in photographer.tags" :key="tag" class="tag">
               {{ tag }}
             </span>
           </div>
@@ -64,14 +69,16 @@
 
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useDataStore } from '@/stores/dataStore'
 
 const route = useRoute()
+const router = useRouter()
 const store = useDataStore()
 const photographer = ref(null)
 const photos = ref([])
 const selectedPhoto = ref(null)
+const loading = ref(true)
 
 const formatDate = (date) => {
   return new Date(date).toLocaleDateString('en-US', {
@@ -91,20 +98,44 @@ const closePhotoModal = () => {
   document.body.style.overflow = 'auto'
 }
 
+const loadPhotographerData = async (id) => {
+  try {
+    // Get photographer data
+    const photographerData = store.photographers.find(p => p.id === parseInt(id))
+    if (!photographerData) {
+      router.push('/portfolio') // Redirect if photographer not found
+      return
+    }
+
+    // Get photographer's photos
+    const photographerPhotos = store.photos.filter(photo => photo.photographerId === parseInt(id))
+    
+    // Format photographer data
+    photographer.value = {
+      ...photographerData,
+      tags: [photographerData.specialty, photographerData.location].filter(Boolean),
+      photoCount: photographerPhotos.length
+    }
+
+    // Format photos data
+    photos.value = photographerPhotos.map(photo => ({
+      ...photo,
+      url: photo.imageUrl,
+      title: photo.title || 'Untitled',
+      description: photo.description || '',
+      dateCreated: photo.date
+    }))
+  } catch (error) {
+    console.error('Error loading photographer data:', error)
+    router.push('/portfolio')
+  } finally {
+    loading.value = false
+  }
+}
+
 onMounted(async () => {
   const photographerId = route.params.id
-  // Replace with actual data fetching from your store
-  photographer.value = {
-    id: photographerId,
-    name: 'Photographer Name',
-    specialty: 'Photography Specialty',
-    location: 'Location',
-    photoCount: 0,
-    tags: ['Tag 1', 'Tag 2'],
-    avatar: '/default-avatar.jpg'
-  }
-  
-  photos.value = [] // Replace with actual photos from your store
+  await loadPhotographerData(photographerId)
 })
 </script>
 
@@ -353,5 +384,20 @@ onMounted(async () => {
     top: -3rem;
     right: 0;
   }
+}
+
+/* Add loading state styles */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 50vh;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.loading-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 </style> 

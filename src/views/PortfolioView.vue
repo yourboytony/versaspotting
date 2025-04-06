@@ -87,29 +87,12 @@ const viewPortfolio = (id) => {
 }
 
 onMounted(async () => {
-  // Simulated data - replace with actual data from your store
-  photographers.value = [
-    {
-      id: 1,
-      name: 'Anthony Nigro',
-      specialty: 'Aviation Photography',
-      location: 'YVR',
-      photoCount: 1,
-      tags: ['Aviation', 'Commercial'],
-      coverImage: '/path/to/cover.jpg',
-      avatar: '/path/to/avatar.jpg'
-    },
-    {
-      id: 2,
-      name: 'Skyeler Kho',
-      specialty: 'Photography, Editing',
-      location: 'YVR, MNL',
-      photoCount: 0,
-      tags: ['Aviation', 'Editing'],
-      coverImage: '/path/to/cover.jpg',
-      avatar: '/path/to/avatar.jpg'
-    }
-  ]
+  // Load photographers from the store
+  photographers.value = store.photographers.map(p => ({
+    ...p,
+    tags: [p.specialty, p.location].filter(Boolean),
+    coverImage: store.photos.find(photo => photo.photographerId === p.id)?.imageUrl || '/placeholder.jpg'
+  }))
 })
 </script>
 
