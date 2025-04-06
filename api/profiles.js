@@ -10,7 +10,7 @@ export const config = {
 
 export default async function handler(req, res) {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true)
+  res.setHeader('Access-Control-Allow-Credentials', 'true')
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT')
   res.setHeader(
@@ -43,15 +43,14 @@ export default async function handler(req, res) {
       case 'GET':
         try {
           const profiles = await profilesCollection.find({}).toArray()
-          res.status(200).json(profiles || [])
+          return res.status(200).json(profiles || [])
         } catch (error) {
           console.error('Error fetching profiles:', error)
-          res.status(500).json({ 
+          return res.status(500).json({ 
             error: 'Failed to fetch profiles',
             message: error.message
           })
         }
-        break
 
       case 'POST':
         try {
@@ -84,15 +83,14 @@ export default async function handler(req, res) {
             throw new Error('Failed to insert profile')
           }
 
-          res.status(201).json(newProfile)
+          return res.status(201).json(newProfile)
         } catch (error) {
           console.error('Error creating profile:', error)
-          res.status(500).json({ 
+          return res.status(500).json({ 
             error: 'Failed to create profile',
             message: error.message
           })
         }
-        break
 
       case 'PUT':
         try {
@@ -115,15 +113,14 @@ export default async function handler(req, res) {
             return res.status(404).json({ error: 'Profile not found' })
           }
 
-          res.status(200).json(updatedProfile)
+          return res.status(200).json(updatedProfile)
         } catch (error) {
           console.error('Error updating profile:', error)
-          res.status(500).json({ 
+          return res.status(500).json({ 
             error: 'Failed to update profile',
             message: error.message
           })
         }
-        break
 
       case 'DELETE':
         try {
@@ -137,23 +134,22 @@ export default async function handler(req, res) {
             return res.status(404).json({ error: 'Profile not found' })
           }
 
-          res.status(200).json({ message: 'Profile deleted successfully' })
+          return res.status(200).json({ message: 'Profile deleted successfully' })
         } catch (error) {
           console.error('Error deleting profile:', error)
-          res.status(500).json({ 
+          return res.status(500).json({ 
             error: 'Failed to delete profile',
             message: error.message
           })
         }
-        break
 
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
-        res.status(405).end(`Method ${req.method} Not Allowed`)
+        return res.status(405).json({ error: `Method ${req.method} Not Allowed` })
     }
   } catch (error) {
     console.error('Error in profiles API:', error)
-    res.status(500).json({ 
+    return res.status(500).json({ 
       error: 'Internal Server Error',
       message: error.message
     })
