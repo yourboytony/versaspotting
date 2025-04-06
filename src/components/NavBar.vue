@@ -75,15 +75,14 @@ onUnmounted(() => {
   left: 0;
   right: 0;
   z-index: 1000;
-  background: rgba(0, 0, 0, 0.8);
-  backdrop-filter: blur(10px);
+  background: #000;
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .nav-content {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 1rem 2rem;
+  padding: 0.5rem 2rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -93,29 +92,24 @@ onUnmounted(() => {
   text-decoration: none;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   transition: all 0.3s ease;
 }
 
 .logo-text {
-  font-family: 'Montserrat', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--primary-color);
-  letter-spacing: 2px;
-  text-shadow: 0 0 20px rgba(144, 153, 62, 0.3);
-  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: neonPulse 3s infinite;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #fff;
+  letter-spacing: 0.5px;
 }
 
 .logo-subtext {
-  font-size: 0.9rem;
-  color: var(--text-color);
-  letter-spacing: 1px;
-  font-weight: 500;
-  transition: all 0.3s ease;
+  font-size: 0.8rem;
+  color: #fff;
+  letter-spacing: 0.5px;
+  font-weight: 400;
+  opacity: 0.8;
 }
 
 .logo-subtext:hover {
@@ -129,41 +123,35 @@ onUnmounted(() => {
 
 .nav-links {
   display: flex;
-  gap: 2rem;
+  gap: 1.5rem;
   align-items: center;
 }
 
 .nav-link {
   color: #fff;
   text-decoration: none;
-  font-size: 1rem;
+  font-size: 0.9rem;
+  font-weight: 400;
+  transition: opacity 0.2s ease;
+  opacity: 0.8;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+
+.nav-link.router-link-active {
+  opacity: 1;
   font-weight: 500;
-  transition: color 0.2s ease;
-  position: relative;
-}
-
-.nav-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
-  transition: width 0.2s ease;
-}
-
-.nav-link:hover::after,
-.nav-link.router-link-active::after {
-  width: 100%;
 }
 
 .admin-link {
-  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
-  color: #000;
-  font-weight: 600;
+  background: #B8860B;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  color: #fff;
+  opacity: 1;
+  font-weight: 500;
 }
 
 .admin-link::after {
