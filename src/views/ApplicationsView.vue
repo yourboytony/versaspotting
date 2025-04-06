@@ -9,9 +9,8 @@
       <div class="application-info">
         <div class="info-card">
           <h2>About VERSA</h2>
-          <p>VERSA Spotting Group is a community of aviation photographers dedicated to capturing the beauty of aircraft at YVR. As a member, you'll have access to:</p>
+          <p>VERSA Spotting Group is a community of aviation photographers dedicated to capturing the beauty of aircraft around the world, with a particular focus on YVR. As a member, you'll have access to:</p>
           <ul>
-            <li>Exclusive spotting locations</li>
             <li>Regular group photo sessions</li>
             <li>Photography workshops and tips</li>
             <li>A supportive community of fellow aviation enthusiasts</li>
