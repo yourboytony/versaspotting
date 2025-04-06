@@ -114,21 +114,21 @@
       <div class="features-grid">
         <div class="feature-card">
           <div class="feature-icon">
-            <i class="icon-camera"></i>
+            <i class="fas fa-camera"></i>
           </div>
           <h3>Photographic Excellence</h3>
           <p>Our photographers are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
-            <i class="icon-community"></i>
+            <i class="fas fa-users"></i>
           </div>
           <h3>Community Focus</h3>
           <p>We believe in building a strong community of aviation enthusiasts and photographers who support and inspire each other.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">
-            <i class="icon-location"></i>
+            <i class="fas fa-map-marker-alt"></i>
           </div>
           <h3>YVR-Based</h3>
           <p>Located at Vancouver International Airport, we have prime access to some of the most beautiful aircraft in the world.</p>
@@ -268,161 +268,86 @@ onMounted(async () => {
   if (!dataStore.isInitialized) {
     await dataStore.initializeData()
   }
-
-  // Create smooth scroll container
-  const smoothScroll = {
-    ease: 0.1,
-    current: 0,
-    target: 0,
-    container: mainContainer.value
-  }
-
-  // Hero Section Animation
-  const heroTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.hero',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      scrub: 1
-    }
+  
+  startBackgroundRotation()
+  
+  // Simple fade-in animations for sections
+  gsap.from('.hero-content', {
+    duration: 1,
+    y: 30,
+    opacity: 0,
+    ease: 'power2.out'
   })
-
-  heroTimeline
-    .fromTo('.hero-content', 
-      { y: 0, opacity: 1 },
-      { y: -100, opacity: 0, duration: 1 }
-    )
-    .fromTo('.hero-background',
-      { scale: 1 },
-      { scale: 1.2, duration: 1 },
-      0
-    )
-
-  // Recent Uploads Section Animation
-  const uploadsTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.recent-uploads',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      scrub: 1
-    }
-  })
-
-  uploadsTimeline
-    .from('.section-header', {
-      y: 100,
+  
+  // Animate sections on scroll
+  gsap.utils.toArray('.section-header').forEach(header => {
+    gsap.from(header, {
+      scrollTrigger: {
+        trigger: header,
+        start: 'top 80%',
+        toggleActions: 'play none none none'
+      },
+      duration: 0.8,
+      y: 30,
       opacity: 0,
-      duration: 1
+      ease: 'power2.out'
     })
-    .from('.photo-card', {
-      y: 100,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 1
-    }, '-=0.5')
-
-  // About Section Animation
-  const aboutTimeline = gsap.timeline({
-    scrollTrigger: {
-      trigger: '.about',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      scrub: 1
-    }
   })
-
-  aboutTimeline
-    .from('.about-title', {
-      y: 100,
-      opacity: 0,
-      duration: 1
-    })
-    .from('.about-subtitle', {
-      y: 50,
-      opacity: 0,
-      duration: 1
-    }, '-=0.5')
-    .from('.about-text p', {
-      y: 50,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 1
-    }, '-=0.5')
-    .from('.stat-box', {
-      scale: 0.8,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 1
-    }, '-=0.5')
-
-  // Features Section Animation
-  const featuresTimeline = gsap.timeline({
+  
+  // Animate photo cards
+  gsap.from('.photo-card', {
     scrollTrigger: {
-      trigger: '.features',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      scrub: 1
-    }
+      trigger: '.photos-grid',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    },
+    duration: 0.8,
+    y: 50,
+    opacity: 0,
+    stagger: 0.1,
+    ease: 'power2.out'
   })
-
-  featuresTimeline
-    .from('.features .section-header', {
-      y: 100,
-      opacity: 0,
-      duration: 1
-    })
-    .from('.feature-card', {
-      scale: 0.8,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 1
-    }, '-=0.5')
-
-  // Announcements Section Animation
-  const announcementsTimeline = gsap.timeline({
+  
+  // Animate feature cards
+  gsap.from('.feature-card', {
     scrollTrigger: {
-      trigger: '.announcements',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      scrub: 1
-    }
+      trigger: '.features-grid',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    },
+    duration: 0.8,
+    y: 30,
+    opacity: 0,
+    stagger: 0.1,
+    ease: 'power2.out'
   })
-
-  announcementsTimeline
-    .from('.announcements .section-header', {
-      y: 100,
-      opacity: 0,
-      duration: 1
-    })
-    .from('.announcement-card', {
-      x: -100,
-      opacity: 0,
-      stagger: 0.2,
-      duration: 1
-    }, '-=0.5')
-
-  // CTA Section Animation
-  const ctaTimeline = gsap.timeline({
+  
+  // Animate announcement cards
+  gsap.from('.announcement-card', {
+    scrollTrigger: {
+      trigger: '.announcements-grid',
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    },
+    duration: 0.8,
+    y: 30,
+    opacity: 0,
+    stagger: 0.1,
+    ease: 'power2.out'
+  })
+  
+  // Animate CTA section
+  gsap.from('.cta-content', {
     scrollTrigger: {
       trigger: '.cta',
-      start: 'top top',
-      end: '+=100%',
-      pin: true,
-      scrub: 1
-    }
+      start: 'top 80%',
+      toggleActions: 'play none none none'
+    },
+    duration: 0.8,
+    y: 30,
+    opacity: 0,
+    ease: 'power2.out'
   })
-
-  ctaTimeline
-    .from('.cta-content', {
-      scale: 0.8,
-      opacity: 0,
-      duration: 1
-    })
 })
 
 onUnmounted(() => {
@@ -587,14 +512,8 @@ const closePhotoModal = () => {
   overflow: hidden;
   aspect-ratio: 4/3;
   cursor: pointer;
-  opacity: 0;
-  transform: translateY(50px);
-  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.photo-card.visible {
-  opacity: 1;
-  transform: translateY(0);
+  transition: all 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
 .photo-card img {
@@ -934,7 +853,7 @@ const closePhotoModal = () => {
 
 .features-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
@@ -951,6 +870,12 @@ const closePhotoModal = () => {
   flex-direction: column;
   justify-content: flex-start;
   align-items: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 .feature-icon {
@@ -994,6 +919,12 @@ const closePhotoModal = () => {
   padding: 2rem;
   border-radius: 15px;
   border: 1px solid var(--primary-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.announcement-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
 }
 
 .announcement-date {
@@ -1072,52 +1003,5 @@ const closePhotoModal = () => {
     font-size: 1.1rem;
     padding: 0 var(--spacing-md);
   }
-}
-
-/* Enhanced section styles for smooth scrolling */
-.hero,
-.recent-uploads,
-.about,
-.features,
-.announcements,
-.cta {
-  position: relative;
-  min-height: 100vh;
-  overflow: hidden;
-  will-change: transform;
-}
-
-/* Smooth scroll container */
-.home {
-  position: relative;
-  overflow: hidden;
-  will-change: transform;
-}
-
-/* Enhanced transitions */
-.photo-card,
-.feature-card,
-.announcement-card,
-.stat-box {
-  will-change: transform, opacity;
-}
-
-/* Parallax effect for background images */
-.hero-background {
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* Enhanced 3D transforms */
-.photo-card:hover {
-  transform: translateY(-8px) scale(1.02);
-  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.feature-card,
-.stat-box {
-  transform-style: preserve-3d;
-  perspective: 1000px;
 }
 </style> 
