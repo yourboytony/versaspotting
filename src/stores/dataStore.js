@@ -1,25 +1,14 @@
 import { defineStore } from 'pinia'
-import { getLocalData, saveLocalData, syncData, getLatestData, initApiService } from '../services/apiService'
+import { getLatestData, syncData, initApiService } from '../services/apiService'
 
 // Initialize the API service
 initApiService()
 
 export const useDataStore = defineStore('data', {
   state: () => {
-    // Try to load data from localStorage, or use default values
-    const loadFromStorage = (key, defaultValue) => {
-      try {
-        // Use the API service to get the latest data
-        const data = getLatestData(key)
-        return data.length > 0 ? data : defaultValue
-      } catch (error) {
-        console.error(`Error loading ${key} from storage:`, error)
-        return defaultValue
-      }
-    }
-
-    return {
-      photographers: loadFromStorage('photographers', [
+    // Default values for each data type
+    const defaults = {
+      photographers: [
         {
           id: '1',
           name: 'Anthony Nigro',
@@ -31,10 +20,10 @@ export const useDataStore = defineStore('data', {
           status: 'active',
           photoCount: 0
         }
-      ]),
-      photos: loadFromStorage('photos', []),
-      applications: loadFromStorage('applications', []),
-      announcements: loadFromStorage('announcements', [
+      ],
+      photos: [],
+      applications: [],
+      announcements: [
         {
           id: '1',
           title: 'Welcome to VERSA',
@@ -43,20 +32,45 @@ export const useDataStore = defineStore('data', {
           category: 'general',
           readTime: '2 min'
         }
-      ])
+      ]
+    }
+
+    return {
+      photographers: defaults.photographers,
+      photos: defaults.photos,
+      applications: defaults.applications,
+      announcements: defaults.announcements
     }
   },
 
   actions: {
-    // Helper method to save to localStorage with error handling
-    saveToStorage(key) {
+    // Initialize data from IndexedDB
+    async initializeData() {
+      try {
+        const [photos, photographers, applications, announcements] = await Promise.all([
+          getLatestData('photos'),
+          getLatestData('photographers'),
+          getLatestData('applications'),
+          getLatestData('announcements')
+        ])
+
+        this.photos = photos.length > 0 ? photos : this.photos
+        this.photographers = photographers.length > 0 ? photographers : this.photographers
+        this.applications = applications.length > 0 ? applications : this.applications
+        this.announcements = announcements.length > 0 ? announcements : this.announcements
+      } catch (error) {
+        console.error('Error initializing data:', error)
+      }
+    },
+
+    // Helper method to save to IndexedDB
+    async saveToStorage(key) {
       try {
         if (!this[key]) {
           console.error(`Cannot save ${key}: data is undefined`)
           return false
         }
-        // Use the API service to sync the data
-        return syncData(key, this[key])
+        return await syncData(key, this[key])
       } catch (error) {
         console.error(`Error saving ${key} to storage:`, error)
         return false
@@ -66,8 +80,7 @@ export const useDataStore = defineStore('data', {
     // Data fetching methods
     async fetchPhotos() {
       try {
-        // Use the API service to get the latest photos
-        this.photos = getLatestData('photos')
+        this.photos = await getLatestData('photos')
         return true
       } catch (error) {
         console.error('Error fetching photos:', error)
@@ -77,8 +90,7 @@ export const useDataStore = defineStore('data', {
 
     async fetchPhotographers() {
       try {
-        // Use the API service to get the latest photographers
-        this.photographers = getLatestData('photographers')
+        this.photographers = await getLatestData('photographers')
         return true
       } catch (error) {
         console.error('Error fetching photographers:', error)
@@ -88,8 +100,7 @@ export const useDataStore = defineStore('data', {
 
     async fetchApplications() {
       try {
-        // Use the API service to get the latest applications
-        this.applications = getLatestData('applications')
+        this.applications = await getLatestData('applications')
         return true
       } catch (error) {
         console.error('Error fetching applications:', error)
@@ -99,8 +110,7 @@ export const useDataStore = defineStore('data', {
 
     async fetchAnnouncements() {
       try {
-        // Use the API service to get the latest announcements
-        this.announcements = getLatestData('announcements')
+        this.announcements = await getLatestData('announcements')
         return true
       } catch (error) {
         console.error('Error fetching announcements:', error)
@@ -109,7 +119,7 @@ export const useDataStore = defineStore('data', {
     },
 
     // Photographer actions
-    addPhotographer(photographer) {
+    async addPhotographer(photographer) {
       try {
         const newPhotographer = {
           ...photographer,
@@ -119,19 +129,19 @@ export const useDataStore = defineStore('data', {
           status: 'active'
         }
         this.photographers.push(newPhotographer)
-        return this.saveToStorage('photographers')
+        return await this.saveToStorage('photographers')
       } catch (error) {
         console.error('Error adding photographer:', error)
         return false
       }
     },
 
-    updatePhotographer(id, updates) {
+    async updatePhotographer(id, updates) {
       try {
         const index = this.photographers.findIndex(p => p.id === id)
         if (index !== -1) {
           this.photographers[index] = { ...this.photographers[index], ...updates }
-          return this.saveToStorage('photographers')
+          return await this.saveToStorage('photographers')
         }
         return false
       } catch (error) {
@@ -140,15 +150,15 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    deletePhotographer(id) {
+    async deletePhotographer(id) {
       try {
         // First, delete all photos associated with this photographer
         this.photos = this.photos.filter(p => p.photographerId !== id)
-        this.saveToStorage('photos')
+        await this.saveToStorage('photos')
         
         // Then delete the photographer
         this.photographers = this.photographers.filter(p => p.id !== id)
-        return this.saveToStorage('photographers')
+        return await this.saveToStorage('photographers')
       } catch (error) {
         console.error('Error deleting photographer:', error)
         return false
@@ -156,7 +166,7 @@ export const useDataStore = defineStore('data', {
     },
 
     // Photo actions
-    addPhoto(photo) {
+    async addPhoto(photo) {
       try {
         const newPhoto = {
           ...photo,
@@ -169,22 +179,22 @@ export const useDataStore = defineStore('data', {
         const photographer = this.photographers.find(p => p.id === photo.photographerId)
         if (photographer) {
           photographer.photoCount++
-          this.saveToStorage('photographers')
+          await this.saveToStorage('photographers')
         }
         
-        return this.saveToStorage('photos')
+        return await this.saveToStorage('photos')
       } catch (error) {
         console.error('Error adding photo:', error)
         return false
       }
     },
 
-    updatePhoto(id, updates) {
+    async updatePhoto(id, updates) {
       try {
         const index = this.photos.findIndex(p => p.id === id)
         if (index !== -1) {
           this.photos[index] = { ...this.photos[index], ...updates }
-          return this.saveToStorage('photos')
+          return await this.saveToStorage('photos')
         }
         return false
       } catch (error) {
@@ -193,7 +203,7 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    deletePhoto(id) {
+    async deletePhoto(id) {
       try {
         const photo = this.photos.find(p => p.id === id)
         if (photo) {
@@ -201,10 +211,10 @@ export const useDataStore = defineStore('data', {
           const photographer = this.photographers.find(p => p.id === photo.photographerId)
           if (photographer) {
             photographer.photoCount--
-            this.saveToStorage('photographers')
+            await this.saveToStorage('photographers')
           }
           this.photos = this.photos.filter(p => p.id !== id)
-          return this.saveToStorage('photos')
+          return await this.saveToStorage('photos')
         }
         return false
       } catch (error) {
@@ -214,7 +224,7 @@ export const useDataStore = defineStore('data', {
     },
 
     // Application actions
-    addApplication(application) {
+    async addApplication(application) {
       try {
         const newApplication = {
           ...application,
@@ -223,19 +233,19 @@ export const useDataStore = defineStore('data', {
           status: 'pending'
         }
         this.applications.push(newApplication)
-        return this.saveToStorage('applications')
+        return await this.saveToStorage('applications')
       } catch (error) {
         console.error('Error adding application:', error)
         return false
       }
     },
 
-    updateApplication(id, updates) {
+    async updateApplication(id, updates) {
       try {
         const index = this.applications.findIndex(a => a.id === id)
         if (index !== -1) {
           this.applications[index] = { ...this.applications[index], ...updates }
-          return this.saveToStorage('applications')
+          return await this.saveToStorage('applications')
         }
         return false
       } catch (error) {
@@ -244,10 +254,10 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    deleteApplication(id) {
+    async deleteApplication(id) {
       try {
         this.applications = this.applications.filter(a => a.id !== id)
-        return this.saveToStorage('applications')
+        return await this.saveToStorage('applications')
       } catch (error) {
         console.error('Error deleting application:', error)
         return false
@@ -255,7 +265,7 @@ export const useDataStore = defineStore('data', {
     },
 
     // Announcement actions
-    addAnnouncement(announcement) {
+    async addAnnouncement(announcement) {
       try {
         const newAnnouncement = {
           ...announcement,
@@ -263,19 +273,19 @@ export const useDataStore = defineStore('data', {
           date: new Date().toISOString().split('T')[0]
         }
         this.announcements.push(newAnnouncement)
-        return this.saveToStorage('announcements')
+        return await this.saveToStorage('announcements')
       } catch (error) {
         console.error('Error adding announcement:', error)
         return false
       }
     },
 
-    updateAnnouncement(id, updates) {
+    async updateAnnouncement(id, updates) {
       try {
         const index = this.announcements.findIndex(a => a.id === id)
         if (index !== -1) {
           this.announcements[index] = { ...this.announcements[index], ...updates }
-          return this.saveToStorage('announcements')
+          return await this.saveToStorage('announcements')
         }
         return false
       } catch (error) {
@@ -284,10 +294,10 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    deleteAnnouncement(id) {
+    async deleteAnnouncement(id) {
       try {
         this.announcements = this.announcements.filter(a => a.id !== id)
-        return this.saveToStorage('announcements')
+        return await this.saveToStorage('announcements')
       } catch (error) {
         console.error('Error deleting announcement:', error)
         return false
