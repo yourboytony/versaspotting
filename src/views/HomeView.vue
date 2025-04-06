@@ -1,5 +1,24 @@
 <template>
   <main class="home">
+    <!-- Navigation -->
+    <nav class="main-nav" :class="{ 'nav-scrolled': isScrolled }">
+      <div class="container nav-container">
+        <div class="nav-brand">
+          <img src="@/assets/logo.svg" alt="VERSA" class="nav-logo">
+        </div>
+        <div class="nav-links" :class="{ 'nav-open': isMenuOpen }">
+          <a href="#" class="nav-link">Home</a>
+          <a href="#latest" class="nav-link">Gallery</a>
+          <a href="#about" class="nav-link">About</a>
+          <a href="#help" class="nav-link">Help</a>
+          <button class="btn-primary nav-cta">Join VERSA</button>
+        </div>
+        <button class="nav-toggle" @click="toggleMenu" aria-label="Toggle Menu">
+          <span></span><span></span><span></span>
+        </button>
+      </div>
+    </nav>
+
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-media">
@@ -41,6 +60,37 @@
         <div class="scroll-line"></div>
       </div>
     </section>
+
+    <!-- Photo Modal -->
+    <div class="photo-modal" v-if="selectedPhoto" @click="closeModal">
+      <div class="modal-content" @click.stop>
+        <button class="modal-close" @click="closeModal">&times;</button>
+        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title">
+        <div class="modal-info">
+          <h3>{{ selectedPhoto.title }}</h3>
+          <p>{{ selectedPhoto.description }}</p>
+          <div class="modal-meta">
+            <span class="photographer">By {{ selectedPhoto.photographer }}</span>
+            <span class="location">{{ selectedPhoto.location }}</span>
+            <span class="date">{{ selectedPhoto.date }}</span>
+          </div>
+          <div class="modal-details">
+            <div class="detail-item">
+              <span class="label">Camera</span>
+              <span class="value">{{ selectedPhoto.camera }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Lens</span>
+              <span class="value">{{ selectedPhoto.lens }}</span>
+            </div>
+            <div class="detail-item">
+              <span class="label">Settings</span>
+              <span class="value">{{ selectedPhoto.settings }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
 
     <!-- Latest Captures -->
     <section class="latest">
@@ -113,11 +163,62 @@
         </div>
       </div>
     </section>
+
+    <!-- Help Section -->
+    <section id="help" class="help">
+      <div class="container">
+        <div class="section-header">
+          <span class="overline">Support</span>
+          <h2>Need Help?</h2>
+          <p>Get assistance with your aviation photography journey</p>
+        </div>
+        
+        <div class="help-grid">
+          <div class="help-card">
+            <div class="help-icon">📘</div>
+            <h3>Getting Started</h3>
+            <p>New to aviation photography? Learn the basics and best practices.</p>
+            <button class="btn-text">Learn More</button>
+          </div>
+          
+          <div class="help-card">
+            <div class="help-icon">🎯</div>
+            <h3>Spotting Locations</h3>
+            <p>Discover premium locations and access guidelines.</p>
+            <button class="btn-text">View Map</button>
+          </div>
+          
+          <div class="help-card">
+            <div class="help-icon">💬</div>
+            <h3>Community Support</h3>
+            <p>Connect with experienced photographers for guidance.</p>
+            <button class="btn-text">Join Chat</button>
+          </div>
+          
+          <div class="help-card">
+            <div class="help-icon">❓</div>
+            <h3>FAQs</h3>
+            <p>Find answers to common questions about VERSA.</p>
+            <button class="btn-text">Read FAQs</button>
+          </div>
+        </div>
+
+        <div class="help-cta">
+          <p>Can't find what you're looking for?</p>
+          <button class="btn-primary">Contact Support</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Loading Overlay -->
+    <div class="loading-overlay" v-if="isLoading">
+      <div class="loader"></div>
+    </div>
   </main>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { useDataStore } from '../stores/dataStore'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
@@ -127,6 +228,10 @@ gsap.registerPlugin(ScrollTrigger)
 
 const dataStore = useDataStore()
 const currentSlide = ref(0)
+const isMenuOpen = ref(false)
+const isScrolled = ref(false)
+const selectedPhoto = ref(null)
+const isLoading = ref(true)
 
 // Computed properties
 const featuredPhotos = computed(() => dataStore.photos?.slice(0, 3) || [])
@@ -284,9 +389,42 @@ const rotateSlides = () => {
   }, 5000)
 }
 
+// Navigation handling
+const toggleMenu = () => {
+  isMenuOpen.value = !isMenuOpen.value
+  document.body.style.overflow = isMenuOpen.value ? 'hidden' : ''
+}
+
+// Scroll handling
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 50
+}
+
+// Photo modal
+const openModal = (photo) => {
+  selectedPhoto.value = photo
+  document.body.style.overflow = 'hidden'
+}
+
+const closeModal = () => {
+  selectedPhoto.value = null
+  document.body.style.overflow = ''
+}
+
+// Loading state
 onMounted(() => {
+  window.addEventListener('scroll', handleScroll)
+  // Simulate loading
+  setTimeout(() => {
+    isLoading.value = false
+  }, 1500)
+  
   initAnimations()
   rotateSlides()
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll)
 })
 </script>
 
@@ -946,5 +1084,295 @@ html {
 ::selection {
   background: var(--accent);
   color: var(--primary);
+}
+
+/* Navigation Styles */
+.main-nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  padding: 1.5rem 0;
+  transition: var(--transition);
+  background: transparent;
+}
+
+.nav-scrolled {
+  background: rgba(8, 8, 16, 0.8);
+  backdrop-filter: blur(20px);
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.nav-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+}
+
+.nav-logo {
+  height: 2rem;
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+}
+
+.nav-link {
+  color: var(--text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: var(--transition);
+  position: relative;
+}
+
+.nav-link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -4px;
+  height: 2px;
+  background: var(--gradient-1);
+  opacity: 0;
+  transform: scaleX(0.5);
+  transition: var(--transition);
+}
+
+.nav-link:hover::after {
+  opacity: 1;
+  transform: scaleX(1);
+}
+
+.nav-cta {
+  padding: 0.75rem 2rem;
+}
+
+/* Photo Modal Styles */
+.photo-modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(8, 8, 16, 0.95);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  backdrop-filter: blur(10px);
+}
+
+.modal-content {
+  max-width: 1200px;
+  width: 100%;
+  background: var(--secondary);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  border: none;
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition);
+  z-index: 1;
+}
+
+.modal-close:hover {
+  background: rgba(255, 255, 255, 0.2);
+  transform: rotate(90deg);
+}
+
+.modal-info {
+  padding: 2rem;
+}
+
+.modal-meta {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem 0 2rem;
+  color: var(--text-secondary);
+}
+
+.modal-details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.detail-item .label {
+  display: block;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Help Section Styles */
+.help {
+  padding: 10rem 0;
+  background: var(--secondary);
+  position: relative;
+  overflow: hidden;
+}
+
+.help-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 2rem;
+  margin-bottom: 4rem;
+}
+
+.help-card {
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  transition: var(--transition);
+}
+
+.help-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent);
+  box-shadow: var(--shadow-lg);
+}
+
+.help-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.help-card h3 {
+  font-size: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.help-card p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.btn-text {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.btn-text:hover {
+  color: var(--accent-dark);
+  transform: translateX(4px);
+}
+
+.help-cta {
+  text-align: center;
+  margin-top: 6rem;
+}
+
+.help-cta p {
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  background: var(--primary);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader {
+  width: 48px;
+  height: 48px;
+  border: 3px solid var(--accent);
+  border-bottom-color: transparent;
+  border-radius: 50%;
+  animation: loader 1s linear infinite;
+}
+
+@keyframes loader {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Responsive Navigation */
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 6px;
+  background: none;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+}
+
+.nav-toggle span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: var(--text);
+  transition: var(--transition);
+}
+
+@media (max-width: 768px) {
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--primary);
+    padding: 6rem 2rem;
+    min-width: 300px;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: var(--transition);
+  }
+
+  .nav-links.nav-open {
+    transform: translateX(0);
+  }
+
+  .nav-toggle.active span:nth-child(1) {
+    transform: translateY(8px) rotate(45deg);
+  }
+
+  .nav-toggle.active span:nth-child(2) {
+    opacity: 0;
+  }
+
+  .nav-toggle.active span:nth-child(3) {
+    transform: translateY(-8px) rotate(-45deg);
+  }
 }
 </style>
