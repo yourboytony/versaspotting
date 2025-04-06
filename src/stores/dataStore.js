@@ -10,12 +10,17 @@ export const useDataStore = defineStore('data', {
     photos: [],
     applications: [],
     announcements: [],
-    isInitialized: false
+    isInitialized: false,
+    isLoading: true,
+    error: null
   }),
 
   actions: {
-    // Initialize data from IndexedDB
+    // Initialize data from IndexedDB with better error handling
     async initializeData() {
+      this.isLoading = true
+      this.error = null
+      
       try {
         const [photos, photographers, applications, announcements] = await Promise.all([
           getLatestData('photos'),
@@ -60,11 +65,17 @@ export const useDataStore = defineStore('data', {
           this.announcements = announcements
         }
 
-        this.photos = photos
-        this.applications = applications
+        this.photos = photos || []
+        this.applications = applications || []
         this.isInitialized = true
+        this.isLoading = false
+        
+        // Trigger an immediate fetch after initialization
+        this.fetchPhotos()
       } catch (error) {
         console.error('Error initializing data:', error)
+        this.error = error.message
+        this.isLoading = false
       }
     },
 
@@ -82,10 +93,13 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    // Data fetching methods
+    // Data fetching methods with better error handling
     async fetchPhotos() {
       try {
-        this.photos = await getLatestData('photos')
+        const photos = await getLatestData('photos')
+        if (photos) {
+          this.photos = photos
+        }
         return true
       } catch (error) {
         console.error('Error fetching photos:', error)
@@ -170,7 +184,7 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    // Photo actions
+    // Photo actions with better error handling
     async addPhoto(photo) {
       try {
         const newPhoto = {
@@ -187,7 +201,11 @@ export const useDataStore = defineStore('data', {
           await this.saveToStorage('photographers')
         }
         
-        return await this.saveToStorage('photos')
+        const success = await this.saveToStorage('photos')
+        if (success) {
+          await this.fetchPhotos() // Refresh photos after adding
+        }
+        return success
       } catch (error) {
         console.error('Error adding photo:', error)
         return false
@@ -311,18 +329,34 @@ export const useDataStore = defineStore('data', {
   },
 
   getters: {
+    // Enhanced getters with error handling
     getPhotographerById: (state) => (id) => {
-      return state.photographers.find(p => p.id === id)
+      try {
+        return state.photographers.find(p => p.id === id)
+      } catch (error) {
+        console.error('Error getting photographer by ID:', error)
+        return null
+      }
     },
 
     getPhotosByPhotographer: (state) => (photographerId) => {
-      return state.photos.filter(p => p.photographerId === photographerId)
+      try {
+        return state.photos.filter(p => p.photographerId === photographerId)
+      } catch (error) {
+        console.error('Error getting photos by photographer:', error)
+        return []
+      }
     },
 
     getRecentPhotos: (state) => (limit = 6) => {
-      return [...state.photos]
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, limit)
+      try {
+        return [...state.photos]
+          .sort((a, b) => new Date(b.date) - new Date(a.date))
+          .slice(0, limit)
+      } catch (error) {
+        console.error('Error getting recent photos:', error)
+        return []
+      }
     },
 
     getPendingApplications: (state) => {

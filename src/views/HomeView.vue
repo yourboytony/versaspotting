@@ -25,7 +25,15 @@
         <h2>Recent Uploads</h2>
         <p>Check out our latest aviation photography</p>
       </div>
-      <div class="photos-grid">
+      
+      <!-- Loading State -->
+      <div v-if="isLoading" class="loading-state">
+        <i class="fas fa-spinner fa-spin"></i>
+        <p>Loading photos...</p>
+      </div>
+      
+      <!-- Photos Grid -->
+      <div v-else class="photos-grid">
         <div v-for="photo in recentPhotos" :key="photo.id" class="photo-card" @click="viewPhoto(photo)">
           <div class="photo-image">
             <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
@@ -34,7 +42,7 @@
                 <h3>{{ photo.title }}</h3>
                 <p class="photographer">By {{ photo.photographer }}</p>
                 <div class="photo-meta">
-                  <span><i class="fas fa-camera"></i> {{ photo.camera }}</span>
+                  <span v-if="photo.camera"><i class="fas fa-camera"></i> {{ photo.camera }}</span>
                   <span><i class="fas fa-calendar"></i> {{ formatDate(photo.date) }}</span>
                 </div>
               </div>
@@ -42,6 +50,13 @@
           </div>
         </div>
       </div>
+      
+      <!-- Empty State -->
+      <div v-if="!isLoading && recentPhotos.length === 0" class="empty-state">
+        <i class="fas fa-camera"></i>
+        <p>No photos uploaded yet</p>
+      </div>
+      
       <div class="view-all">
         <router-link to="/portfolio" class="view-all-btn">View All Photos</router-link>
       </div>
@@ -158,7 +173,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useDataStore } from '../stores/dataStore'
@@ -169,6 +184,7 @@ const dataStore = useDataStore()
 const currentBackgroundIndex = ref(0)
 const backgroundInterval = ref(null)
 const selectedPhoto = ref(null)
+const isLoading = ref(true)
 
 // Get recent photos for background with error handling
 const backgroundPhotos = computed(() => {
@@ -198,7 +214,10 @@ const startBackgroundRotation = () => {
 // Recent photos with URL parsing and error handling
 const recentPhotos = computed(() => {
   try {
-    return [...dataStore.photos]
+    if (!dataStore.isInitialized) {
+      return []
+    }
+    const photos = [...dataStore.photos]
       .sort((a, b) => new Date(b.date) - new Date(a.date))
       .slice(0, 6)
       .map(photo => ({
@@ -206,28 +225,41 @@ const recentPhotos = computed(() => {
         imageUrl: parseImageUrl(photo.imageUrl),
         photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
       }))
+    return photos
   } catch (error) {
     console.error('Error loading recent photos:', error)
     return []
   }
 })
 
-// URL parsing function
+// Watch for data initialization
+watchEffect(() => {
+  if (dataStore.isInitialized && recentPhotos.value.length > 0) {
+    isLoading.value = false
+  }
+})
+
+// URL parsing function with better error handling
 const parseImageUrl = (url) => {
-  if (!url) return ''
+  if (!url) return 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
   
-  if (url.includes('postimages.org')) {
-    const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
-    if (match) {
-      return `https://i.postimg.cc/${match[1]}/image.jpg`
+  try {
+    if (url.includes('postimages.org')) {
+      const match = url.match(/\/\/(?:i\.)?postimg\.(?:cc|org)\/([^\/]+)/)
+      if (match) {
+        return `https://i.postimg.cc/${match[1]}`
+      }
     }
-  }
-  
-  if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+    
+    if (url.match(/\.(jpg|jpeg|png|gif|webp)$/i)) {
+      return url
+    }
+    
     return url
+  } catch (error) {
+    console.error('Error parsing image URL:', error)
+    return 'https://via.placeholder.com/600x400?text=Photo+Not+Found'
   }
-  
-  return url
 }
 
 // Error handling for images
@@ -251,7 +283,12 @@ const totalPhotographers = computed(() => dataStore.photographers.length)
 const totalLocations = ref(8)
 
 // Animations
-onMounted(() => {
+onMounted(async () => {
+  // Ensure data is loaded
+  if (!dataStore.isInitialized) {
+    await dataStore.initializeData()
+  }
+  
   startBackgroundRotation()
   
   // Hero animations with enhanced timing
@@ -528,12 +565,43 @@ const closePhotoModal = () => {
   font-size: 1.2rem;
 }
 
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: var(--primary-color);
+}
+
+.loading-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Empty State */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.empty-state i {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+}
+
+/* Enhanced Photos Grid */
 .photos-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
   gap: 2rem;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 auto 3rem;
   padding: 0 1rem;
 }
 
@@ -547,6 +615,7 @@ const closePhotoModal = () => {
   transform: translateY(0);
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  opacity: 1;
 }
 
 .photo-card:hover {
