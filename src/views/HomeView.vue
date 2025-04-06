@@ -21,43 +21,56 @@
 
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-media">
-        <div class="hero-image-container" 
-             v-for="(photo, index) in featuredPhotos" 
-             :key="photo.id"
-             :class="{ active: currentSlide === index }">
-          <img :src="photo.imageUrl" :alt="photo.title" class="hero-image">
-        </div>
-        <div class="hero-overlay"></div>
-      </div>
+      <div class="container">
+        <div class="hero-content">
+          <div class="hero-text">
+            <h1>Vancouver's Elite</h1>
+            <h1>Community</h1>
+            <p class="hero-subtitle">Experience the art of aviation photography at YVR's most exclusive locations</p>
+            
+            <div class="stats-grid">
+              <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Elite Photographers</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">1.2K+</div>
+                <div class="stat-label">Premium Captures</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-number">12</div>
+                <div class="stat-label">Exclusive Locations</div>
+              </div>
+            </div>
 
-      <div class="hero-content container">
-        <div class="hero-text">
-          <h1 class="glide-in">
-            <span class="line">Vancouver's Elite</span>
-            <span class="line accent">Aviation Photography</span>
-            <span class="line">Community</span>
-          </h1>
-          <p class="hero-subtitle fade-in">
-            Experience the art of aviation photography at YVR's most exclusive locations
-          </p>
-          <div class="hero-cta fade-in">
-            <button class="btn-primary">Join VERSA</button>
-            <button class="btn-secondary">View Gallery</button>
-          </div>
-        </div>
+            <div class="quick-actions">
+              <div class="action-card">
+                <div class="action-icon">📸</div>
+                <div class="action-label">View Gallery</div>
+              </div>
+              <div class="action-card">
+                <div class="action-icon">🎯</div>
+                <div class="action-label">Spotting Locations</div>
+              </div>
+              <div class="action-card">
+                <div class="action-icon">👥</div>
+                <div class="action-label">Join Community</div>
+              </div>
+            </div>
 
-        <div class="hero-counter">
-          <div class="counter-item" v-for="stat in stats" :key="stat.label">
-            <div class="counter-number">{{ stat.value }}</div>
-            <div class="counter-label">{{ stat.label }}</div>
+            <div class="hero-cta">
+              <button class="btn-primary">Join VERSA</button>
+              <button class="btn-secondary">View Gallery</button>
+            </div>
           </div>
         </div>
       </div>
 
       <div class="scroll-indicator">
         <span>Scroll to Explore</span>
-        <div class="scroll-line"></div>
+        <div class="scroll-line">
+          <div class="scroll-dot"></div>
+        </div>
       </div>
     </section>
 
@@ -468,11 +481,11 @@ body {
 
 /* Enhanced Hero Section */
 .hero {
-  min-height: 100vh;
   position: relative;
+  min-height: 100vh;
   display: flex;
   align-items: center;
-  color: var(--text);
+  padding: 8rem 0;
   overflow: hidden;
   background: var(--primary);
 }
@@ -519,85 +532,204 @@ body {
 .hero-content {
   position: relative;
   z-index: 2;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  gap: 6rem;
-  align-items: center;
 }
 
 .hero-text {
   max-width: 800px;
+  margin-bottom: 4rem;
 }
 
 .hero-text h1 {
-  font-size: clamp(3rem, 10vw, 6rem);
+  font-size: clamp(3.5rem, 12vw, 7rem);
   font-weight: 800;
-  margin-bottom: 2rem;
+  line-height: 0.9;
   letter-spacing: -0.03em;
-  line-height: 1;
+  margin-bottom: 2rem;
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   text-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
-.hero-text h1 .line {
-  display: block;
-  overflow: hidden;
-}
-
-.hero-text h1 .accent {
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-
 .hero-subtitle {
-  font-size: clamp(1.1rem, 3vw, 1.5rem);
+  font-size: clamp(1.25rem, 4vw, 1.5rem);
   color: var(--text-secondary);
-  margin-bottom: 3rem;
   max-width: 600px;
-  font-weight: 400;
+  margin-bottom: 3rem;
+  line-height: 1.6;
 }
 
-.hero-counter {
+.stats-grid {
   display: grid;
-  grid-template-columns: repeat(1, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
+  margin-top: 4rem;
 }
 
-.counter-item {
-  text-align: right;
-  padding: 2rem;
+.stat-card {
   background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: var(--shadow-md);
+  padding: 2rem;
+  backdrop-filter: blur(20px);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
   transition: var(--transition);
 }
 
-.counter-item:hover {
-  transform: translateY(-8px) scale(1.02);
-  background: rgba(255, 255, 255, 0.06);
+.stat-card:hover {
+  transform: translateY(-10px);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--accent);
-  box-shadow: 0 30px 60px rgba(0, 255, 213, 0.2);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.5),
+    0 0 40px rgba(0, 255, 213, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
-.counter-number {
-  font-size: 3rem;
+.stat-number {
+  font-size: 3.5rem;
   font-weight: 700;
-  background: var(--gradient-1);
+  margin-bottom: 0.5rem;
+  background: linear-gradient(to right, var(--accent), #fff);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-  margin-bottom: 0.5rem;
 }
 
-.counter-label {
-  font-size: 0.875rem;
+.stat-label {
   color: var(--text-secondary);
+  font-size: 1.1rem;
   font-weight: 500;
-  letter-spacing: 0.05em;
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.action-card {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius);
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  box-shadow: 
+    0 10px 30px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.action-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
+  border-color: var(--accent);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(0, 255, 213, 0.1),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.action-icon {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--accent);
+}
+
+.action-label {
+  font-weight: 500;
+  color: var(--text);
+}
+
+.hero-cta {
+  display: flex;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent), #0066ff);
+  color: var(--text);
+  padding: 1rem 3rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 
+    0 20px 40px rgba(0, 255, 213, 0.2),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.btn-primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 
+    0 30px 60px rgba(0, 255, 213, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text);
+  padding: 1rem 3rem;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+}
+
+.btn-secondary:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.15);
+  border-color: var(--accent);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  opacity: 0.7;
+}
+
+.scroll-line {
+  width: 2px;
+  height: 100px;
+  background: linear-gradient(to bottom, var(--accent), transparent);
+  position: relative;
+  box-shadow: 0 0 20px var(--accent);
+}
+
+.scroll-dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  animation: scrollDot 2s infinite;
+  box-shadow: 0 0 20px var(--accent);
+}
+
+@keyframes scrollDot {
+  0% { transform: translate(-50%, 0); opacity: 1; }
+  50% { transform: translate(-50%, 50px); opacity: 0.5; }
+  100% { transform: translate(-50%, 100px); opacity: 0; }
 }
 
 /* Enhanced Latest Section */
