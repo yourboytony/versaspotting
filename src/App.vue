@@ -57,7 +57,7 @@
         <div class="footer-content">
           <div class="footer-section">
             <h3>VERSA Spotting Group</h3>
-            <p>Capturing the beauty of aviation through the lens of passionate photographers.</p>
+            <p>Capturing the beauty of aviation through the lenses of passionate photographers.</p>
             <div class="social-links">
               <a href="#" class="social-link" target="_blank">
                 <i class="icon-instagram"></i>
