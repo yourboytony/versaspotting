@@ -106,13 +106,6 @@
           <h3>YVR Based</h3>
           <p>Located at Vancouver International Airport, we have prime access to some of the most beautiful aircraft in the world.</p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <i class="icon-events"></i>
-          </div>
-          <h3>Exclusive Events</h3>
-          <p>Participate in special events and workshops with industry experts.</p>
-        </div>
       </div>
     </section>
 
