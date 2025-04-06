@@ -76,29 +76,29 @@
             <div class="quick-links-container">
               <div class="quick-links-column">
                 <router-link to="/" class="quick-link">
-                  <i class="icon-home"></i>
+                  <i class="fas fa-home"></i>
                   <span>Home</span>
                 </router-link>
                 <router-link to="/portfolio" class="quick-link">
-                  <i class="icon-portfolio"></i>
+                  <i class="fas fa-images"></i>
                   <span>Portfolio</span>
                 </router-link>
                 <router-link to="/news" class="quick-link">
-                  <i class="icon-news"></i>
+                  <i class="fas fa-newspaper"></i>
                   <span>News</span>
                 </router-link>
               </div>
               <div class="quick-links-column">
                 <router-link to="/about" class="quick-link">
-                  <i class="icon-about"></i>
+                  <i class="fas fa-info-circle"></i>
                   <span>About</span>
                 </router-link>
                 <router-link to="/apply" class="quick-link">
-                  <i class="icon-apply"></i>
+                  <i class="fas fa-user-plus"></i>
                   <span>Apply</span>
                 </router-link>
                 <router-link to="/contact" class="quick-link">
-                  <i class="icon-contact"></i>
+                  <i class="fas fa-envelope"></i>
                   <span>Contact</span>
                 </router-link>
               </div>
@@ -223,6 +223,7 @@ onMounted(() => {
 
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@700&display=swap');
+@import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css');
 
 :root {
   --primary-color: #90993e;
