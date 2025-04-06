@@ -1,5 +1,5 @@
 <template>
-  <div class="home">
+  <div class="home" ref="mainContainer">
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-overlay"></div>
@@ -174,6 +174,7 @@ const dataStore = useDataStore()
 const currentBackgroundIndex = ref(0)
 const backgroundInterval = ref(null)
 const selectedPhoto = ref(null)
+const mainContainer = ref(null)
 const isLoading = ref(true)
 
 // Get recent photos for background with error handling
@@ -263,144 +264,171 @@ const totalPhotos = computed(() => dataStore.photos.length)
 const totalPhotographers = computed(() => dataStore.photographers.length)
 const totalLocations = ref(8)
 
-// Animations
 onMounted(async () => {
-  // Ensure data is loaded
   if (!dataStore.isInitialized) {
     await dataStore.initializeData()
   }
-  
-  startBackgroundRotation()
-  
-  // Hero animations with enhanced timing
-  gsap.from('.hero-content', {
-    duration: 1.8,
-    y: 60,
-    opacity: 0,
-    ease: 'power3.out'
-  })
 
-  // Recent uploads animations with better stagger
-  gsap.from('.photo-card', {
+  // Create smooth scroll container
+  const smoothScroll = {
+    ease: 0.1,
+    current: 0,
+    target: 0,
+    container: mainContainer.value
+  }
+
+  // Hero Section Animation
+  const heroTimeline = gsap.timeline({
     scrollTrigger: {
-      trigger: '.recent-uploads',
-      start: 'top 80%',
-      toggleActions: 'play none none reset'
-    },
-    duration: 1,
-    y: 60,
-    opacity: 0,
-    stagger: {
-      amount: 0.6,
-      ease: 'power2.out'
+      trigger: '.hero',
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      scrub: 1
     }
   })
 
-  // Section headers animation
-  gsap.utils.toArray('.section-header').forEach(header => {
-    gsap.from(header, {
-      scrollTrigger: {
-        trigger: header,
-        start: 'top 85%',
-        toggleActions: 'play none none reset'
-      },
-      duration: 1,
-      y: 40,
-      opacity: 0,
-      ease: 'power2.out'
-    })
+  heroTimeline
+    .fromTo('.hero-content', 
+      { y: 0, opacity: 1 },
+      { y: -100, opacity: 0, duration: 1 }
+    )
+    .fromTo('.hero-background',
+      { scale: 1 },
+      { scale: 1.2, duration: 1 },
+      0
+    )
+
+  // Recent Uploads Section Animation
+  const uploadsTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.recent-uploads',
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      scrub: 1
+    }
   })
 
-  // About section enhanced animations
+  uploadsTimeline
+    .from('.section-header', {
+      y: 100,
+      opacity: 0,
+      duration: 1
+    })
+    .from('.photo-card', {
+      y: 100,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 1
+    }, '-=0.5')
+
+  // About Section Animation
   const aboutTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: '.about',
-      start: 'top 80%',
-      toggleActions: 'play none none reset'
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      scrub: 1
     }
   })
 
   aboutTimeline
     .from('.about-title', {
-      y: 40,
+      y: 100,
       opacity: 0,
-      duration: 1,
-      ease: 'power2.out'
+      duration: 1
     })
     .from('.about-subtitle', {
-      y: 30,
+      y: 50,
       opacity: 0,
-      duration: 0.8,
-      ease: 'power2.out'
-    }, '-=0.6')
+      duration: 1
+    }, '-=0.5')
     .from('.about-text p', {
-      y: 30,
+      y: 50,
       opacity: 0,
-      duration: 0.8,
       stagger: 0.2,
-      ease: 'power2.out'
-    }, '-=0.4')
+      duration: 1
+    }, '-=0.5')
     .from('.stat-box', {
-      y: 30,
+      scale: 0.8,
       opacity: 0,
-      duration: 0.6,
       stagger: 0.2,
-      ease: 'power2.out'
-    }, '-=0.4')
+      duration: 1
+    }, '-=0.5')
 
-  // Features animation with bounce
-  gsap.from('.feature-card', {
+  // Features Section Animation
+  const featuresTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: '.features',
-      start: 'top 80%',
-      toggleActions: 'play none none reset'
-    },
-    duration: 1,
-    y: 40,
-    opacity: 0,
-    stagger: 0.2,
-    ease: 'back.out(1.2)'
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      scrub: 1
+    }
   })
 
-  // Announcements animation with slide
-  gsap.from('.announcement-card', {
+  featuresTimeline
+    .from('.features .section-header', {
+      y: 100,
+      opacity: 0,
+      duration: 1
+    })
+    .from('.feature-card', {
+      scale: 0.8,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 1
+    }, '-=0.5')
+
+  // Announcements Section Animation
+  const announcementsTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: '.announcements',
-      start: 'top 80%',
-      toggleActions: 'play none none reset'
-    },
-    duration: 1,
-    x: -40,
-    opacity: 0,
-    stagger: 0.2,
-    ease: 'power2.out'
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      scrub: 1
+    }
   })
 
-  // CTA animation with scale
-  gsap.from('.cta-content', {
+  announcementsTimeline
+    .from('.announcements .section-header', {
+      y: 100,
+      opacity: 0,
+      duration: 1
+    })
+    .from('.announcement-card', {
+      x: -100,
+      opacity: 0,
+      stagger: 0.2,
+      duration: 1
+    }, '-=0.5')
+
+  // CTA Section Animation
+  const ctaTimeline = gsap.timeline({
     scrollTrigger: {
       trigger: '.cta',
-      start: 'top 85%',
-      toggleActions: 'play none none reset'
-    },
-    duration: 1,
-    scale: 0.95,
-    y: 30,
-    opacity: 0,
-    ease: 'power3.out'
+      start: 'top top',
+      end: '+=100%',
+      pin: true,
+      scrub: 1
+    }
   })
 
-  // Enhanced scroll indicator animation
-  gsap.to('.scroll-arrow', {
-    y: 12,
-    duration: 1.5,
-    repeat: -1,
-    yoyo: true,
-    ease: 'power1.inOut'
-  })
+  ctaTimeline
+    .from('.cta-content', {
+      scale: 0.8,
+      opacity: 0,
+      duration: 1
+    })
 })
 
 onUnmounted(() => {
+  // Clean up ScrollTrigger instances
+  ScrollTrigger.getAll().forEach(trigger => trigger.kill())
+  
   if (backgroundInterval.value) {
     clearInterval(backgroundInterval.value)
   }
@@ -1044,5 +1072,52 @@ const closePhotoModal = () => {
     font-size: 1.1rem;
     padding: 0 var(--spacing-md);
   }
+}
+
+/* Enhanced section styles for smooth scrolling */
+.hero,
+.recent-uploads,
+.about,
+.features,
+.announcements,
+.cta {
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+  will-change: transform;
+}
+
+/* Smooth scroll container */
+.home {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+/* Enhanced transitions */
+.photo-card,
+.feature-card,
+.announcement-card,
+.stat-box {
+  will-change: transform, opacity;
+}
+
+/* Parallax effect for background images */
+.hero-background {
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Enhanced 3D transforms */
+.photo-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature-card,
+.stat-box {
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 </style> 

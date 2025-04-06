@@ -129,7 +129,6 @@ import gsap from 'gsap'
 import { useDataStore } from './stores/dataStore'
 import { storeToRefs } from 'pinia'
 import NavBar from './components/NavBar.vue'
-import Footer from './components/Footer.vue'
 
 const router = useRouter()
 const isAdmin = computed(() => localStorage.getItem('adminToken') !== null)
