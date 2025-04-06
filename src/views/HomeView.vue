@@ -112,7 +112,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted, watchEffect } from 'vue'
 import gsap from 'gsap'
 import ScrollTrigger from 'gsap/ScrollTrigger'
 import { useDataStore } from '../stores/dataStore'
@@ -126,10 +126,18 @@ const currentBackgroundIndex = ref(0)
 const backgroundInterval = ref(null)
 const error = ref(null)
 
+console.log('Initial dataStore state:', {
+  photos: dataStore.photos,
+  photographers: dataStore.photographers,
+  isInitialized: dataStore.isInitialized,
+  isLoading: dataStore.isLoading
+})
+
 // Get recent photos with error handling
 const recentPhotos = computed(() => {
+  console.log('Computing recentPhotos, current photos:', dataStore.photos)
   const photos = dataStore.photos || []
-  return photos
+  const sorted = photos
     .slice()
     .sort((a, b) => new Date(b.date) - new Date(a.date))
     .slice(0, 6)
@@ -137,39 +145,66 @@ const recentPhotos = computed(() => {
       ...photo,
       photographer: dataStore.photographers.find(p => p.id === photo.photographerId)?.name || 'Unknown'
     }))
+  console.log('Computed recentPhotos:', sorted)
+  return sorted
 })
 
-// Watch for data initialization
+// Watch for data initialization and loading state
 watchEffect(() => {
-  if (dataStore.isInitialized && recentPhotos.value.length > 0) {
-    isLoading.value = false
+  console.log('watchEffect triggered:', {
+    isInitialized: dataStore.isInitialized,
+    photosLength: recentPhotos.value.length,
+    isLoading: isLoading.value
+  })
+  
+  if (dataStore.isInitialized) {
+    if (recentPhotos.value.length > 0) {
+      isLoading.value = false
+      console.log('Data loaded successfully')
+    } else {
+      error.value = 'No photos available'
+      isLoading.value = false
+      console.log('No photos available')
+    }
   }
 })
 
 // Error handling for images
 const handleImageError = (event) => {
+  console.log('Image load error, using fallback')
   event.target.src = 'https://via.placeholder.com/400x300?text=Photo+Not+Available'
 }
 
 // Stats
-const totalPhotos = computed(() => dataStore.photos.length)
-const totalPhotographers = computed(() => dataStore.photographers.length)
+const totalPhotos = computed(() => {
+  console.log('Computing totalPhotos:', dataStore.photos.length)
+  return dataStore.photos.length
+})
+
+const totalPhotographers = computed(() => {
+  console.log('Computing totalPhotographers:', dataStore.photographers.length)
+  return dataStore.photographers.length
+})
+
 const totalLocations = ref(8)
 
 // Rotate background images
 const rotateBackground = () => {
   if (recentPhotos.value.length > 0) {
     currentBackgroundIndex.value = (currentBackgroundIndex.value + 1) % Math.min(3, recentPhotos.value.length)
+    console.log('Rotating background to index:', currentBackgroundIndex.value)
   }
 }
 
 // Retry initialization
 const retryInitialization = async () => {
+  console.log('Retrying initialization')
   isLoading.value = true
   error.value = null
   try {
     await dataStore.initializeData()
   } catch (e) {
+    console.error('Retry failed:', e)
     error.value = e.message
   } finally {
     isLoading.value = false
@@ -178,27 +213,34 @@ const retryInitialization = async () => {
 
 // Initialize data on component mount
 onMounted(async () => {
-  if (!dataStore.isInitialized) {
-    try {
-      await dataStore.initializeData()
-    } catch (e) {
-      error.value = e.message
+  console.log('Component mounted, initializing data')
+  try {
+    await dataStore.initializeData()
+    console.log('Data initialized:', {
+      photos: dataStore.photos,
+      photographers: dataStore.photographers
+    })
+    
+    // Start background rotation if we have photos
+    if (recentPhotos.value.length > 0) {
+      console.log('Starting background rotation')
+      backgroundInterval.value = setInterval(rotateBackground, 5000)
     }
-  }
-  
-  // Start background rotation if we have photos
-  if (recentPhotos.value.length > 0) {
-    backgroundInterval.value = setInterval(rotateBackground, 5000)
-  }
-  
-  // Initialize animations only if we have content
-  if (!error.value) {
-    initializeAnimations()
+    
+    // Initialize animations
+    if (!error.value) {
+      console.log('Initializing animations')
+      initializeAnimations()
+    }
+  } catch (e) {
+    console.error('Initialization failed:', e)
+    error.value = e.message
   }
 })
 
 // Initialize animations
 const initializeAnimations = () => {
+  console.log('Setting up animations')
   // Hero animations
   gsap.from('.hero-content', {
     duration: 1.5,
@@ -283,6 +325,7 @@ const initializeAnimations = () => {
 }
 
 onUnmounted(() => {
+  console.log('Component unmounting, cleaning up')
   ScrollTrigger.getAll().forEach(trigger => trigger.kill())
   if (backgroundInterval.value) {
     clearInterval(backgroundInterval.value)
