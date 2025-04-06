@@ -540,13 +540,13 @@ h2 {
 .hero-overlay {
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
-  z-index: 1;
+  background: linear-gradient(to bottom, rgba(0,0,0,0.4), rgba(0,0,0,0.7));
+  z-index: 5;
 }
 
 .hero-content {
   position: relative;
-  z-index: 2;
+  z-index: 10;
   max-width: 1000px;
   margin: 0 auto;
   padding: 0 var(--spacing-md);
@@ -557,37 +557,42 @@ h2 {
 .welcome-text {
   text-align: center;
   margin-bottom: var(--spacing-lg);
+  position: relative;
+  z-index: 10;
 }
 
 .pre-title {
   font-size: 1.5rem;
   font-weight: 500;
-  color: var(--color-text-light);
+  color: #ffffff;
   margin-bottom: var(--spacing-sm);
   letter-spacing: 0.2em;
-  opacity: 0.9;
+  opacity: 1;
+  text-shadow: 0 2px 10px rgba(0,0,0,0.3);
 }
 
 h1 {
   font-size: clamp(3rem, 10vw, 6rem);
   font-weight: 800;
   line-height: 1;
-  background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 100%;
-  animation: shine 3s linear infinite;
-  filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+  color: #ffffff;
   margin: var(--spacing-sm) 0;
   letter-spacing: -0.02em;
+  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
+  opacity: 1;
+  -webkit-text-fill-color: #ffffff;
+  background: none;
 }
 
 .hero-description {
   font-size: clamp(1.25rem, 3vw, 1.5rem);
   max-width: 600px;
   margin: 0 auto var(--spacing-lg);
-  opacity: 0.9;
+  opacity: 1;
+  color: #ffffff;
   text-shadow: 0 2px 10px rgba(0,0,0,0.3);
+  position: relative;
+  z-index: 10;
 }
 
 .hero-buttons {
