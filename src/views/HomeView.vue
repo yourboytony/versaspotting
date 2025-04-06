@@ -298,21 +298,18 @@ const initializeAnimations = () => {
     })
   })
 
-  // Stats counter with better easing
-  gsap.utils.toArray('.stat-number').forEach(stat => {
-    const value = parseInt(stat.textContent)
+  // Remove the complex stats counter animation and replace with simpler reveal
+  gsap.utils.toArray('.stat').forEach((stat, i) => {
     gsap.from(stat, {
       scrollTrigger: {
         trigger: stat,
-        start: 'top 80%'
+        start: 'top 85%',
       },
-      textContent: 0,
-      duration: 2,
-      ease: 'power2.out',
-      snap: { textContent: 1 },
-      onUpdate: () => {
-        stat.textContent = Math.round(gsap.getProperty(stat, 'textContent'))
-      }
+      y: 30,
+      opacity: 0,
+      duration: 0.6,
+      delay: i * 0.2,
+      ease: 'power2.out'
     })
   })
 
@@ -671,59 +668,94 @@ h2 {
 .stats {
   padding: var(--spacing-xl) 0;
   background: var(--background);
+  position: relative;
+  overflow: hidden;
+}
+
+.stats::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
+}
+
+.stats::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--primary-light), transparent);
 }
 
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: var(--spacing-lg);
+  position: relative;
 }
 
 .stat {
   text-align: center;
   padding: var(--spacing-lg);
-  background: var(--card-bg);
+  background: linear-gradient(145deg, var(--card-bg), rgba(255, 255, 255, 0.9));
   border-radius: var(--border-radius);
-  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-  min-height: 200px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 1px solid rgba(130, 157, 80, 0.1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--primary-light));
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
 .stat:hover {
-  transform: translateY(-5px) scale(1.02);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 40px rgba(130, 157, 80, 0.15);
+}
+
+.stat:hover::before {
+  opacity: 1;
 }
 
 .stat-number {
   font-size: 3.5rem;
-  font-weight: 700;
-  color: var(--primary);
-  margin-bottom: var(--spacing-xs);
-  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  font-weight: 800;
+  background: linear-gradient(45deg, var(--primary), var(--primary-dark));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  background-size: 200% 200%;
-  animation: gradient 5s ease infinite;
+  margin-bottom: var(--spacing-xs);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  line-height: 1;
 }
 
 .stat-label {
   font-size: 1.25rem;
   font-weight: 600;
   margin-bottom: var(--spacing-xs);
+  color: var(--text);
 }
 
 .stat-description {
   font-size: 1rem;
   color: var(--text-secondary);
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
+  max-width: 200px;
+  margin: 0 auto;
+  line-height: 1.5;
 }
 
 /* About Section */
@@ -1167,10 +1199,20 @@ h2 {
   
   .stats-grid {
     grid-template-columns: 1fr;
+    max-width: 400px;
+    margin: 0 auto;
   }
   
   .features {
     grid-template-columns: 1fr;
+  }
+  
+  .stat {
+    padding: var(--spacing-md);
+  }
+  
+  .stat-number {
+    font-size: 3rem;
   }
 }
 
