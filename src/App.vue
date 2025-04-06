@@ -558,7 +558,7 @@ body {
   height: 100%;
   background: radial-gradient(
     circle at center,
-    rgba(144, 153, 62, 0.1) 0%,
+    rgba(144, 153, 62, 0.05) 0%,
     transparent 70%
   );
   opacity: 0;
@@ -578,16 +578,15 @@ body {
   height: 100%;
   background: linear-gradient(
     135deg,
-    rgba(144, 153, 62, 0.1),
-    rgba(176, 185, 94, 0.1)
+    rgba(144, 153, 62, 0.05),
+    rgba(176, 185, 94, 0.05)
   );
   opacity: 0;
   transition: opacity var(--transition-normal);
-  animation: gradientShift 5s infinite;
 }
 
 .footer-section:hover::after {
-  opacity: 0.2;
+  opacity: 0.5;
 }
 
 .footer-section h3 {
@@ -636,8 +635,6 @@ body {
   transition: all var(--transition-normal);
   position: relative;
   overflow: hidden;
-  animation: float 4s ease-in-out infinite;
-  animation-delay: calc(var(--i) * 0.2s);
 }
 
 .social-link::before {
@@ -649,7 +646,7 @@ body {
   height: 100%;
   background: radial-gradient(
     circle at center,
-    rgba(144, 153, 62, 0.3) 0%,
+    rgba(144, 153, 62, 0.2) 0%,
     transparent 70%
   );
   transform: scale(0);
@@ -661,9 +658,8 @@ body {
 }
 
 .social-link:hover {
-  transform: translateY(-3px) scale(1.1);
+  transform: translateY(-3px);
   color: var(--primary-color);
-  animation: pulse 1s infinite;
 }
 
 .footer-links {
@@ -764,7 +760,7 @@ body {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 1px;
   background: linear-gradient(
     90deg,
     transparent,
@@ -776,7 +772,7 @@ body {
 }
 
 .contact-info p:hover::after {
-  transform: translateX(100%);
+  transform: translateX(0);
 }
 
 .footer-bottom {
