@@ -1,5 +1,5 @@
 <template>
-  <div class="home" ref="mainContainer">
+  <div class="home">
     <!-- Hero Section -->
     <section class="hero">
       <div class="hero-background">
@@ -9,17 +9,19 @@
         <div class="hero-overlay"></div>
       </div>
       <div class="hero-content">
-        <h1 class="title">VERSA Spotting Group</h1>
-        <p class="subtitle">Where Aviation Meets Artistry</p>
-        <p class="description">Join Vancouver's premier aviation photography community</p>
-        <div class="hero-buttons">
-          <router-link to="/portfolio" class="button primary">View Portfolios</router-link>
-          <router-link to="/applications" class="button secondary">Join Us</router-link>
+        <div class="hero-text">
+          <h1 class="title">VERSA Spotting Group</h1>
+          <p class="subtitle">Where Aviation Meets Artistry</p>
+          <p class="description">Join Vancouver's premier aviation photography community</p>
+          <div class="hero-buttons">
+            <router-link to="/portfolio" class="button primary">View Portfolios</router-link>
+            <router-link to="/applications" class="button secondary">Join Us</router-link>
+          </div>
         </div>
-      </div>
-      <div class="scroll-indicator">
-        <span class="scroll-text">Scroll to explore</span>
-        <div class="scroll-arrow"></div>
+        <div class="scroll-indicator">
+          <span class="scroll-text">Scroll to explore</span>
+          <div class="scroll-arrow"></div>
+        </div>
       </div>
     </section>
 
@@ -56,54 +58,29 @@
       </div>
     </section>
 
-    <!-- Photo Modal -->
-    <div v-if="selectedPhoto" class="photo-modal" @click="closePhotoModal">
-      <div class="modal-content" @click.stop>
-        <button class="close-btn" @click="closePhotoModal">&times;</button>
-        <img :src="selectedPhoto.imageUrl" :alt="selectedPhoto.title">
-        <div class="modal-info">
-          <h2>{{ selectedPhoto.title }}</h2>
-          <p class="photographer">By {{ selectedPhoto.photographer }}</p>
-          <p class="description">{{ selectedPhoto.description }}</p>
-          <div class="photo-details">
-            <span v-if="selectedPhoto.camera"><i class="fas fa-camera"></i> {{ selectedPhoto.camera }}</span>
-            <span v-if="selectedPhoto.lens"><i class="fas fa-camera-retro"></i> {{ selectedPhoto.lens }}</span>
-            <span><i class="fas fa-calendar"></i> {{ formatDate(selectedPhoto.date) }}</span>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- About Section -->
     <section class="about">
-      <div class="about-wrapper">
-        <div class="about-header">
-          <div class="about-title">
-            <h2>About VERSA</h2>
-            <div class="title-line"></div>
-          </div>
+      <div class="about-content">
+        <div class="about-text">
+          <h2>About VERSA</h2>
           <p class="about-subtitle">Vancouver's Premier Aviation Photography Community</p>
-        </div>
-
-        <div class="about-content">
-          <div class="about-text">
+          <div class="about-description">
             <p>VERSA Spotting Group is a community of aviation enthusiasts and photographers based in Vancouver, Canada. We are dedicated to capturing and sharing the beauty of aviation through our lenses.</p>
             <p>Our members are passionate about aviation photography and are committed to capturing the perfect shot, whether it's a commercial airliner or a private jet.</p>
           </div>
-
-          <div class="about-stats">
-            <div class="stat-box">
-              <span class="stat-value">{{ totalPhotographers }}</span>
-              <span class="stat-label">Members</span>
-            </div>
-            <div class="stat-box">
-              <span class="stat-value">{{ totalPhotos }}</span>
-              <span class="stat-label">Photos</span>
-            </div>
-            <div class="stat-box">
-              <span class="stat-value">{{ totalLocations }}</span>
-              <span class="stat-label">Locations</span>
-            </div>
+        </div>
+        <div class="about-stats">
+          <div class="stat-box">
+            <span class="stat-value">{{ totalPhotographers }}</span>
+            <span class="stat-label">Members</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">{{ totalPhotos }}</span>
+            <span class="stat-label">Photos</span>
+          </div>
+          <div class="stat-box">
+            <span class="stat-value">{{ totalLocations }}</span>
+            <span class="stat-label">Locations</span>
           </div>
         </div>
       </div>
@@ -111,9 +88,6 @@
 
     <!-- Features Section -->
     <section class="features">
-      <div class="features-background">
-        <div class="features-pattern"></div>
-      </div>
       <div class="section-header">
         <h2>Why Join VERSA</h2>
         <p>Experience the difference</p>
@@ -145,9 +119,6 @@
 
     <!-- Latest Announcements -->
     <section class="announcements">
-      <div class="announcements-background">
-        <div class="announcements-pattern"></div>
-      </div>
       <div class="section-header">
         <h2>Latest Announcements</h2>
         <p>Stay updated with our latest news and events</p>
@@ -163,12 +134,6 @@
 
     <!-- CTA Section -->
     <section class="cta">
-      <div class="cta-background">
-        <video autoplay loop muted playsinline class="cta-video">
-          <source src="https://player.vimeo.com/external/434045526.sd.mp4?s=c27eecc69a27dbc4ff2b87d38afc35f1a9e7c02d&profile_id=139&oauth2_token_id=57447761" type="video/mp4">
-        </video>
-        <div class="cta-overlay"></div>
-      </div>
       <div class="cta-content">
         <h2>Ready to Join VERSA?</h2>
         <p>Start your journey with us today and become part of Vancouver's premier aviation photography community</p>
@@ -187,41 +152,11 @@ import { useDataStore } from '../stores/dataStore'
 gsap.registerPlugin(ScrollTrigger)
 
 const dataStore = useDataStore()
-const currentBackgroundIndex = ref(0)
-const backgroundInterval = ref(null)
 const selectedPhoto = ref(null)
 const mainContainer = ref(null)
 const isLoading = ref(true)
-const mousePosition = ref({ x: 0, y: 0 })
-const previousBackground = ref(null)
 
 // Get recent photos for background with error handling
-const backgroundPhotos = computed(() => {
-  try {
-    return [...dataStore.photos]
-      .sort((a, b) => new Date(b.date) - new Date(a.date))
-      .slice(0, 5)
-      .map(photo => parseImageUrl(photo.imageUrl))
-  } catch (error) {
-    console.error('Error loading background photos:', error)
-    return []
-  }
-})
-
-// Current background image
-const currentBackground = computed(() => {
-  return backgroundPhotos.value[currentBackgroundIndex.value] || 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png'
-})
-
-// Change background every 5 seconds with crossfade
-const startBackgroundRotation = () => {
-  backgroundInterval.value = setInterval(() => {
-    previousBackground.value = currentBackground.value
-    currentBackgroundIndex.value = (currentBackgroundIndex.value + 1) % backgroundPhotos.value.length
-  }, 5000)
-}
-
-// Recent photos with URL parsing and error handling
 const recentPhotos = computed(() => {
   const photos = dataStore.photos || []
   return photos
@@ -283,27 +218,14 @@ const totalPhotos = computed(() => dataStore.photos.length)
 const totalPhotographers = computed(() => dataStore.photographers.length)
 const totalLocations = ref(8)
 
-// Track mouse position for parallax effect
-const handleMouseMove = (e) => {
-  mousePosition.value = {
-    x: (e.clientX / window.innerWidth - 0.5) * 20,
-    y: (e.clientY / window.innerHeight - 0.5) * 20
-  }
-}
-
 onMounted(async () => {
   if (!dataStore.isInitialized) {
     await dataStore.initializeData()
   }
   
-  startBackgroundRotation()
-  
-  // Add mouse move event listener for parallax effect
-  window.addEventListener('mousemove', handleMouseMove)
-  
   // Hero section animations
-  gsap.from('.hero-content', {
-    duration: 2,
+  gsap.from('.hero-text', {
+    duration: 1.5,
     y: 100,
     opacity: 0,
     ease: 'power4.out',
@@ -326,22 +248,12 @@ onMounted(async () => {
     delay: 2
   })
   
-  // Parallax effect for hero background
-  gsap.to('.hero-background', {
-    backgroundPosition: `${mousePosition.value.x}px ${mousePosition.value.y}px`,
-    ease: 'power1.out',
-    duration: 1,
-    repeat: -1
-  })
-  
   // Recent Uploads section
   gsap.timeline({
     scrollTrigger: {
       trigger: '.recent-uploads',
-      start: 'top top',
-      end: 'bottom top',
-      pin: true,
-      pinSpacing: true,
+      start: 'top center',
+      end: 'bottom center',
       scrub: 1
     }
   })
@@ -368,50 +280,28 @@ onMounted(async () => {
   gsap.timeline({
     scrollTrigger: {
       trigger: '.about',
-      start: 'top top',
-      end: 'bottom top',
-      pin: true,
-      pinSpacing: true,
+      start: 'top center',
+      end: 'bottom center',
       scrub: 1
     }
   })
-  .from('.about-title', {
-    y: 100,
+  .from('.about-text', {
+    x: -100,
     opacity: 0,
     duration: 1
   })
-  .from('.title-line', {
-    scaleX: 0,
-    duration: 1,
-    ease: 'power2.out'
-  }, '-=0.5')
-  .from('.about-subtitle', {
-    y: 50,
+  .from('.about-stats', {
+    x: 100,
     opacity: 0,
     duration: 1
-  }, '-=0.5')
-  .from('.about-text p', {
-    y: 50,
-    opacity: 0,
-    stagger: 0.2,
-    duration: 1
-  }, '-=0.5')
-  .from('.stat-box', {
-    scale: 0.8,
-    opacity: 0,
-    stagger: 0.2,
-    duration: 1,
-    ease: 'back.out(1.7)'
   }, '-=0.5')
   
   // Features section
   gsap.timeline({
     scrollTrigger: {
       trigger: '.features',
-      start: 'top top',
-      end: 'bottom top',
-      pin: true,
-      pinSpacing: true,
+      start: 'top center',
+      end: 'bottom center',
       scrub: 1
     }
   })
@@ -421,29 +311,19 @@ onMounted(async () => {
     duration: 1
   })
   .from('.feature-card', {
-    scale: 0.8,
+    y: 100,
     opacity: 0,
     stagger: 0.2,
     duration: 1,
     ease: 'back.out(1.7)'
-  }, '-=0.5')
-  .from('.feature-icon', {
-    rotation: 360,
-    scale: 0,
-    opacity: 0,
-    stagger: 0.2,
-    duration: 1,
-    ease: 'elastic.out(1, 0.5)'
   }, '-=0.5')
   
   // Announcements section
   gsap.timeline({
     scrollTrigger: {
       trigger: '.announcements',
-      start: 'top top',
-      end: 'bottom top',
-      pin: true,
-      pinSpacing: true,
+      start: 'top center',
+      end: 'bottom center',
       scrub: 1
     }
   })
@@ -453,7 +333,7 @@ onMounted(async () => {
     duration: 1
   })
   .from('.announcement-card', {
-    x: -100,
+    y: 100,
     opacity: 0,
     stagger: 0.2,
     duration: 1,
@@ -464,10 +344,8 @@ onMounted(async () => {
   gsap.timeline({
     scrollTrigger: {
       trigger: '.cta',
-      start: 'top top',
-      end: 'bottom top',
-      pin: true,
-      pinSpacing: true,
+      start: 'top center',
+      end: 'bottom center',
       scrub: 1
     }
   })
@@ -477,42 +355,11 @@ onMounted(async () => {
     duration: 1,
     ease: 'elastic.out(1, 0.5)'
   })
-  
-  // Add floating animation to stat boxes
-  gsap.to('.stat-box', {
-    y: -10,
-    duration: 2,
-    ease: 'power1.inOut',
-    stagger: {
-      each: 0.3,
-      yoyo: true,
-      repeat: -1
-    }
-  })
-  
-  // Add pulse animation to feature icons
-  gsap.to('.feature-icon', {
-    scale: 1.1,
-    duration: 1.5,
-    ease: 'power1.inOut',
-    stagger: {
-      each: 0.5,
-      yoyo: true,
-      repeat: -1
-    }
-  })
 })
 
 onUnmounted(() => {
   // Clean up ScrollTrigger instances
   ScrollTrigger.getAll().forEach(trigger => trigger.kill())
-  
-  if (backgroundInterval.value) {
-    clearInterval(backgroundInterval.value)
-  }
-  
-  // Remove event listener
-  window.removeEventListener('mousemove', handleMouseMove)
 })
 
 const openPhotoModal = (photo) => {
@@ -594,22 +441,33 @@ const closePhotoModal = () => {
 .hero-content {
   position: relative;
   z-index: 2;
-  max-width: 800px;
+  max-width: 1200px;
+  width: 100%;
   padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.hero-text {
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 .title {
-  font-size: 4.5rem;
+  font-size: 5rem;
   font-weight: 800;
   margin-bottom: 1rem;
   color: #fff;
   text-shadow: 0 0 20px rgba(130, 157, 80, 0.5);
-  letter-spacing: -1px;
+  letter-spacing: -2px;
   line-height: 1.1;
 }
 
 .subtitle {
-  font-size: 1.8rem;
+  font-size: 2rem;
   margin-bottom: 1rem;
   color: #fff;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -618,7 +476,7 @@ const closePhotoModal = () => {
 }
 
 .description {
-  font-size: 1.2rem;
+  font-size: 1.4rem;
   margin-bottom: 3rem;
   color: rgba(255, 255, 255, 0.8);
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
@@ -632,14 +490,14 @@ const closePhotoModal = () => {
 }
 
 .button {
-  padding: 1rem 2.5rem;
-  border-radius: 30px;
+  padding: 1.2rem 3rem;
+  border-radius: 50px;
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   letter-spacing: -0.5px;
 }
 
@@ -683,14 +541,8 @@ const closePhotoModal = () => {
 
 /* Recent Uploads Section */
 .recent-uploads {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 6rem 2rem;
-  background: var(--background-color);
+  padding: 8rem 2rem;
+  background: #fff;
 }
 
 .section-header {
@@ -699,7 +551,7 @@ const closePhotoModal = () => {
 }
 
 .section-header h2 {
-  font-size: 3rem;
+  font-size: 3.5rem;
   margin-bottom: 1rem;
   color: var(--primary-color);
   font-weight: 700;
@@ -816,16 +668,16 @@ const closePhotoModal = () => {
 
 .view-all-btn {
   display: inline-block;
-  padding: 1rem 2.5rem;
+  padding: 1.2rem 3rem;
   background: var(--primary-color);
   color: #fff;
   text-decoration: none;
-  border-radius: 30px;
+  border-radius: 50px;
   font-weight: 600;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   letter-spacing: -0.5px;
 }
 
@@ -856,59 +708,13 @@ const closePhotoModal = () => {
 
 /* About Section */
 .about {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 6rem 2rem;
-  background: #fff;
-}
-
-.about-wrapper {
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
-}
-
-.about-header {
-  text-align: center;
-  margin-bottom: 4rem;
-}
-
-.about-title {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 1rem;
-  margin-bottom: 1rem;
-}
-
-.about-title h2 {
-  font-size: 3.5rem;
-  color: var(--primary-color);
-  font-weight: 700;
-  margin: 0;
-  letter-spacing: -1px;
-}
-
-.title-line {
-  width: 100px;
-  height: 3px;
-  background: var(--primary-color);
-  border-radius: 3px;
-}
-
-.about-subtitle {
-  font-size: 1.5rem;
-  color: var(--text-color);
-  margin: 0;
-  font-weight: 500;
-  letter-spacing: -0.5px;
+  padding: 8rem 2rem;
+  background: var(--background-color);
 }
 
 .about-content {
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
@@ -916,16 +722,36 @@ const closePhotoModal = () => {
 }
 
 .about-text {
+  padding-right: 2rem;
+}
+
+.about-text h2 {
+  font-size: 3.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+  font-weight: 700;
+  letter-spacing: -1px;
+}
+
+.about-subtitle {
+  font-size: 1.5rem;
+  color: var(--text-color);
+  margin-bottom: 2rem;
+  font-weight: 500;
+  letter-spacing: -0.5px;
+}
+
+.about-description {
   font-size: 1.2rem;
   line-height: 1.8;
   color: var(--text-color);
 }
 
-.about-text p {
+.about-description p {
   margin-bottom: 1.5rem;
 }
 
-.about-text p:last-child {
+.about-description p:last-child {
   margin-bottom: 0;
 }
 
@@ -937,7 +763,7 @@ const closePhotoModal = () => {
 
 .stat-box {
   background: #fff;
-  padding: 2rem;
+  padding: 2.5rem;
   border-radius: 20px;
   text-align: center;
   border: 1px solid var(--border-color);
@@ -953,7 +779,7 @@ const closePhotoModal = () => {
 
 .stat-value {
   display: block;
-  font-size: 3.5rem;
+  font-size: 4rem;
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 0.5rem;
@@ -963,60 +789,29 @@ const closePhotoModal = () => {
 
 .stat-label {
   color: var(--text-color);
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 500;
   letter-spacing: -0.5px;
 }
 
 /* Features Section */
 .features {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 6rem 2rem;
-  background: var(--background-color);
-  overflow: hidden;
-}
-
-.features-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  padding: 8rem 2rem;
   background: #fff;
-  z-index: 0;
-}
-
-.features-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: radial-gradient(var(--primary-color) 1px, transparent 1px);
-  background-size: 30px 30px;
-  opacity: 0.1;
 }
 
 .features-grid {
-  position: relative;
-  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
 }
 
 .feature-card {
   position: relative;
   background: #fff;
-  padding: 2.5rem;
+  padding: 3rem;
   border-radius: 20px;
   border: 1px solid var(--border-color);
   text-align: center;
@@ -1036,9 +831,9 @@ const closePhotoModal = () => {
 }
 
 .feature-icon {
-  font-size: 2.5rem;
+  font-size: 3rem;
   color: var(--primary-color);
-  margin-bottom: 1.5rem;
+  margin-bottom: 2rem;
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
 }
@@ -1046,8 +841,8 @@ const closePhotoModal = () => {
 .feature-icon::after {
   content: '';
   position: absolute;
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   background: rgba(130, 157, 80, 0.1);
   border-radius: 50%;
   top: 50%;
@@ -1067,7 +862,7 @@ const closePhotoModal = () => {
 }
 
 .feature-card h3 {
-  font-size: 1.5rem;
+  font-size: 1.8rem;
   color: var(--primary-color);
   margin-bottom: 1rem;
   font-weight: 600;
@@ -1084,57 +879,22 @@ const closePhotoModal = () => {
 
 /* Announcements Section */
 .announcements {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 6rem 2rem;
-  background: #fff;
-  overflow: hidden;
-}
-
-.announcements-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  padding: 8rem 2rem;
   background: var(--background-color);
-  z-index: 0;
-}
-
-.announcements-pattern {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: linear-gradient(45deg, var(--primary-color) 25%, transparent 25%), 
-                    linear-gradient(-45deg, var(--primary-color) 25%, transparent 25%), 
-                    linear-gradient(45deg, transparent 75%, var(--primary-color) 75%), 
-                    linear-gradient(-45deg, transparent 75%, var(--primary-color) 75%);
-  background-size: 60px 60px;
-  background-position: 0 0, 0 30px, 30px -30px, -30px 0px;
-  opacity: 0.05;
 }
 
 .announcements-grid {
-  position: relative;
-  z-index: 1;
+  max-width: 1200px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 2rem;
-  max-width: 1200px;
-  margin: 0 auto;
-  width: 100%;
 }
 
 .announcement-card {
   position: relative;
   background: #fff;
-  padding: 2.5rem;
+  padding: 3rem;
   border-radius: 20px;
   border: 1px solid var(--border-color);
   transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
@@ -1149,14 +909,14 @@ const closePhotoModal = () => {
 
 .announcement-date {
   color: var(--primary-color);
-  font-size: 0.9rem;
+  font-size: 1rem;
   margin-bottom: 1rem;
   font-weight: 500;
 }
 
 .announcement-card h3 {
   color: var(--text-color);
-  font-size: 1.3rem;
+  font-size: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 600;
   letter-spacing: -0.5px;
@@ -1170,52 +930,12 @@ const closePhotoModal = () => {
 
 /* CTA Section */
 .cta {
-  min-height: 100vh;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding: 6rem 2rem;
+  padding: 8rem 2rem;
   background: var(--primary-color);
   text-align: center;
-  overflow: hidden;
-}
-
-.cta-background {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  z-index: 0;
-}
-
-.cta-video {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transform: scale(1.1);
-  opacity: 0.3;
-}
-
-.cta-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(130, 157, 80, 0.8),
-    rgba(130, 157, 80, 0.95)
-  );
-  z-index: 1;
 }
 
 .cta-content {
-  position: relative;
-  z-index: 2;
   max-width: 800px;
   margin: 0 auto;
 }
@@ -1295,18 +1015,27 @@ const closePhotoModal = () => {
 }
 
 /* Responsive Design */
-@media (max-width: 968px) {
+@media (max-width: 1200px) {
+  .title {
+    font-size: 4rem;
+  }
+  
+  .subtitle {
+    font-size: 1.8rem;
+  }
+  
   .about-content {
     grid-template-columns: 1fr;
     gap: 3rem;
   }
-
+  
   .about-text {
+    padding-right: 0;
     text-align: center;
   }
-
+  
   .features-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
@@ -1314,31 +1043,35 @@ const closePhotoModal = () => {
   .title {
     font-size: 3rem;
   }
-
+  
   .subtitle {
     font-size: 1.4rem;
   }
-
+  
   .hero-buttons {
     flex-direction: column;
   }
-
+  
   .about-title h2 {
     font-size: 2.5rem;
   }
-
+  
   .about-subtitle {
     font-size: 1.2rem;
   }
-
+  
   .about-stats {
     grid-template-columns: 1fr;
   }
-
+  
   .photos-grid {
     grid-template-columns: 1fr;
   }
-
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
   .recent-uploads,
   .about,
   .features,
@@ -1347,4 +1080,4 @@ const closePhotoModal = () => {
     padding: 4rem 1rem;
   }
 }
-</style> 
+</style>
