@@ -224,10 +224,62 @@ const rotateBackground = () => {
   }
 }
 
-// Initialize animations
+// Update the initializeAnimations function
 const initializeAnimations = () => {
-  // Hero animations
-  gsap.from('.hero-content > *', {
+  // Hero animations with staggered reveal
+  const heroTimeline = gsap.timeline()
+  heroTimeline
+    .from('.hero-content .overline', {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    })
+    .from('.hero-content h1', {
+      y: 50,
+      opacity: 0,
+      duration: 1.2,
+      ease: 'power4.out'
+    }, '-=0.7')
+    .from('.hero-content .hero-description', {
+      y: 30,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.9')
+    .from('.hero-buttons .btn', {
+      y: 20,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out'
+    }, '-=0.7')
+    .from('.scroll-indicator', {
+      y: -20,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power2.out'
+    }, '-=0.5')
+
+  // Parallax effect for hero background
+  gsap.to('.background-image.active', {
+    y: '20%',
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
+    }
+  })
+
+  // Featured section animations
+  gsap.from('.featured .overline, .featured h2', {
+    scrollTrigger: {
+      trigger: '.featured',
+      start: 'top 80%',
+      end: 'top 20%',
+      toggleActions: 'play none none reverse'
+    },
     y: 50,
     opacity: 0,
     duration: 1,
@@ -235,36 +287,142 @@ const initializeAnimations = () => {
     ease: 'power3.out'
   })
 
-  // Scroll-triggered animations
-  gsap.utils.toArray('section:not(.hero)').forEach(section => {
-    gsap.from(section, {
-      scrollTrigger: {
-        trigger: section,
-        start: 'top 80%',
-        end: 'top 20%',
-        scrub: 1
-      },
-      y: 100,
-      opacity: 0,
-      duration: 1
-    })
+  gsap.from('.featured-item', {
+    scrollTrigger: {
+      trigger: '.featured-grid',
+      start: 'top 80%',
+      end: 'top 20%',
+      toggleActions: 'play none none reverse'
+    },
+    y: 100,
+    opacity: 0,
+    duration: 1,
+    stagger: 0.2,
+    ease: 'power3.out'
   })
 
-  // Stats counter animation
+  // Stats section animations with counter effect
+  const statsTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.stats',
+      start: 'top 80%',
+      end: 'top 20%',
+      toggleActions: 'play none none reverse'
+    }
+  })
+
+  statsTimeline
+    .from('.stats .overline, .stats h2', {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2,
+      ease: 'power3.out'
+    })
+    .from('.stat', {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out'
+    }, '-=0.5')
+
+  // Animate stat numbers
   gsap.utils.toArray('.stat-number').forEach(stat => {
+    let endValue = parseInt(stat.textContent)
     gsap.from(stat, {
       scrollTrigger: {
         trigger: stat,
         start: 'top 80%',
-        end: 'top 20%',
-        scrub: 1
+        toggleActions: 'play none none reverse'
       },
-      textContent: 0,
-      duration: 1,
-      snap: { textContent: 1 },
-      stagger: 0.2
+      innerText: 0,
+      duration: 2,
+      snap: { innerText: 1 },
+      ease: 'power2.out'
     })
   })
+
+  // About section animations with parallax
+  const aboutTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.about',
+      start: 'top 80%',
+      end: 'top 20%',
+      toggleActions: 'play none none reverse'
+    }
+  })
+
+  aboutTimeline
+    .from('.about .overline, .about h2', {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      stagger: 0.2,
+      ease: 'power3.out'
+    })
+    .from('.about-text p', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out'
+    }, '-=0.5')
+    .from('.feature', {
+      y: 50,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out'
+    }, '-=0.5')
+
+  gsap.from('.about-image', {
+    scrollTrigger: {
+      trigger: '.about-image',
+      start: 'top 80%',
+      end: 'bottom 20%',
+      scrub: 1
+    },
+    y: '10%',
+    scale: 0.95,
+    opacity: 0.8
+  })
+
+  // CTA section animations
+  const ctaTimeline = gsap.timeline({
+    scrollTrigger: {
+      trigger: '.cta',
+      start: 'top 80%',
+      end: 'top 20%',
+      toggleActions: 'play none none reverse'
+    }
+  })
+
+  ctaTimeline
+    .from('.cta .overline', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out'
+    })
+    .from('.cta h2', {
+      y: 40,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.6')
+    .from('.cta p', {
+      y: 30,
+      opacity: 0,
+      duration: 0.8,
+      ease: 'power3.out'
+    }, '-=0.7')
+    .from('.cta .btn', {
+      y: 20,
+      opacity: 0,
+      duration: 0.8,
+      stagger: 0.2,
+      ease: 'power3.out'
+    }, '-=0.5')
 }
 
 // Component lifecycle
@@ -374,14 +532,13 @@ h2 {
   background-size: cover;
   background-position: center;
   opacity: 0;
-  transition: opacity 1.5s ease-in-out;
+  transition: all 2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: scale(1.1);
 }
 
 .background-image.active {
   opacity: 1;
-  transform: scale(1);
-  transition: opacity 1.5s ease-in-out, transform 8s ease-in-out;
+  transform: scale(1.05);
 }
 
 .hero-overlay {
@@ -398,6 +555,7 @@ h2 {
   margin: 0 auto;
   padding: 0 var(--spacing-md);
   text-align: center;
+  animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-content h1 {
@@ -444,11 +602,12 @@ h2 {
   aspect-ratio: 4/3;
   cursor: pointer;
   transform: translateY(0);
-  transition: transform 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .featured-item:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2);
 }
 
 .featured-image {
@@ -461,7 +620,7 @@ h2 {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.3s ease;
+  transition: transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .featured-item:hover img {
@@ -473,7 +632,7 @@ h2 {
   inset: 0;
   background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
   opacity: 0;
-  transition: opacity 0.3s ease;
+  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   align-items: flex-end;
   padding: var(--spacing-md);
@@ -518,11 +677,12 @@ h2 {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-  transition: transform 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stat:hover {
-  transform: translateY(-10px);
+  transform: translateY(-10px) scale(1.05);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.15);
 }
 
 .stat-number {
@@ -576,11 +736,12 @@ h2 {
   padding: var(--spacing-md);
   background: var(--card-bg);
   border-radius: var(--border-radius);
-  transition: transform 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .feature:hover {
-  transform: translateY(-5px);
+  transform: translateY(-5px) scale(1.03);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.1);
 }
 
 .feature-icon {
@@ -646,7 +807,7 @@ h2 {
   font-weight: 600;
   text-decoration: none;
   border-radius: 50px;
-  transition: all 0.3s ease;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
   cursor: pointer;
   text-shadow: none;
 }
@@ -664,8 +825,8 @@ h2 {
 }
 
 .btn:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
 }
 
 .btn-primary:hover {
@@ -696,6 +857,7 @@ h2 {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   overflow: hidden;
+  animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .modal-close {
@@ -810,6 +972,7 @@ h2 {
   font-size: 0.75rem;
   font-weight: 500;
   letter-spacing: 0.2em;
+  animation: float 3s ease-in-out infinite;
 }
 
 .scroll-line {
@@ -828,7 +991,7 @@ h2 {
   width: 100%;
   height: 100%;
   background: #fff;
-  animation: scroll 2s infinite;
+  animation: scroll 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
 }
 
 @keyframes scroll {
@@ -836,6 +999,11 @@ h2 {
   50% { transform: translateY(100%); }
   51% { transform: translateY(-100%); }
   100% { transform: translateY(-100%); }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-10px); }
 }
 
 /* Responsive Design */
