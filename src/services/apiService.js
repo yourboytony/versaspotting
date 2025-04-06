@@ -1,102 +1,71 @@
 // API Service for VERSA Spotting Group
 // This service handles data synchronization between different browsers and devices
-// Using IndexedDB for free storage
+// Using Firebase Realtime Database (free tier)
 
-let db;
+import { initializeApp } from 'firebase/app'
+import { getDatabase, ref, set, get, child } from 'firebase/database'
 
-// Initialize IndexedDB
-const initDB = () => {
-  return new Promise((resolve, reject) => {
-    const request = indexedDB.open('versaDB', 1);
-    
-    request.onerror = () => {
-      console.error('Error opening database');
-      reject(request.error);
-    };
-    
-    request.onsuccess = () => {
-      db = request.result;
-      resolve(db);
-    };
-    
-    request.onupgradeneeded = (event) => {
-      const db = event.target.result;
-      
-      // Create object stores for each data type
-      if (!db.objectStoreNames.contains('photos')) {
-        db.createObjectStore('photos', { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains('photographers')) {
-        db.createObjectStore('photographers', { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains('applications')) {
-        db.createObjectStore('applications', { keyPath: 'id' });
-      }
-      if (!db.objectStoreNames.contains('announcements')) {
-        db.createObjectStore('announcements', { keyPath: 'id' });
-      }
-    };
-  });
-};
+// Firebase configuration
+const firebaseConfig = {
+  apiKey: "AIzaSyBXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+  authDomain: "versa-spotting.firebaseapp.com",
+  databaseURL: "https://versa-spotting-default-rtdb.firebaseio.com",
+  projectId: "versa-spotting",
+  storageBucket: "versa-spotting.appspot.com",
+  messagingSenderId: "XXXXXXXXXXXX",
+  appId: "1:XXXXXXXXXXXX:web:XXXXXXXXXXXXXXXX"
+}
 
-// Helper function to get data from IndexedDB
-const getData = (storeName) => {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readonly');
-    const store = transaction.objectStore(storeName);
-    const request = store.getAll();
-    
-    request.onsuccess = () => resolve(request.result);
-    request.onerror = () => reject(request.error);
-  });
-};
+// Initialize Firebase
+const app = initializeApp(firebaseConfig)
+const db = getDatabase(app)
 
-// Helper function to save data to IndexedDB
-const saveData = (storeName, data) => {
-  return new Promise((resolve, reject) => {
-    const transaction = db.transaction(storeName, 'readwrite');
-    const store = transaction.objectStore(storeName);
+// Helper function to get data from Firebase
+const getData = async (key) => {
+  try {
+    const snapshot = await get(child(ref(db), key))
+    if (snapshot.exists()) {
+      return Object.values(snapshot.val())
+    }
+    return []
+  } catch (error) {
+    console.error(`Error getting data for ${key}:`, error)
+    return []
+  }
+}
+
+// Helper function to save data to Firebase
+const saveData = async (key, data) => {
+  try {
+    // Convert array to object with IDs as keys
+    const dataObj = data.reduce((acc, item) => {
+      acc[item.id] = item
+      return acc
+    }, {})
     
-    // Clear existing data
-    store.clear();
-    
-    // Add all new data
-    data.forEach(item => {
-      store.add(item);
-    });
-    
-    transaction.oncomplete = () => resolve(true);
-    transaction.onerror = () => reject(transaction.error);
-  });
-};
+    await set(ref(db, key), dataObj)
+    return true
+  } catch (error) {
+    console.error(`Error saving data for ${key}:`, error)
+    return false
+  }
+}
 
 // Export functions
 export const initApiService = async () => {
   try {
-    await initDB();
-    console.log('IndexedDB initialized successfully');
-    return true;
+    console.log('Firebase initialized successfully')
+    return true
   } catch (error) {
-    console.error('Failed to initialize IndexedDB:', error);
-    return false;
+    console.error('Failed to initialize Firebase:', error)
+    return false
   }
-};
+}
 
 export const getLatestData = async (key) => {
-  try {
-    return await getData(key);
-  } catch (error) {
-    console.error(`Error getting data for ${key}:`, error);
-    return [];
-  }
-};
+  return await getData(key)
+}
 
 export const syncData = async (key, data) => {
-  try {
-    await saveData(key, data);
-    return true;
-  } catch (error) {
-    console.error(`Error syncing data for ${key}:`, error);
-    return false;
-  }
-}; 
+  return await saveData(key, data)
+} 
