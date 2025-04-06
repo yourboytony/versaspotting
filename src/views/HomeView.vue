@@ -765,14 +765,12 @@ h1::after {
   background: var(--section-bg);
   position: relative;
   z-index: 10;
+  margin-top: 100vh;
 }
 
-.section-content {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-  position: relative;
-  z-index: 10;
+.section-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
 }
 
 .featured .overline {
@@ -784,6 +782,7 @@ h1::after {
   color: var(--primary);
   margin-bottom: var(--spacing-sm);
   opacity: 1;
+  text-align: center;
 }
 
 .featured h2 {
@@ -794,51 +793,40 @@ h1::after {
   line-height: 1.1;
   position: relative;
   z-index: 10;
+  text-align: center;
 }
 
 .featured-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
-  gap: var(--spacing-md);
+  grid-template-columns: repeat(2, 1fr);
+  gap: var(--spacing-lg);
   margin-top: var(--spacing-lg);
   position: relative;
   z-index: 10;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 var(--spacing-md);
 }
 
 .featured-item {
   position: relative;
   border-radius: var(--border-radius);
   overflow: hidden;
-  aspect-ratio: 4/3;
+  aspect-ratio: 16/9;
   cursor: pointer;
   transform: none;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   transform-style: preserve-3d;
   perspective: 2000px;
   background: var(--card-bg);
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.1);
 }
 
-/* Add a subtle gradient background to the featured section */
-.featured::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgba(130, 157, 80, 0.05),
-    rgba(130, 157, 80, 0.02)
-  );
-  z-index: 1;
-}
-
-/* Ensure text is visible */
-.featured .overline,
-.featured h2 {
-  color: var(--text);
-  text-shadow: none;
-  position: relative;
-  z-index: 10;
+.featured-item:hover {
+  transform: translateY(-10px) rotateX(5deg) rotateY(5deg);
+  box-shadow: 
+    0 30px 60px rgba(0,0,0,0.2),
+    0 0 0 1px rgba(255,255,255,0.1);
 }
 
 .featured-image {
@@ -856,52 +844,33 @@ h1::after {
   will-change: transform;
 }
 
-.featured-item:hover img {
-  transform: translateZ(50px);
+.featured-item:hover .featured-image img {
+  transform: scale(1.05) translateZ(50px);
 }
 
-.featured-overlay {
+/* Add gradient overlay */
+.featured::before {
+  content: '';
   position: absolute;
   inset: 0;
   background: linear-gradient(
-    to top,
-    rgba(0,0,0,0.9) 0%,
-    rgba(0,0,0,0.4) 50%,
-    transparent 100%
+    to bottom,
+    rgba(130, 157, 80, 0.05),
+    rgba(130, 157, 80, 0.02)
   );
-  opacity: 0;
-  transition: opacity 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-  display: flex;
-  align-items: flex-end;
-  padding: var(--spacing-md);
-  color: #fff;
+  z-index: 1;
 }
 
-.featured-item:hover .featured-overlay {
-  opacity: 1;
-}
-
-.featured-info h3 {
-  font-size: 1.5rem;
-  margin-bottom: var(--spacing-xs);
-}
-
-.featured-info p {
-  font-size: 1rem;
-  margin-bottom: var(--spacing-xs);
-  opacity: 0.9;
-}
-
-.photographer {
-  font-size: 0.875rem;
-  opacity: 0.7;
-}
-
-.featured-info .location {
-  font-size: 0.875rem;
-  opacity: 0.7;
-  display: block;
-  margin-top: 0.25rem;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .featured-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .featured {
+    margin-top: 100vh;
+    padding: var(--spacing-lg) 0;
+  }
 }
 
 /* Stats Section */
