@@ -233,18 +233,30 @@ const rotateBackground = () => {
 
 // Update the initializeAnimations function
 const initializeAnimations = () => {
-  // Subtle hero parallax effect
+  // Enhanced hero parallax with depth effect
   gsap.to('.background-image.active', {
-    y: '10%',
+    y: '15%',
+    scale: 1.1,
     scrollTrigger: {
       trigger: '.hero',
       start: 'top top',
       end: 'bottom top',
-      scrub: true
+      scrub: 1
     }
   })
 
-  // Subtle text reveal on scroll
+  // Floating animation for hero content
+  gsap.to('.hero-content', {
+    y: '-20px',
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 2
+    }
+  })
+
+  // Text reveal animations
   gsap.utils.toArray('h2, .overline').forEach(element => {
     gsap.from(element, {
       scrollTrigger: {
@@ -253,13 +265,14 @@ const initializeAnimations = () => {
         end: 'top 65%',
         scrub: 0.5
       },
-      color: 'rgba(var(--text-color-rgb), 0.3)',
+      y: 20,
+      opacity: 0.3,
       duration: 0.5
     })
   })
 
-  // Subtle background parallax for sections
-  gsap.utils.toArray('.featured, .stats, .about').forEach(section => {
+  // Enhanced section parallax
+  gsap.utils.toArray('.featured, .stats, .about').forEach((section, i) => {
     gsap.to(section, {
       backgroundPositionY: '10%',
       scrollTrigger: {
@@ -269,55 +282,85 @@ const initializeAnimations = () => {
         scrub: true
       }
     })
-  })
 
-  // Simple fade in for sections
-  const sections = ['.featured', '.stats', '.about', '.cta']
-  sections.forEach(section => {
-    gsap.from(section, {
+    // Stagger children animations
+    const items = section.querySelectorAll('.featured-item, .stat, .feature')
+    gsap.from(items, {
       scrollTrigger: {
         trigger: section,
-        start: 'top 80%',
-        end: 'top 20%',
-        toggleActions: 'play none none none'
+        start: 'top 80%'
       },
+      y: 30,
       opacity: 0,
-      y: 20,
       duration: 0.8,
+      stagger: 0.1,
       ease: 'power2.out'
     })
   })
 
-  // Subtle image scale on hover
-  gsap.utils.toArray('.featured-item img, .about-image').forEach(img => {
-    const tl = gsap.timeline({ paused: true })
-    tl.to(img, {
-      scale: 1.05,
-      duration: 0.5,
-      ease: 'power2.out'
-    })
-    
-    img.addEventListener('mouseenter', () => tl.play())
-    img.addEventListener('mouseleave', () => tl.reverse())
-  })
-
-  // Stats counter animation
+  // Stats counter with better easing
   gsap.utils.toArray('.stat-number').forEach(stat => {
     const value = parseInt(stat.textContent)
     gsap.from(stat, {
       scrollTrigger: {
         trigger: stat,
-        start: 'top 80%',
-        toggleActions: 'play none none none'
+        start: 'top 80%'
       },
       textContent: 0,
-      duration: 1.5,
-      ease: 'power1.out',
+      duration: 2,
+      ease: 'power2.out',
       snap: { textContent: 1 },
       onUpdate: () => {
         stat.textContent = Math.round(gsap.getProperty(stat, 'textContent'))
       }
     })
+  })
+
+  // Magnetic effect for buttons
+  gsap.utils.toArray('.btn').forEach(btn => {
+    btn.addEventListener('mousemove', (e) => {
+      const rect = btn.getBoundingClientRect()
+      const x = e.clientX - rect.left
+      const y = e.clientY - rect.top
+      
+      gsap.to(btn, {
+        x: (x - rect.width / 2) / rect.width * 20,
+        y: (y - rect.height / 2) / rect.height * 20,
+        duration: 0.3,
+        ease: 'power2.out'
+      })
+    })
+    
+    btn.addEventListener('mouseleave', () => {
+      gsap.to(btn, {
+        x: 0,
+        y: 0,
+        duration: 0.5,
+        ease: 'elastic.out(1, 0.3)'
+      })
+    })
+  })
+
+  // Smooth parallax for about image
+  gsap.to('.about-image', {
+    y: '20%',
+    scrollTrigger: {
+      trigger: '.about',
+      start: 'top bottom',
+      end: 'bottom top',
+      scrub: 1
+    }
+  })
+
+  // Enhanced CTA section reveal
+  gsap.from('.cta', {
+    scrollTrigger: {
+      trigger: '.cta',
+      start: 'top 80%'
+    },
+    backgroundColor: 'rgba(130, 157, 80, 0)',
+    duration: 1,
+    ease: 'power2.inOut'
   })
 }
 
@@ -513,6 +556,11 @@ h2 {
   line-height: 1;
   margin: var(--spacing-sm) 0;
   letter-spacing: -0.02em;
+  background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  animation: shine 3s linear infinite;
 }
 
 .hero-description {
@@ -553,6 +601,8 @@ h2 {
   cursor: pointer;
   transform: none;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .featured-item:hover {
@@ -564,6 +614,7 @@ h2 {
   position: relative;
   width: 100%;
   height: 100%;
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .featured-image img {
@@ -574,7 +625,7 @@ h2 {
 }
 
 .featured-item:hover img {
-  transform: scale(1.1);
+  transform: translateZ(20px);
 }
 
 .featured-overlay {
@@ -639,11 +690,11 @@ h2 {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .stat:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-5px) scale(1.02);
 }
 
 .stat-number {
@@ -651,6 +702,11 @@ h2 {
   font-weight: 700;
   color: var(--primary);
   margin-bottom: var(--spacing-xs);
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient 5s ease infinite;
 }
 
 .stat-label {
@@ -662,6 +718,12 @@ h2 {
 .stat-description {
   font-size: 1rem;
   color: var(--text-secondary);
+}
+
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
 /* About Section */
@@ -698,16 +760,22 @@ h2 {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .feature:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
 .feature-icon {
   font-size: 2.5rem;
   margin-bottom: var(--spacing-sm);
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature:hover .feature-icon {
+  transform: scale(1.2) rotate(5deg);
 }
 
 .feature h3 {
@@ -773,6 +841,8 @@ h2 {
   text-shadow: none;
   opacity: 1 !important;
   transform: none !important;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
 .btn-primary {
@@ -788,8 +858,8 @@ h2 {
 }
 
 .btn:hover {
-  transform: translateY(-2px) !important;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
 .btn-primary:hover {
@@ -820,7 +890,8 @@ h2 {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   overflow: hidden;
-  animation: modalIn 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transform-origin: center;
 }
 
 .modal-close {
@@ -935,6 +1006,7 @@ h2 {
   font-weight: 500;
   letter-spacing: 0.2em;
   opacity: 0.7;
+  animation: float 3s ease-in-out infinite;
 }
 
 .scroll-indicator::after {
@@ -948,132 +1020,127 @@ h2 {
   background: currentColor;
   border-radius: 50%;
   opacity: 0.5;
-  animation: pulse 2s infinite;
+  animation: pulseAndFloat 2s infinite;
 }
 
-@keyframes pulse {
-  0% { transform: translateX(-50%) scale(1); opacity: 0.5; }
-  50% { transform: translateX(-50%) scale(1.5); opacity: 0.2; }
-  100% { transform: translateX(-50%) scale(1); opacity: 0.5; }
+@keyframes float {
+  0%, 100% { transform: translateX(-50%) translateY(0); }
+  50% { transform: translateX(-50%) translateY(-10px); }
 }
 
-/* Add smooth transitions for images */
-.featured-item img,
-.about-image {
-  transition: transform 0.5s ease, filter 0.5s ease;
-  will-change: transform;
-  transform-origin: center center;
+@keyframes pulseAndFloat {
+  0% { transform: translateX(-50%) scale(1) translateY(0); opacity: 0.5; }
+  50% { transform: translateX(-50%) scale(1.5) translateY(-5px); opacity: 0.2; }
+  100% { transform: translateX(-50%) scale(1) translateY(0); opacity: 0.5; }
 }
 
-/* Enhance hover effects */
-.featured-item {
-  position: relative;
-  overflow: hidden;
-}
-
-.featured-item::after {
+/* Add shimmer effect to featured images */
+.featured-image::after {
   content: '';
   position: absolute;
   top: 0;
+  right: 0;
+  bottom: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
   background: linear-gradient(
-    to bottom,
+    45deg,
     transparent 0%,
-    rgba(0, 0, 0, 0.2) 100%
+    rgba(255, 255, 255, 0.1) 50%,
+    transparent 100%
   );
-  opacity: 0;
-  transition: opacity 0.3s ease;
+  transform: translateX(-100%);
+  animation: shimmer 3s infinite;
 }
 
-.featured-item:hover::after {
-  opacity: 1;
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  20%, 100% { transform: translateX(100%); }
 }
 
-/* Enhance stat cards */
+/* Enhanced Animations */
+.featured-item {
+  transform-style: preserve-3d;
+  perspective: 1000px;
+}
+
+.featured-image {
+  transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.featured-item:hover .featured-image {
+  transform: translateZ(20px);
+}
+
 .stat {
-  position: relative;
-  overflow: hidden;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.stat::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  left: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transform: scale(0.5);
-  transition: transform 0.6s ease, opacity 0.6s ease;
+.stat:hover {
+  transform: translateY(-5px) scale(1.02);
 }
 
-.stat:hover::before {
-  opacity: 1;
-  transform: scale(1);
+.stat-number {
+  background: linear-gradient(45deg, var(--primary), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 200%;
+  animation: gradient 5s ease infinite;
 }
 
-/* Enhance CTA section */
-.cta {
-  position: relative;
-  overflow: hidden;
+@keyframes gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
 }
 
-.cta::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(255, 255, 255, 0.1) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity 0.6s ease;
+.feature {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.cta:hover::before {
-  opacity: 1;
+.feature:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.15);
 }
 
-/* Enhance buttons */
+.feature-icon {
+  transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.feature:hover .feature-icon {
+  transform: scale(1.2) rotate(5deg);
+}
+
 .btn {
-  position: relative;
-  overflow: hidden;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform;
 }
 
-.btn::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 150%;
-  height: 150%;
-  background: radial-gradient(
-    circle,
-    rgba(255, 255, 255, 0.2) 0%,
-    transparent 70%
-  );
-  transform: translate(-50%, -50%) scale(0);
-  transition: transform 0.4s ease;
+.btn:hover {
+  transform: translateY(-2px) scale(1.02) !important;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.15);
 }
 
-.btn:hover::after {
-  transform: translate(-50%, -50%) scale(1);
+.hero-content h1 {
+  background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-size: 200% 100%;
+  animation: shine 3s linear infinite;
 }
 
-/* Add subtle text animations */
-h2, .overline {
-  transition: color 0.3s ease;
+@keyframes shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.modal-content {
+  transform-origin: center;
+  animation: modalPop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes modalPop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 /* Responsive Design */
