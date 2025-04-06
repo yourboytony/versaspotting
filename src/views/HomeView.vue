@@ -333,6 +333,21 @@ onMounted(async () => {
     if (!error.value) {
       initializeAnimations()
     }
+
+    // Handle navigation background on scroll
+    const handleScroll = () => {
+      const nav = document.querySelector('nav')
+      if (nav) {
+        if (window.scrollY > 50) {
+          nav.classList.add('scrolled')
+        } else {
+          nav.classList.remove('scrolled')
+        }
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    handleScroll() // Initial check
   } catch (e) {
     error.value = e.message
   }
@@ -343,6 +358,8 @@ onUnmounted(() => {
   if (backgroundInterval.value) {
     clearInterval(backgroundInterval.value)
   }
+  // Remove scroll listener
+  window.removeEventListener('scroll', handleScroll)
 })
 
 // Modal handlers
@@ -369,6 +386,7 @@ body {
   margin: 0;
   padding: 0;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Variables */
@@ -393,6 +411,9 @@ body {
 .home {
   margin: 0;
   padding: 0;
+  position: relative;
+  min-height: 100vh;
+  overflow-x: hidden;
 }
 
 .section-content {
@@ -422,6 +443,7 @@ h2 {
 /* Hero Section */
 .hero {
   height: 100vh;
+  width: 100%;
   position: relative;
   display: flex;
   align-items: center;
@@ -429,6 +451,9 @@ h2 {
   overflow: hidden;
   margin: 0;
   padding: 0;
+  top: 0;
+  left: 0;
+  right: 0;
 }
 
 .hero-background {
@@ -437,6 +462,8 @@ h2 {
   z-index: 0;
   margin: 0;
   padding: 0;
+  width: 100%;
+  height: 100%;
 }
 
 .background-slider {
@@ -1078,5 +1105,21 @@ h2, .overline {
   .features {
     grid-template-columns: 1fr;
   }
+}
+
+/* Navigation styles to prevent spacing issues */
+:deep(nav) {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: transparent;
+  transition: background-color 0.3s ease;
+}
+
+:deep(nav.scrolled) {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
 }
 </style>
