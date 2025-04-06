@@ -1,97 +1,113 @@
 <template>
   <div class="home">
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="hero-background">
-        <div class="background-slider">
-          <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
+    <!-- Loading State -->
+    <div v-if="isLoading" class="loading-state">
+      <div class="loading-spinner"></div>
+      <p>Loading VERSA Spotting Group...</p>
+    </div>
+
+    <!-- Error State -->
+    <div v-else-if="error" class="error-state">
+      <h2>Oops! Something went wrong</h2>
+      <p>{{ error }}</p>
+      <button @click="retryInitialization" class="btn">Retry</button>
+    </div>
+
+    <!-- Content -->
+    <template v-else>
+      <!-- Hero Section -->
+      <section class="hero">
+        <div class="hero-background">
+          <div class="background-slider">
+            <div v-for="(photo, index) in recentPhotos.slice(0, 3)" 
+                 :key="photo.id" 
+                 class="background-image"
+                 :class="{ active: currentBackgroundIndex === index }"
+                 :style="{ backgroundImage: `url(${photo.imageUrl})` }">
+            </div>
+          </div>
+          <div class="hero-overlay"></div>
+        </div>
+        <div class="hero-content">
+          <h1>VERSA<br>Spotting Group</h1>
+          <p>Vancouver's Premier Aviation Photography Community</p>
+          <div class="hero-buttons">
+            <router-link to="/portfolio" class="btn">View Gallery</router-link>
+            <router-link to="/applications" class="btn btn-outline">Join Us</router-link>
+          </div>
+        </div>
+      </section>
+
+      <!-- Stats Section -->
+      <section class="stats">
+        <div class="stats-container">
+          <div class="stat">
+            <span class="number">{{ totalPhotographers }}</span>
+            <span class="label">Members</span>
+          </div>
+          <div class="stat">
+            <span class="number">{{ totalPhotos }}</span>
+            <span class="label">Photos</span>
+          </div>
+          <div class="stat">
+            <span class="number">{{ totalLocations }}</span>
+            <span class="label">Locations</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- Gallery Section -->
+      <section class="gallery">
+        <h2>Recent Captures</h2>
+        <div class="gallery-grid">
+          <div v-for="photo in recentPhotos.slice(0, 6)" 
                :key="photo.id" 
-               class="background-image"
-               :class="{ active: currentBackgroundIndex === index }"
-               :style="{ backgroundImage: `url(${photo.imageUrl})` }">
+               class="gallery-item"
+               @click="openPhotoModal(photo)">
+            <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
+            <div class="gallery-info">
+              <h3>{{ photo.title }}</h3>
+              <p>By {{ photo.photographer }}</p>
+            </div>
           </div>
         </div>
-        <div class="hero-overlay"></div>
-      </div>
-      <div class="hero-content">
-        <h1>VERSA<br>Spotting Group</h1>
-        <p>Vancouver's Premier Aviation Photography Community</p>
-        <div class="hero-buttons">
-          <router-link to="/portfolio" class="btn">View Gallery</router-link>
-          <router-link to="/applications" class="btn btn-outline">Join Us</router-link>
-        </div>
-      </div>
-    </section>
+        <router-link to="/portfolio" class="btn">View All Photos</router-link>
+      </section>
 
-    <!-- Stats Section -->
-    <section class="stats">
-      <div class="stats-container">
-        <div class="stat">
-          <span class="number">{{ totalPhotographers }}</span>
-          <span class="label">Members</span>
+      <!-- About Section -->
+      <section class="about">
+        <div class="about-content">
+          <h2>About VERSA</h2>
+          <p>We are a community of aviation enthusiasts and photographers based in Vancouver, Canada. Our mission is to capture and share the beauty of aviation through our lenses.</p>
+          <div class="features">
+            <div class="feature">
+              <div class="feature-icon">✈️</div>
+              <h3>Aviation Focus</h3>
+              <p>Dedicated to capturing aircraft at their best moments</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">📸</div>
+              <h3>Photography Excellence</h3>
+              <p>Committed to producing high-quality aviation photography</p>
+            </div>
+            <div class="feature">
+              <div class="feature-icon">🤝</div>
+              <h3>Community Driven</h3>
+              <p>Supporting and inspiring fellow aviation photographers</p>
+            </div>
+          </div>
         </div>
-        <div class="stat">
-          <span class="number">{{ totalPhotos }}</span>
-          <span class="label">Photos</span>
-        </div>
-        <div class="stat">
-          <span class="number">{{ totalLocations }}</span>
-          <span class="label">Locations</span>
-        </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Gallery Section -->
-    <section class="gallery">
-      <h2>Recent Captures</h2>
-      <div class="gallery-grid">
-        <div v-for="photo in recentPhotos.slice(0, 6)" 
-             :key="photo.id" 
-             class="gallery-item"
-             @click="openPhotoModal(photo)">
-          <img :src="photo.imageUrl" :alt="photo.title" @error="handleImageError">
-          <div class="gallery-info">
-            <h3>{{ photo.title }}</h3>
-            <p>By {{ photo.photographer }}</p>
-          </div>
+      <!-- CTA Section -->
+      <section class="cta">
+        <div class="cta-content">
+          <h2>Ready to Join VERSA?</h2>
+          <p>Start your journey with us today and become part of Vancouver's premier aviation photography community.</p>
+          <router-link to="/applications" class="btn">Apply Now</router-link>
         </div>
-      </div>
-      <router-link to="/portfolio" class="btn">View All Photos</router-link>
-    </section>
-
-    <!-- About Section -->
-    <section class="about">
-      <div class="about-content">
-        <h2>About VERSA</h2>
-        <p>We are a community of aviation enthusiasts and photographers based in Vancouver, Canada. Our mission is to capture and share the beauty of aviation through our lenses.</p>
-        <div class="features">
-          <div class="feature">
-            <div class="feature-icon">✈️</div>
-            <h3>Aviation Focus</h3>
-            <p>Dedicated to capturing aircraft at their best moments</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon">📸</div>
-            <h3>Photography Excellence</h3>
-            <p>Committed to producing high-quality aviation photography</p>
-          </div>
-          <div class="feature">
-            <div class="feature-icon">🤝</div>
-            <h3>Community Driven</h3>
-            <p>Supporting and inspiring fellow aviation photographers</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta">
-      <div class="cta-content">
-        <h2>Ready to Join VERSA?</h2>
-        <p>Start your journey with us today and become part of Vancouver's premier aviation photography community.</p>
-        <router-link to="/applications" class="btn">Apply Now</router-link>
-      </div>
-    </section>
+      </section>
+    </template>
   </div>
 </template>
 
@@ -108,6 +124,7 @@ const selectedPhoto = ref(null)
 const isLoading = ref(true)
 const currentBackgroundIndex = ref(0)
 const backgroundInterval = ref(null)
+const error = ref(null)
 
 // Get recent photos with error handling
 const recentPhotos = computed(() => {
@@ -146,16 +163,42 @@ const rotateBackground = () => {
   }
 }
 
+// Retry initialization
+const retryInitialization = async () => {
+  isLoading.value = true
+  error.value = null
+  try {
+    await dataStore.initializeData()
+  } catch (e) {
+    error.value = e.message
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// Initialize data on component mount
 onMounted(async () => {
   if (!dataStore.isInitialized) {
-    await dataStore.initializeData()
+    try {
+      await dataStore.initializeData()
+    } catch (e) {
+      error.value = e.message
+    }
   }
   
-  // Start background rotation
+  // Start background rotation if we have photos
   if (recentPhotos.value.length > 0) {
     backgroundInterval.value = setInterval(rotateBackground, 5000)
   }
   
+  // Initialize animations only if we have content
+  if (!error.value) {
+    initializeAnimations()
+  }
+})
+
+// Initialize animations
+const initializeAnimations = () => {
   // Hero animations
   gsap.from('.hero-content', {
     duration: 1.5,
@@ -237,7 +280,7 @@ onMounted(async () => {
     opacity: 0,
     duration: 1
   })
-})
+}
 
 onUnmounted(() => {
   ScrollTrigger.getAll().forEach(trigger => trigger.kill())
@@ -629,5 +672,61 @@ const closePhotoModal = () => {
   .cta {
     padding: 4rem 1rem;
   }
+}
+
+/* Loading State */
+.loading-state {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+  color: var(--text);
+}
+
+.loading-spinner {
+  width: 50px;
+  height: 50px;
+  border: 4px solid var(--primary-light);
+  border-top: 4px solid var(--primary);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loading-state p {
+  font-size: 1.2rem;
+  color: var(--primary);
+}
+
+/* Error State */
+.error-state {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: var(--background);
+  color: var(--text);
+  padding: 2rem;
+  text-align: center;
+}
+
+.error-state h2 {
+  font-size: 2rem;
+  color: var(--primary);
+  margin-bottom: 1rem;
+}
+
+.error-state p {
+  font-size: 1.2rem;
+  margin-bottom: 2rem;
+  max-width: 600px;
 }
 </style>

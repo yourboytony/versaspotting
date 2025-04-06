@@ -4,6 +4,46 @@ import { getLatestData, syncData, initApiService } from '../services/apiService'
 // Initialize the API service
 initApiService()
 
+// Sample data for testing
+const samplePhotos = [
+  {
+    id: '1',
+    title: 'Air Canada 787 Sunset',
+    description: 'Beautiful sunset capture of an Air Canada 787 at YVR',
+    imageUrl: 'https://images.unsplash.com/photo-1436491865332-7a61a109cc05',
+    photographerId: '1',
+    date: '2025-04-01',
+    location: 'YVR',
+    aircraft: 'Boeing 787',
+    airline: 'Air Canada',
+    likes: 156
+  },
+  {
+    id: '2',
+    title: 'WestJet 737 MAX Take Off',
+    description: 'WestJet 737 MAX taking off from YVR',
+    imageUrl: 'https://images.unsplash.com/photo-1464037866556-6812c9d1c72e',
+    photographerId: '1',
+    date: '2025-04-01',
+    location: 'YVR',
+    aircraft: 'Boeing 737 MAX',
+    airline: 'WestJet',
+    likes: 142
+  },
+  {
+    id: '3',
+    title: 'Emirates A380 Landing',
+    description: 'Emirates A380 on final approach to YVR',
+    imageUrl: 'https://images.unsplash.com/photo-1570710891163-6d3b5c47248b',
+    photographerId: '1',
+    date: '2025-04-01',
+    location: 'YVR',
+    aircraft: 'Airbus A380',
+    airline: 'Emirates',
+    likes: 189
+  }
+]
+
 export const useDataStore = defineStore('data', {
   state: () => ({
     photographers: [],
@@ -29,8 +69,16 @@ export const useDataStore = defineStore('data', {
           getLatestData('announcements')
         ])
 
+        // Use sample data if no photos exist
+        if (!photos || photos.length === 0) {
+          this.photos = samplePhotos
+          await this.saveToStorage('photos')
+        } else {
+          this.photos = photos
+        }
+
         // Only use defaults if we have no data in storage
-        if (photographers.length === 0) {
+        if (!photographers || photographers.length === 0) {
           this.photographers = [
             {
               id: '1',
@@ -41,7 +89,7 @@ export const useDataStore = defineStore('data', {
               joinDate: '2025-04-01',
               bio: 'Founder of VERSA Spotting Group. Passionate about capturing the beauty of aviation at YVR.',
               status: 'active',
-              photoCount: 0
+              photoCount: samplePhotos.length
             }
           ]
           await this.saveToStorage('photographers')
@@ -49,7 +97,7 @@ export const useDataStore = defineStore('data', {
           this.photographers = photographers
         }
 
-        if (announcements.length === 0) {
+        if (!announcements || announcements.length === 0) {
           this.announcements = [
             {
               id: '1',
@@ -65,17 +113,30 @@ export const useDataStore = defineStore('data', {
           this.announcements = announcements
         }
 
-        this.photos = photos || []
         this.applications = applications || []
         this.isInitialized = true
         this.isLoading = false
-        
-        // Trigger an immediate fetch after initialization
-        this.fetchPhotos()
       } catch (error) {
         console.error('Error initializing data:', error)
         this.error = error.message
         this.isLoading = false
+        
+        // Fallback to sample data if there's an error
+        this.photos = samplePhotos
+        this.photographers = [
+          {
+            id: '1',
+            name: 'Anthony Nigro',
+            specialty: 'Aviation Photography',
+            location: 'YVR',
+            avatar: 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png',
+            joinDate: '2025-04-01',
+            bio: 'Founder of VERSA Spotting Group. Passionate about capturing the beauty of aviation at YVR.',
+            status: 'active',
+            photoCount: samplePhotos.length
+          }
+        ]
+        this.isInitialized = true
       }
     },
 
