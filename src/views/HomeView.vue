@@ -165,32 +165,40 @@ const features = [
 // Animation functions
 const initAnimations = () => {
   // Split text for hero title
-  const heroTitle = new SplitType('.hero-text h1', { types: 'lines' })
+  const heroTitle = new SplitType('.hero-text h1', { types: 'lines,chars' })
   
   // Hero animations
   const heroTL = gsap.timeline({ delay: 0.5 })
   heroTL
-    .from(heroTitle.lines, {
+    .from(heroTitle.chars, {
       y: 100,
+      opacity: 0,
+      rotateX: -90,
+      duration: 1.2,
+      stagger: 0.02,
+      ease: 'power4.out'
+    })
+    .from('.hero-subtitle', {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.8')
+    .from('.hero-cta', {
+      y: 50,
+      opacity: 0,
+      duration: 1,
+      ease: 'power3.out'
+    }, '-=0.8')
+    .from('.hero-counter', {
+      y: 50,
       opacity: 0,
       duration: 1,
       stagger: 0.2,
       ease: 'power3.out'
-    })
-    .from('.hero-subtitle', {
+    }, '-=0.8')
+    .from('.scroll-indicator', {
       y: 30,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out'
-    }, '-=0.5')
-    .from('.hero-cta', {
-      y: 30,
-      opacity: 0,
-      duration: 1,
-      ease: 'power3.out'
-    }, '-=0.7')
-    .from('.hero-counter', {
-      y: 50,
       opacity: 0,
       duration: 1,
       ease: 'power3.out'
@@ -200,11 +208,13 @@ const initAnimations = () => {
   gsap.from('.photo-card', {
     scrollTrigger: {
       trigger: '.photo-grid',
-      start: 'top 80%'
+      start: 'top 80%',
+      end: 'bottom 20%',
+      scrub: 1
     },
     y: 100,
     opacity: 0,
-    duration: 1,
+    scale: 0.9,
     stagger: 0.2,
     ease: 'power3.out'
   })
@@ -212,11 +222,13 @@ const initAnimations = () => {
   gsap.from('.feature-item', {
     scrollTrigger: {
       trigger: '.feature-grid',
-      start: 'top 80%'
+      start: 'top 80%',
+      end: 'bottom 20%',
+      scrub: 1
     },
-    y: 50,
+    y: 80,
     opacity: 0,
-    duration: 0.8,
+    scale: 0.95,
     stagger: 0.1,
     ease: 'power3.out'
   })
@@ -224,13 +236,44 @@ const initAnimations = () => {
   gsap.from('.media-stack img', {
     scrollTrigger: {
       trigger: '.about-media',
-      start: 'top 80%'
+      start: 'top 80%',
+      end: 'bottom 20%',
+      scrub: 1
     },
     y: 100,
     opacity: 0,
-    duration: 1,
+    scale: 0.9,
     stagger: 0.3,
     ease: 'power3.out'
+  })
+
+  // Parallax effects
+  gsap.to('.hero-image-container.active img', {
+    scrollTrigger: {
+      trigger: '.hero',
+      start: 'top top',
+      end: 'bottom top',
+      scrub: 1
+    },
+    y: '20%',
+    scale: 1.1
+  })
+
+  // Counter animation
+  const counterItems = document.querySelectorAll('.counter-number')
+  counterItems.forEach(item => {
+    const value = parseInt(item.textContent)
+    gsap.from(item, {
+      scrollTrigger: {
+        trigger: item,
+        start: 'top 80%'
+      },
+      textContent: 0,
+      duration: 2,
+      ease: 'power2.out',
+      snap: { textContent: 1 },
+      stagger: 0.2
+    })
   })
 }
 
@@ -251,22 +294,22 @@ onMounted(() => {
 /* Base Styles */
 :root {
   /* Enhanced color palette */
-  --primary: #0a0a0c;
-  --secondary: #141419;
+  --primary: #080810;
+  --secondary: #0c0c14;
   --accent: #00ffd5;
   --accent-dark: #00ccaa;
   --text: #ffffff;
   --text-secondary: rgba(255, 255, 255, 0.7);
-  --gradient-1: linear-gradient(135deg, #00ffd5 0%, #00b4ff 100%);
-  --gradient-2: linear-gradient(45deg, rgba(0, 255, 213, 0.1) 0%, rgba(0, 180, 255, 0.1) 100%);
+  --gradient-1: linear-gradient(135deg, #00ffd5 0%, #0066ff 100%);
+  --gradient-2: linear-gradient(45deg, rgba(0, 255, 213, 0.15) 0%, rgba(0, 102, 255, 0.15) 100%);
   --spacing: clamp(1rem, 5vw, 2rem);
-  --radius: 16px;
-  --radius-lg: 24px;
+  --radius: 20px;
+  --radius-lg: 30px;
   --radius-full: 9999px;
-  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.2);
-  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.3);
-  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --shadow-sm: 0 4px 20px rgba(0, 255, 213, 0.1);
+  --shadow-md: 0 12px 32px rgba(0, 255, 213, 0.15);
+  --shadow-lg: 0 24px 48px rgba(0, 255, 213, 0.2);
+  --transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* Enhanced Typography */
@@ -327,10 +370,11 @@ body {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(10, 10, 12, 0.4) 0%,
-    rgba(10, 10, 12, 0.8) 60%,
-    rgba(10, 10, 12, 0.95) 100%
+    rgba(8, 8, 16, 0.3) 0%,
+    rgba(8, 8, 16, 0.8) 60%,
+    rgba(8, 8, 16, 0.98) 100%
   );
+  backdrop-filter: blur(10px);
   z-index: 1;
 }
 
@@ -348,11 +392,12 @@ body {
 }
 
 .hero-text h1 {
-  font-size: clamp(2.5rem, 8vw, 5rem);
+  font-size: clamp(3rem, 10vw, 6rem);
   font-weight: 800;
   margin-bottom: 2rem;
-  letter-spacing: -0.02em;
-  line-height: 1.1;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
 }
 
 .hero-text h1 .line {
@@ -383,18 +428,20 @@ body {
 
 .counter-item {
   text-align: right;
-  padding: 1.5rem;
+  padding: 2rem;
   background: rgba(255, 255, 255, 0.03);
   backdrop-filter: blur(20px);
-  border-radius: var(--radius);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-md);
   transition: var(--transition);
 }
 
 .counter-item:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
+  transform: translateY(-8px) scale(1.02);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent);
+  box-shadow: 0 30px 60px rgba(0, 255, 213, 0.2);
 }
 
 .counter-number {
@@ -477,13 +524,15 @@ body {
   overflow: hidden;
   background: rgba(255, 255, 255, 0.03);
   transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(20px);
 }
 
 .photo-card:hover {
-  transform: translateY(-10px) scale(1.02);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-15px) scale(1.02);
+  border-color: var(--accent);
+  box-shadow: 0 40px 80px rgba(0, 255, 213, 0.25);
 }
 
 .photo-image {
@@ -496,7 +545,10 @@ body {
   content: '';
   position: absolute;
   inset: 0;
-  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.5) 100%);
+  background: linear-gradient(to bottom, 
+    rgba(8, 8, 16, 0) 0%,
+    rgba(8, 8, 16, 0.8) 100%
+  );
   opacity: 0;
   transition: var(--transition);
 }
@@ -587,18 +639,20 @@ body {
 }
 
 .feature-item {
-  padding: 2.5rem;
+  padding: 3rem;
   background: rgba(255, 255, 255, 0.03);
-  border-radius: var(--radius);
+  border-radius: var(--radius-lg);
   transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(20px);
 }
 
 .feature-item:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: rgba(255, 255, 255, 0.1);
-  box-shadow: var(--shadow-md);
+  transform: translateY(-10px) scale(1.02);
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--accent);
+  box-shadow: 0 30px 60px rgba(0, 255, 213, 0.2);
 }
 
 .feature-icon {
@@ -694,14 +748,15 @@ body {
 /* Enhanced Buttons */
 .btn-primary,
 .btn-secondary {
-  padding: 1.25rem 3rem;
-  font-size: 1rem;
+  padding: 1.5rem 4rem;
+  font-size: 1.1rem;
   font-weight: 600;
   border-radius: var(--radius-full);
   border: none;
   cursor: pointer;
   transition: var(--transition);
   letter-spacing: 0.02em;
+  box-shadow: var(--shadow-md);
 }
 
 .btn-primary {
@@ -737,8 +792,8 @@ body {
 
 .btn-primary:hover,
 .btn-secondary:hover {
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-lg);
+  transform: translateY(-6px);
+  box-shadow: 0 30px 60px rgba(0, 255, 213, 0.3);
 }
 
 .btn-secondary:hover {
@@ -766,11 +821,13 @@ body {
 }
 
 .scroll-line {
-  width: 1px;
-  height: 80px;
+  width: 2px;
+  height: 100px;
   background: linear-gradient(to bottom, var(--accent), transparent);
   margin: 1rem auto 0;
   position: relative;
+  opacity: 0.8;
+  box-shadow: 0 0 20px var(--accent);
 }
 
 .scroll-line::after {
@@ -779,11 +836,11 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
   background: var(--accent);
   border-radius: 50%;
-  box-shadow: 0 0 20px var(--accent);
+  box-shadow: 0 0 30px var(--accent);
   animation: scrollDot 2s infinite;
 }
 
