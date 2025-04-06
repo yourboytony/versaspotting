@@ -89,25 +89,42 @@ onUnmounted(() => {
   align-items: center;
 }
 
-.logo {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.logo-link {
   text-decoration: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: all 0.3s ease;
+}
+
+.logo-text {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(144, 153, 62, 0.3);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: neonPulse 3s infinite;
+}
+
+.logo-subtext {
+  font-size: 0.9rem;
+  color: var(--text-color);
+  letter-spacing: 1px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.logo-subtext:hover {
+  color: var(--primary-light);
 }
 
 .logo-img {
   height: 40px;
   width: auto;
-}
-
-.logo-text {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #fff;
-  background: linear-gradient(135deg, #90992e 0%, #b8c339 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 .nav-links {

@@ -320,24 +320,32 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  color: #00A6FF;
-  font-weight: bold;
-  transition: color 0.3s ease;
-}
-
-.logo-link:hover {
-  color: #004C99;
+  transition: all var(--transition-normal);
 }
 
 .logo-text {
-  font-size: 24px;
-  line-height: 1;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  letter-spacing: 2px;
+  text-shadow: 0 0 20px rgba(144, 153, 62, 0.3);
+  background: linear-gradient(135deg, var(--primary-color), var(--primary-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: neonPulse 3s infinite;
 }
 
 .logo-subtext {
-  font-size: 14px;
-  line-height: 1;
-  margin-top: 2px;
+  font-size: 0.9rem;
+  color: var(--text-color);
+  letter-spacing: 1px;
+  font-weight: 500;
+  transition: all var(--transition-normal);
+}
+
+.logo-subtext:hover {
+  color: var(--primary-light);
 }
 
 .nav-links {
