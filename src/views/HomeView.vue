@@ -271,82 +271,133 @@ onMounted(async () => {
   
   startBackgroundRotation()
   
-  // Simple fade-in animations for sections
+  // Apple-style scroll animations
+  // Hero section
   gsap.from('.hero-content', {
-    duration: 1,
-    y: 30,
-    opacity: 0,
-    ease: 'power2.out'
-  })
-  
-  // Animate sections on scroll
-  gsap.utils.toArray('.section-header').forEach(header => {
-    gsap.from(header, {
-      scrollTrigger: {
-        trigger: header,
-        start: 'top 80%',
-        toggleActions: 'play none none none'
-      },
-      duration: 0.8,
-      y: 30,
-      opacity: 0,
-      ease: 'power2.out'
-    })
-  })
-  
-  // Animate photo cards
-  gsap.from('.photo-card', {
-    scrollTrigger: {
-      trigger: '.photos-grid',
-      start: 'top 80%',
-      toggleActions: 'play none none none'
-    },
-    duration: 0.8,
+    duration: 1.5,
     y: 50,
     opacity: 0,
-    stagger: 0.1,
-    ease: 'power2.out'
+    ease: 'power3.out'
   })
   
-  // Animate feature cards
-  gsap.from('.feature-card', {
+  // Recent Uploads section
+  gsap.timeline({
     scrollTrigger: {
-      trigger: '.features-grid',
-      start: 'top 80%',
-      toggleActions: 'play none none none'
-    },
-    duration: 0.8,
-    y: 30,
-    opacity: 0,
-    stagger: 0.1,
-    ease: 'power2.out'
+      trigger: '.recent-uploads',
+      start: 'top top',
+      end: 'bottom top',
+      pin: true,
+      pinSpacing: true,
+      scrub: 1
+    }
   })
+  .from('.recent-uploads .section-header', {
+    y: 100,
+    opacity: 0,
+    duration: 1
+  })
+  .from('.photo-card', {
+    y: 100,
+    opacity: 0,
+    stagger: 0.2,
+    duration: 1
+  }, '-=0.5')
   
-  // Animate announcement cards
-  gsap.from('.announcement-card', {
+  // About section
+  gsap.timeline({
     scrollTrigger: {
-      trigger: '.announcements-grid',
-      start: 'top 80%',
-      toggleActions: 'play none none none'
-    },
-    duration: 0.8,
-    y: 30,
-    opacity: 0,
-    stagger: 0.1,
-    ease: 'power2.out'
+      trigger: '.about',
+      start: 'top top',
+      end: 'bottom top',
+      pin: true,
+      pinSpacing: true,
+      scrub: 1
+    }
   })
+  .from('.about-title', {
+    y: 100,
+    opacity: 0,
+    duration: 1
+  })
+  .from('.about-subtitle', {
+    y: 50,
+    opacity: 0,
+    duration: 1
+  }, '-=0.5')
+  .from('.about-text p', {
+    y: 50,
+    opacity: 0,
+    stagger: 0.2,
+    duration: 1
+  }, '-=0.5')
+  .from('.stat-box', {
+    scale: 0.8,
+    opacity: 0,
+    stagger: 0.2,
+    duration: 1
+  }, '-=0.5')
   
-  // Animate CTA section
-  gsap.from('.cta-content', {
+  // Features section
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: '.features',
+      start: 'top top',
+      end: 'bottom top',
+      pin: true,
+      pinSpacing: true,
+      scrub: 1
+    }
+  })
+  .from('.features .section-header', {
+    y: 100,
+    opacity: 0,
+    duration: 1
+  })
+  .from('.feature-card', {
+    scale: 0.8,
+    opacity: 0,
+    stagger: 0.2,
+    duration: 1
+  }, '-=0.5')
+  
+  // Announcements section
+  gsap.timeline({
+    scrollTrigger: {
+      trigger: '.announcements',
+      start: 'top top',
+      end: 'bottom top',
+      pin: true,
+      pinSpacing: true,
+      scrub: 1
+    }
+  })
+  .from('.announcements .section-header', {
+    y: 100,
+    opacity: 0,
+    duration: 1
+  })
+  .from('.announcement-card', {
+    x: -100,
+    opacity: 0,
+    stagger: 0.2,
+    duration: 1
+  }, '-=0.5')
+  
+  // CTA section
+  gsap.timeline({
     scrollTrigger: {
       trigger: '.cta',
-      start: 'top 80%',
-      toggleActions: 'play none none none'
-    },
-    duration: 0.8,
-    y: 30,
+      start: 'top top',
+      end: 'bottom top',
+      pin: true,
+      pinSpacing: true,
+      scrub: 1
+    }
+  })
+  .from('.cta-content', {
+    scale: 0.8,
     opacity: 0,
-    ease: 'power2.out'
+    duration: 1
   })
 })
 
@@ -373,6 +424,7 @@ const closePhotoModal = () => {
 <style scoped>
 .home {
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
 /* Hero Section */
@@ -473,9 +525,14 @@ const closePhotoModal = () => {
 
 /* Recent Uploads Section */
 .recent-uploads {
-  padding: 6rem 2rem;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   background: rgba(0, 0, 0, 0.3);
-  min-height: 400px;
 }
 
 .section-header {
@@ -497,6 +554,7 @@ const closePhotoModal = () => {
 .photos-container {
   max-width: 1400px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .photos-grid {
@@ -699,14 +757,20 @@ const closePhotoModal = () => {
 
 /* About Section */
 .about {
-  padding: 6rem 2rem;
-  background: var(--background-color);
+  height: 100vh;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  background: var(--background-color);
 }
 
 .about-wrapper {
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .about-header {
@@ -809,10 +873,6 @@ const closePhotoModal = () => {
 }
 
 @media (max-width: 768px) {
-  .about {
-    padding: 4rem 1rem;
-  }
-
   .about-title h2 {
     font-size: 2.5rem;
   }
@@ -828,10 +888,14 @@ const closePhotoModal = () => {
 
 /* Features Section */
 .features {
-  padding: 4rem 2rem;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   background: var(--card-background);
-  margin: 2rem;
-  border-radius: 20px;
 }
 
 .section-header {
@@ -857,6 +921,7 @@ const closePhotoModal = () => {
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .feature-card {
@@ -900,10 +965,14 @@ const closePhotoModal = () => {
 
 /* Announcements Section */
 .announcements {
-  padding: 4rem 2rem;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   background: rgba(0, 0, 0, 0.8);
-  margin: 2rem;
-  border-radius: 20px;
 }
 
 .announcements-grid {
@@ -912,6 +981,7 @@ const closePhotoModal = () => {
   gap: 2rem;
   max-width: 1200px;
   margin: 0 auto;
+  width: 100%;
 }
 
 .announcement-card {
@@ -946,10 +1016,14 @@ const closePhotoModal = () => {
 
 /* CTA Section */
 .cta {
-  padding: 4rem 2rem;
+  height: 100vh;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
   background: rgba(0, 0, 0, 0.8);
-  margin: 2rem;
-  border-radius: 20px;
   text-align: center;
 }
 
@@ -968,6 +1042,48 @@ const closePhotoModal = () => {
   color: #cccccc;
   font-size: 1.2rem;
   margin-bottom: 2rem;
+}
+
+/* Scroll Indicator */
+.scroll-indicator {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #fff;
+  opacity: 0.8;
+  z-index: 10;
+}
+
+.scroll-text {
+  font-size: 0.9rem;
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.scroll-arrow {
+  width: 30px;
+  height: 30px;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) rotate(45deg);
+  }
+  40% {
+    transform: translateY(-10px) rotate(45deg);
+  }
+  60% {
+    transform: translateY(-5px) rotate(45deg);
+  }
 }
 
 /* Responsive Design */
@@ -989,7 +1105,6 @@ const closePhotoModal = () => {
   .features,
   .announcements,
   .cta {
-    margin: 1rem;
     padding: 2rem 1rem;
   }
 
