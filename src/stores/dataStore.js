@@ -23,7 +23,7 @@ export const useDataStore = defineStore('data', {
           specialty: 'Aviation Photography',
           location: 'YVR',
           avatar: 'https://i.postimg.cc/MZF9qXhP/20250330-DSC03087-modified.png',
-          joinDate: '2024-01-01',
+          joinDate: '2025-04-01',
           bio: 'Founder of VERSA Spotting Group. Passionate about capturing the beauty of aviation at YVR.',
           status: 'active',
           photoCount: 0
@@ -36,7 +36,7 @@ export const useDataStore = defineStore('data', {
           id: '1',
           title: 'Welcome to VERSA',
           content: 'Welcome to the VERSA Spotting Group website! We are excited to share our passion for aviation photography with you.',
-          date: '2024-01-01',
+          date: '2025-04-01',
           category: 'general',
           readTime: '2 min'
         }
