@@ -576,12 +576,11 @@ h1 {
   color: #ffffff;
   margin: var(--spacing-sm) 0;
   letter-spacing: -0.02em;
-  text-shadow: 0 2px 20px rgba(0,0,0,0.5);
-  opacity: 1;
-  background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.9) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  animation: shine 3s linear infinite;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  background: none;
+  -webkit-background-clip: unset;
+  -webkit-text-fill-color: #ffffff;
+  animation: none;
 }
 
 .hero-description {
@@ -1271,12 +1270,11 @@ h1 {
 }
 
 .hero-content h1 {
-  background: linear-gradient(120deg, #ffffff 0%, rgba(255,255,255,0.8) 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 100%;
-  animation: shine 3s linear infinite;
-  filter: drop-shadow(0 0 20px rgba(255,255,255,0.2));
+  color: #ffffff;
+  -webkit-text-fill-color: #ffffff;
+  background: none;
+  animation: none;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.5);
 }
 
 @keyframes shine {
