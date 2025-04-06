@@ -572,44 +572,15 @@ body {
   overflow: hidden;
 }
 
-.footer-section::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(144, 153, 62, 0.05) 0%,
-    transparent 70%
-  );
-  opacity: 0;
-  transition: opacity var(--transition-normal);
-}
-
-.footer-section:hover::before {
-  opacity: 1;
-}
-
+/* Removing hover effects from footer sections */
+.footer-section::before,
 .footer-section::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    135deg,
-    rgba(144, 153, 62, 0.05),
-    rgba(176, 185, 94, 0.05)
-  );
-  opacity: 0;
-  transition: opacity var(--transition-normal);
+  display: none;
 }
 
+.footer-section:hover::before,
 .footer-section:hover::after {
-  opacity: 0.5;
+  display: none;
 }
 
 .footer-section h3 {
@@ -628,11 +599,11 @@ body {
   width: 40px;
   height: 2px;
   background: var(--primary-color);
-  transition: width var(--transition-normal);
 }
 
+/* Removing hover effect from h3 */
 .footer-section:hover h3::after {
-  width: 100%;
+  width: 40px;
 }
 
 .footer-section h4 {
@@ -655,33 +626,20 @@ body {
 .social-link {
   color: var(--text-secondary);
   font-size: 1.5rem;
-  transition: all var(--transition-normal);
-  position: relative;
-  overflow: hidden;
+  transition: color var(--transition-normal);
 }
 
+/* Removing hover effects from social links */
 .social-link::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at center,
-    rgba(144, 153, 62, 0.2) 0%,
-    transparent 70%
-  );
-  transform: scale(0);
-  transition: transform var(--transition-normal);
+  display: none;
 }
 
 .social-link:hover::before {
-  transform: scale(1.5);
+  display: none;
 }
 
 .social-link:hover {
-  transform: translateY(-3px);
+  transform: none;
   color: var(--primary-color);
 }
 
@@ -696,51 +654,22 @@ body {
 .footer-links a {
   color: var(--text-secondary);
   text-decoration: none;
-  transition: all var(--transition-normal);
+  transition: color var(--transition-normal);
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
   position: relative;
 }
 
-.footer-links a::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  bottom: -2px;
-  width: 0;
-  height: 1px;
-  background: linear-gradient(90deg, 
-    var(--primary-color),
-    var(--primary-light)
-  );
-  transition: width var(--transition-normal);
-}
-
-.footer-links a:hover::before {
-  width: 100%;
-}
-
+/* Removing hover effects from footer links */
+.footer-links a::before,
 .footer-links a::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--primary-color),
-    transparent
-  );
-  transform: scaleX(0);
-  transform-origin: center;
-  transition: transform var(--transition-normal);
+  display: none;
 }
 
+.footer-links a:hover::before,
 .footer-links a:hover::after {
-  transform: scaleX(1);
+  display: none;
 }
 
 .contact-info {
@@ -758,6 +687,7 @@ body {
   overflow: hidden;
 }
 
+/* Removing hover effects from contact info */
 .contact-info p::before {
   content: '';
   position: absolute;
@@ -773,29 +703,15 @@ body {
 }
 
 .contact-info p:hover::before {
-  background: var(--primary-light);
-  transform: translateY(-50%) scale(1.5);
+  transform: translateY(-50%);
 }
 
 .contact-info p::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 1px;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    var(--primary-color),
-    transparent
-  );
-  transform: translateX(-100%);
-  transition: transform var(--transition-normal);
+  display: none;
 }
 
 .contact-info p:hover::after {
-  transform: translateX(0);
+  display: none;
 }
 
 .footer-bottom {
