@@ -17,6 +17,9 @@
         <span class="scroll-text">Scroll to explore</span>
         <div class="scroll-arrow"></div>
       </div>
+      <div class="particles">
+        <div v-for="n in 20" :key="n" class="particle"></div>
+      </div>
     </section>
 
     <!-- Recent Uploads Section -->
@@ -176,6 +179,7 @@ const backgroundInterval = ref(null)
 const selectedPhoto = ref(null)
 const mainContainer = ref(null)
 const isLoading = ref(true)
+const mousePosition = ref({ x: 0, y: 0 })
 
 // Get recent photos for background with error handling
 const backgroundPhotos = computed(() => {
@@ -264,6 +268,14 @@ const totalPhotos = computed(() => dataStore.photos.length)
 const totalPhotographers = computed(() => dataStore.photographers.length)
 const totalLocations = ref(8)
 
+// Track mouse position for parallax effect
+const handleMouseMove = (e) => {
+  mousePosition.value = {
+    x: (e.clientX / window.innerWidth - 0.5) * 20,
+    y: (e.clientY / window.innerHeight - 0.5) * 20
+  }
+}
+
 onMounted(async () => {
   if (!dataStore.isInitialized) {
     await dataStore.initializeData()
@@ -271,13 +283,40 @@ onMounted(async () => {
   
   startBackgroundRotation()
   
-  // Apple-style scroll animations
-  // Hero section
+  // Add mouse move event listener for parallax effect
+  window.addEventListener('mousemove', handleMouseMove)
+  
+  // Hero section animations
   gsap.from('.hero-content', {
+    duration: 2,
+    y: 100,
+    opacity: 0,
+    ease: 'power4.out',
+    delay: 0.5
+  })
+  
+  gsap.from('.hero-buttons', {
     duration: 1.5,
     y: 50,
     opacity: 0,
-    ease: 'power3.out'
+    ease: 'power3.out',
+    delay: 1.5
+  })
+  
+  gsap.from('.scroll-indicator', {
+    duration: 1.5,
+    y: 30,
+    opacity: 0,
+    ease: 'power3.out',
+    delay: 2
+  })
+  
+  // Parallax effect for hero background
+  gsap.to('.hero-background', {
+    backgroundPosition: `${mousePosition.value.x}px ${mousePosition.value.y}px`,
+    ease: 'power1.out',
+    duration: 1,
+    repeat: -1
   })
   
   // Recent Uploads section
@@ -300,7 +339,14 @@ onMounted(async () => {
     y: 100,
     opacity: 0,
     stagger: 0.2,
-    duration: 1
+    duration: 1,
+    ease: 'back.out(1.7)'
+  }, '-=0.5')
+  .from('.view-all-btn', {
+    scale: 0.8,
+    opacity: 0,
+    duration: 1,
+    ease: 'elastic.out(1, 0.5)'
   }, '-=0.5')
   
   // About section
@@ -319,6 +365,11 @@ onMounted(async () => {
     opacity: 0,
     duration: 1
   })
+  .from('.title-line', {
+    scaleX: 0,
+    duration: 1,
+    ease: 'power2.out'
+  }, '-=0.5')
   .from('.about-subtitle', {
     y: 50,
     opacity: 0,
@@ -334,7 +385,8 @@ onMounted(async () => {
     scale: 0.8,
     opacity: 0,
     stagger: 0.2,
-    duration: 1
+    duration: 1,
+    ease: 'back.out(1.7)'
   }, '-=0.5')
   
   // Features section
@@ -357,7 +409,16 @@ onMounted(async () => {
     scale: 0.8,
     opacity: 0,
     stagger: 0.2,
-    duration: 1
+    duration: 1,
+    ease: 'back.out(1.7)'
+  }, '-=0.5')
+  .from('.feature-icon', {
+    rotation: 360,
+    scale: 0,
+    opacity: 0,
+    stagger: 0.2,
+    duration: 1,
+    ease: 'elastic.out(1, 0.5)'
   }, '-=0.5')
   
   // Announcements section
@@ -380,7 +441,8 @@ onMounted(async () => {
     x: -100,
     opacity: 0,
     stagger: 0.2,
-    duration: 1
+    duration: 1,
+    ease: 'back.out(1.7)'
   }, '-=0.5')
   
   // CTA section
@@ -397,7 +459,32 @@ onMounted(async () => {
   .from('.cta-content', {
     scale: 0.8,
     opacity: 0,
-    duration: 1
+    duration: 1,
+    ease: 'elastic.out(1, 0.5)'
+  })
+  
+  // Add floating animation to stat boxes
+  gsap.to('.stat-box', {
+    y: -10,
+    duration: 2,
+    ease: 'power1.inOut',
+    stagger: {
+      each: 0.3,
+      yoyo: true,
+      repeat: -1
+    }
+  })
+  
+  // Add pulse animation to feature icons
+  gsap.to('.feature-icon', {
+    scale: 1.1,
+    duration: 1.5,
+    ease: 'power1.inOut',
+    stagger: {
+      each: 0.5,
+      yoyo: true,
+      repeat: -1
+    }
   })
 })
 
@@ -408,6 +495,9 @@ onUnmounted(() => {
   if (backgroundInterval.value) {
     clearInterval(backgroundInterval.value)
   }
+  
+  // Remove event listener
+  window.removeEventListener('mousemove', handleMouseMove)
 })
 
 const openPhotoModal = (photo) => {
@@ -450,6 +540,7 @@ const closePhotoModal = () => {
   background-position: center;
   transition: background-image 1s ease-in-out;
   z-index: 0;
+  transform: scale(1.1);
 }
 
 .hero-overlay {
@@ -479,18 +570,21 @@ const closePhotoModal = () => {
   margin-bottom: 1rem;
   color: var(--primary-color);
   text-shadow: 0 0 20px rgba(144, 153, 62, 0.5);
+  letter-spacing: 1px;
 }
 
 .subtitle {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #ffffff;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 .description {
   font-size: 1.2rem;
   margin-bottom: 3rem;
   color: #cccccc;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .hero-buttons {
@@ -505,22 +599,104 @@ const closePhotoModal = () => {
   font-weight: 600;
   text-decoration: none;
   transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.button:hover::before {
+  left: 100%;
 }
 
 .button.primary {
   background: var(--primary-color);
   color: #000000;
+  box-shadow: 0 5px 15px rgba(144, 153, 62, 0.4);
 }
 
 .button.secondary {
   background: transparent;
   border: 2px solid var(--primary-color);
   color: var(--primary-color);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
 }
 
 .button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(144, 153, 62, 0.3);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(144, 153, 62, 0.4);
+}
+
+/* Particles */
+.particles {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.particle {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.5);
+  border-radius: 50%;
+  animation: float 15s infinite linear;
+}
+
+.particle:nth-child(1) { left: 10%; top: 20%; animation-delay: 0s; }
+.particle:nth-child(2) { left: 20%; top: 60%; animation-delay: 1s; }
+.particle:nth-child(3) { left: 30%; top: 40%; animation-delay: 2s; }
+.particle:nth-child(4) { left: 40%; top: 80%; animation-delay: 3s; }
+.particle:nth-child(5) { left: 50%; top: 30%; animation-delay: 4s; }
+.particle:nth-child(6) { left: 60%; top: 70%; animation-delay: 5s; }
+.particle:nth-child(7) { left: 70%; top: 50%; animation-delay: 6s; }
+.particle:nth-child(8) { left: 80%; top: 90%; animation-delay: 7s; }
+.particle:nth-child(9) { left: 90%; top: 10%; animation-delay: 8s; }
+.particle:nth-child(10) { left: 15%; top: 50%; animation-delay: 9s; }
+.particle:nth-child(11) { left: 25%; top: 30%; animation-delay: 10s; }
+.particle:nth-child(12) { left: 35%; top: 70%; animation-delay: 11s; }
+.particle:nth-child(13) { left: 45%; top: 20%; animation-delay: 12s; }
+.particle:nth-child(14) { left: 55%; top: 60%; animation-delay: 13s; }
+.particle:nth-child(15) { left: 65%; top: 40%; animation-delay: 14s; }
+.particle:nth-child(16) { left: 75%; top: 80%; animation-delay: 15s; }
+.particle:nth-child(17) { left: 85%; top: 30%; animation-delay: 16s; }
+.particle:nth-child(18) { left: 95%; top: 70%; animation-delay: 17s; }
+.particle:nth-child(19) { left: 5%; top: 50%; animation-delay: 18s; }
+.particle:nth-child(20) { left: 50%; top: 90%; animation-delay: 19s; }
+
+@keyframes float {
+  0% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  90% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100vh) rotate(360deg);
+    opacity: 0;
+  }
 }
 
 /* Recent Uploads Section */
@@ -544,6 +720,20 @@ const closePhotoModal = () => {
   font-size: 2.5rem;
   margin-bottom: 1rem;
   color: var(--primary-color);
+  position: relative;
+  display: inline-block;
+}
+
+.section-header h2::after {
+  content: '';
+  position: absolute;
+  bottom: -5px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 3px;
+  background: var(--primary-color);
+  border-radius: 3px;
 }
 
 .section-header p {
@@ -572,6 +762,8 @@ const closePhotoModal = () => {
   cursor: pointer;
   transition: all 0.3s ease;
   box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  transform-style: preserve-3d;
+  perspective: 1000px;
 }
 
 .photo-card img {
@@ -582,7 +774,7 @@ const closePhotoModal = () => {
 }
 
 .photo-card:hover img {
-  transform: scale(1.05);
+  transform: scale(1.1);
 }
 
 .photo-overlay {
@@ -594,6 +786,8 @@ const closePhotoModal = () => {
   display: flex;
   align-items: flex-end;
   padding: 1.5rem;
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
 }
 
 .photo-card:hover .photo-overlay {
@@ -647,11 +841,33 @@ const closePhotoModal = () => {
   border-radius: 8px;
   font-weight: 600;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.view-all-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: 0.5s;
+}
+
+.view-all-btn:hover::before {
+  left: 100%;
 }
 
 .view-all-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(144, 153, 62, 0.2);
+  transform: translateY(-5px);
+  box-shadow: 0 15px 30px rgba(144, 153, 62, 0.4);
 }
 
 /* Photo Modal */
@@ -839,11 +1055,13 @@ const closePhotoModal = () => {
   border-radius: 15px;
   text-align: center;
   border: 1px solid var(--border-color);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .stat-box:hover {
-  transform: translateY(-5px);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.2);
 }
 
 .stat-value {
@@ -936,17 +1154,23 @@ const closePhotoModal = () => {
   justify-content: flex-start;
   align-items: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
 }
 
 .feature-icon {
   font-size: 2.5rem;
   color: var(--primary-color);
   margin-bottom: 1.5rem;
+  transition: transform 0.3s ease;
+}
+
+.feature-card:hover .feature-icon {
+  transform: scale(1.2);
 }
 
 .feature-card h3 {
@@ -990,11 +1214,12 @@ const closePhotoModal = () => {
   border-radius: 15px;
   border: 1px solid var(--primary-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .announcement-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+  transform: translateY(-10px);
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.3);
 }
 
 .announcement-date {
