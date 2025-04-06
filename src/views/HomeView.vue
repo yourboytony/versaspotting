@@ -582,7 +582,6 @@ h2 {
 
 .stat:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
 }
 
 .stat-number {
@@ -592,6 +591,10 @@ h2 {
   margin-bottom: var(--spacing-xs);
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1;
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--primary) !important;
+  animation: none !important;
 }
 
 .stat-label {
@@ -609,12 +612,17 @@ h2 {
   line-height: 1.5;
 }
 
-/* Remove all complex animations for stats */
-.stat, .stat-number {
-  animation: none;
-  background: none;
-  -webkit-background-clip: unset;
-  -webkit-text-fill-color: unset;
+/* Remove all animations and effects from stats */
+.stat {
+  animation: none !important;
+}
+
+/* Remove the gradient animation styles */
+.stat-number {
+  background: none !important;
+  -webkit-background-clip: unset !important;
+  -webkit-text-fill-color: var(--primary) !important;
+  animation: none !important;
 }
 
 /* About Section */
@@ -963,27 +971,14 @@ h2 {
 }
 
 .stat {
-  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .stat:hover {
-  transform: translateY(-5px) scale(1.02);
+  transform: translateY(-5px);
 }
 
-.stat-number {
-  background: linear-gradient(45deg, var(--primary), var(--primary-light));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-size: 200% 200%;
-  animation: gradient 5s ease infinite;
-}
-
-@keyframes gradient {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
+/* Remove gradient animation for stat numbers */
 .feature {
   transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
