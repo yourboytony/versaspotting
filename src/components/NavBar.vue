@@ -1,9 +1,8 @@
 <template>
   <nav class="navbar">
     <div class="nav-content">
-      <router-link to="/" class="logo">
-        <img src="../assets/logo.png" alt="VERSA Logo" class="logo-img">
-        <span class="logo-text">VERSA</span>
+      <router-link to="/" class="logo-link" @click="scrollToTop">
+        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCAyMDAgNTAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiMwMEE2RkYiLz48dGV4dCB4PSIxMCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiPkZFUlNBIE1FRElBPC90ZXh0Pjwvc3ZnPg==" alt="VERSA Logo" class="logo-img">
       </router-link>
       
       <div class="nav-links">

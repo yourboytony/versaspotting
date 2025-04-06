@@ -3,10 +3,8 @@
     <header class="header">
       <div class="container">
         <nav class="nav">
-          <router-link to="/" class="logo" @click="scrollToTop">
-            <img src="@/assets/logo.png" alt="VERSA Logo" class="logo-img">
-            <span class="logo-text">VERSA</span>
-            <span class="logo-subtext">Spotting Group</span>
+          <router-link to="/" class="logo-link" @click="scrollToTop">
+            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCAyMDAgNTAiPjxyZWN0IHdpZHRoPSIyMDAiIGhlaWdodD0iNTAiIGZpbGw9IiMwMEE2RkYiLz48dGV4dCB4PSIxMCIgeT0iMzUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIyNCIgZmlsbD0id2hpdGUiPkZFUlNBIE1FRElBPC90ZXh0Pjwvc3ZnPg==" alt="VERSA Logo" class="logo-img">
           </router-link>
           
           <div class="nav-links" :class="{ 'active': mobileMenuOpen }">
@@ -316,7 +314,7 @@ body {
   padding: var(--spacing-md) 0;
 }
 
-.logo {
+.logo-link {
   display: flex;
   align-items: baseline;
   gap: var(--spacing-xs);
