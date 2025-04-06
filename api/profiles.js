@@ -1,4 +1,4 @@
-import clientPromise, { verifyConnection } from './mongodb'
+import { connectToDatabase, verifyConnection } from './mongodb'
 
 export const config = {
   api: {
@@ -33,10 +33,8 @@ export default async function handler(req, res) {
     })
   }
 
-  let client
   try {
-    client = await clientPromise
-    const db = client.db('versaspotting')
+    const { db } = await connectToDatabase()
     const profilesCollection = db.collection('profiles')
 
     switch (req.method) {

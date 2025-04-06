@@ -12,31 +12,27 @@ const options = {
   socketTimeoutMS: 45000, // Close sockets after 45s of inactivity
 }
 
-let client
-let clientPromise
+// In Vercel serverless functions, we need to create a new connection for each request
+let cachedClient = null
+let cachedDb = null
 
-if (process.env.NODE_ENV === 'development') {
-  // In development mode, use a global variable so that the value
-  // is preserved across module reloads caused by HMR (Hot Module Replacement).
-  if (!global._mongoClientPromise) {
-    try {
-      client = new MongoClient(uri, options)
-      global._mongoClientPromise = client.connect()
-      console.log('MongoDB connection established in development mode')
-    } catch (error) {
-      console.error('MongoDB connection error in development:', error)
-      throw error
-    }
+export async function connectToDatabase() {
+  if (cachedClient && cachedDb) {
+    return { client: cachedClient, db: cachedDb }
   }
-  clientPromise = global._mongoClientPromise
-} else {
-  // In production mode, it's best to not use a global variable.
+
   try {
-    client = new MongoClient(uri, options)
-    clientPromise = client.connect()
-    console.log('MongoDB connection established in production mode')
+    const client = new MongoClient(uri, options)
+    await client.connect()
+    const db = client.db('versaspotting')
+
+    cachedClient = client
+    cachedDb = db
+
+    console.log('MongoDB connection established')
+    return { client, db }
   } catch (error) {
-    console.error('MongoDB connection error in production:', error)
+    console.error('MongoDB connection error:', error)
     throw error
   }
 }
@@ -44,7 +40,7 @@ if (process.env.NODE_ENV === 'development') {
 // Add a function to verify the connection
 export async function verifyConnection() {
   try {
-    const client = await clientPromise
+    const { client } = await connectToDatabase()
     await client.db('versaspotting').command({ ping: 1 })
     console.log('MongoDB connection verified')
     return true
@@ -54,4 +50,5 @@ export async function verifyConnection() {
   }
 }
 
-export default clientPromise 
+// For backward compatibility
+export default connectToDatabase 
