@@ -1,16 +1,19 @@
 import { defineStore } from 'pinia'
+import { getLocalData, saveLocalData, syncData, getLatestData, initApiService } from '../services/apiService'
+
+// Initialize the API service
+initApiService()
 
 export const useDataStore = defineStore('data', {
   state: () => {
     // Try to load data from localStorage, or use default values
     const loadFromStorage = (key, defaultValue) => {
       try {
-        const stored = localStorage.getItem(key)
-        if (!stored) return defaultValue
-        const parsed = JSON.parse(stored)
-        return Array.isArray(parsed) ? parsed : defaultValue
+        // Use the API service to get the latest data
+        const data = getLatestData(key)
+        return data.length > 0 ? data : defaultValue
       } catch (error) {
-        console.error(`Error loading ${key} from localStorage:`, error)
+        console.error(`Error loading ${key} from storage:`, error)
         return defaultValue
       }
     }
@@ -52,10 +55,10 @@ export const useDataStore = defineStore('data', {
           console.error(`Cannot save ${key}: data is undefined`)
           return false
         }
-        localStorage.setItem(key, JSON.stringify(this[key]))
-        return true
+        // Use the API service to sync the data
+        return syncData(key, this[key])
       } catch (error) {
-        console.error(`Error saving ${key} to localStorage:`, error)
+        console.error(`Error saving ${key} to storage:`, error)
         return false
       }
     },
@@ -63,10 +66,8 @@ export const useDataStore = defineStore('data', {
     // Data fetching methods
     async fetchPhotos() {
       try {
-        const stored = localStorage.getItem('photos')
-        if (stored) {
-          this.photos = JSON.parse(stored)
-        }
+        // Use the API service to get the latest photos
+        this.photos = getLatestData('photos')
         return true
       } catch (error) {
         console.error('Error fetching photos:', error)
@@ -76,10 +77,8 @@ export const useDataStore = defineStore('data', {
 
     async fetchPhotographers() {
       try {
-        const stored = localStorage.getItem('photographers')
-        if (stored) {
-          this.photographers = JSON.parse(stored)
-        }
+        // Use the API service to get the latest photographers
+        this.photographers = getLatestData('photographers')
         return true
       } catch (error) {
         console.error('Error fetching photographers:', error)
@@ -89,10 +88,8 @@ export const useDataStore = defineStore('data', {
 
     async fetchApplications() {
       try {
-        const stored = localStorage.getItem('applications')
-        if (stored) {
-          this.applications = JSON.parse(stored)
-        }
+        // Use the API service to get the latest applications
+        this.applications = getLatestData('applications')
         return true
       } catch (error) {
         console.error('Error fetching applications:', error)
@@ -102,10 +99,8 @@ export const useDataStore = defineStore('data', {
 
     async fetchAnnouncements() {
       try {
-        const stored = localStorage.getItem('announcements')
-        if (stored) {
-          this.announcements = JSON.parse(stored)
-        }
+        // Use the API service to get the latest announcements
+        this.announcements = getLatestData('announcements')
         return true
       } catch (error) {
         console.error('Error fetching announcements:', error)
@@ -235,16 +230,16 @@ export const useDataStore = defineStore('data', {
       }
     },
 
-    updateApplicationStatus(id, status) {
+    updateApplication(id, updates) {
       try {
         const index = this.applications.findIndex(a => a.id === id)
         if (index !== -1) {
-          this.applications[index].status = status
+          this.applications[index] = { ...this.applications[index], ...updates }
           return this.saveToStorage('applications')
         }
         return false
       } catch (error) {
-        console.error('Error updating application status:', error)
+        console.error('Error updating application:', error)
         return false
       }
     },
