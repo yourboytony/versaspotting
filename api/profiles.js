@@ -30,7 +30,8 @@ export default async function handler(req, res) {
     if (!isConnected) {
       return res.status(500).json({ 
         error: 'Database Connection Error',
-        message: 'Unable to connect to the database. Please try again later.'
+        message: 'Unable to connect to the database. Please try again later.',
+        code: 'CONNECTION_ERROR'
       })
     }
 
@@ -46,7 +47,8 @@ export default async function handler(req, res) {
           console.error('Error fetching profiles:', error)
           return res.status(500).json({ 
             error: 'Failed to fetch profiles',
-            message: error.message || 'An unexpected error occurred'
+            message: error.message || 'An unexpected error occurred',
+            code: 'FETCH_ERROR'
           })
         }
 
@@ -61,7 +63,8 @@ export default async function handler(req, res) {
           if (missingFields.length > 0) {
             return res.status(400).json({ 
               error: 'Missing required fields',
-              fields: missingFields
+              fields: missingFields,
+              code: 'VALIDATION_ERROR'
             })
           }
 
@@ -86,7 +89,8 @@ export default async function handler(req, res) {
           console.error('Error creating profile:', error)
           return res.status(500).json({ 
             error: 'Failed to create profile',
-            message: error.message || 'An unexpected error occurred'
+            message: error.message || 'An unexpected error occurred',
+            code: 'CREATE_ERROR'
           })
         }
 
@@ -94,7 +98,10 @@ export default async function handler(req, res) {
         try {
           const { id } = req.query
           if (!id) {
-            return res.status(400).json({ error: 'Profile ID is required' })
+            return res.status(400).json({ 
+              error: 'Profile ID is required',
+              code: 'VALIDATION_ERROR'
+            })
           }
 
           const updatedProfile = {
@@ -108,7 +115,10 @@ export default async function handler(req, res) {
           )
 
           if (updateResult.matchedCount === 0) {
-            return res.status(404).json({ error: 'Profile not found' })
+            return res.status(404).json({ 
+              error: 'Profile not found',
+              code: 'NOT_FOUND'
+            })
           }
 
           return res.status(200).json(updatedProfile)
@@ -116,7 +126,8 @@ export default async function handler(req, res) {
           console.error('Error updating profile:', error)
           return res.status(500).json({ 
             error: 'Failed to update profile',
-            message: error.message || 'An unexpected error occurred'
+            message: error.message || 'An unexpected error occurred',
+            code: 'UPDATE_ERROR'
           })
         }
 
@@ -124,12 +135,18 @@ export default async function handler(req, res) {
         try {
           const profileId = req.query.id
           if (!profileId) {
-            return res.status(400).json({ error: 'Profile ID is required' })
+            return res.status(400).json({ 
+              error: 'Profile ID is required',
+              code: 'VALIDATION_ERROR'
+            })
           }
 
           const deleteResult = await profilesCollection.deleteOne({ id: profileId })
           if (deleteResult.deletedCount === 0) {
-            return res.status(404).json({ error: 'Profile not found' })
+            return res.status(404).json({ 
+              error: 'Profile not found',
+              code: 'NOT_FOUND'
+            })
           }
 
           return res.status(200).json({ message: 'Profile deleted successfully' })
@@ -137,13 +154,17 @@ export default async function handler(req, res) {
           console.error('Error deleting profile:', error)
           return res.status(500).json({ 
             error: 'Failed to delete profile',
-            message: error.message || 'An unexpected error occurred'
+            message: error.message || 'An unexpected error occurred',
+            code: 'DELETE_ERROR'
           })
         }
 
       default:
         res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE'])
-        return res.status(405).json({ error: `Method ${req.method} Not Allowed` })
+        return res.status(405).json({ 
+          error: `Method ${req.method} Not Allowed`,
+          code: 'METHOD_NOT_ALLOWED'
+        })
     }
   } catch (error) {
     console.error('Error in profiles API:', error)
@@ -153,7 +174,8 @@ export default async function handler(req, res) {
     }
     return res.status(500).json({ 
       error: 'Internal Server Error',
-      message: error.message || 'An unexpected error occurred'
+      message: error.message || 'An unexpected error occurred',
+      code: 'INTERNAL_ERROR'
     })
   }
 } 

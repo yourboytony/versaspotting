@@ -17,19 +17,19 @@ let cachedClient = null
 let cachedDb = null
 
 export async function connectToDatabase() {
-  if (cachedClient && cachedDb) {
-    try {
-      // Verify the connection is still alive
-      await cachedClient.db('versaspotting').command({ ping: 1 })
-      return { client: cachedClient, db: cachedDb }
-    } catch (error) {
-      // If the connection is dead, clear the cache and create a new one
-      cachedClient = null
-      cachedDb = null
-    }
-  }
-
   try {
+    if (cachedClient && cachedDb) {
+      try {
+        // Verify the connection is still alive
+        await cachedClient.db('versaspotting').command({ ping: 1 })
+        return { client: cachedClient, db: cachedDb }
+      } catch (error) {
+        // If the connection is dead, clear the cache and create a new one
+        cachedClient = null
+        cachedDb = null
+      }
+    }
+
     const client = new MongoClient(uri, options)
     await client.connect()
     const db = client.db('versaspotting')
@@ -44,11 +44,13 @@ export async function connectToDatabase() {
     return { client, db }
   } catch (error) {
     console.error('MongoDB connection error:', error)
-    throw {
+    // Format error for Vercel serverless function
+    const formattedError = {
       error: 'Database Connection Error',
-      message: error.message,
-      code: error.code
+      message: error.message || 'Failed to connect to database',
+      code: error.code || 'CONNECTION_ERROR'
     }
+    throw formattedError
   }
 }
 

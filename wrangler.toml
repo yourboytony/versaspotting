@@ -1,0 +1,21 @@
+name = "versaspotting"
+type = "webpack"
+account_id = ""
+workers_dev = true
+route = ""
+zone_id = ""
+
+[site]
+bucket = "./dist"
+entry-point = "workers-site"
+
+[build]
+command = "npm run build"
+
+[env.production]
+name = "versaspotting-prod"
+route = "versaspotting.com/*"
+zone_id = ""
+
+[env.production.vars]
+MONGODB_URI = "mongodb+srv://VERSAadmin:adminw8492%24%40@versaspotting.qrtcdft.mongodb.net/?retryWrites=true&w=majority&appName=versaspotting" 
