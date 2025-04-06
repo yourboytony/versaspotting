@@ -21,46 +21,58 @@
 
     <!-- Hero Section -->
     <section class="hero">
+      <!-- Background Video/Image -->
+      <div class="hero-media">
+        <div class="hero-image-container" v-for="(photo, index) in featuredPhotos" :key="photo.id" :class="{ active: currentSlide === index }">
+          <img :src="photo.imageUrl" :alt="photo.title" class="hero-image">
+        </div>
+        <div class="hero-overlay"></div>
+      </div>
+
       <div class="container">
         <div class="hero-content">
           <div class="hero-text">
-            <h1>Vancouver's Elite</h1>
-            <h1>Community</h1>
-            <p class="hero-subtitle">Experience the art of aviation photography at YVR's most exclusive locations</p>
+            <div class="brand-tag">
+              <span class="dot"></span>
+              VERSA Spotting Group
+            </div>
             
-            <div class="stats-grid">
-              <div class="stat-card">
-                <div class="stat-number">25+</div>
-                <div class="stat-label">Elite Photographers</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-number">1.2K+</div>
-                <div class="stat-label">Premium Captures</div>
-              </div>
-              <div class="stat-card">
-                <div class="stat-number">12</div>
-                <div class="stat-label">Exclusive Locations</div>
-              </div>
-            </div>
+            <h1 class="hero-title">
+              <span class="line">Vancouver's Elite</span>
+              <span class="line accent">Aviation Photography</span>
+              <span class="line">Community</span>
+            </h1>
 
-            <div class="quick-actions">
-              <div class="action-card">
-                <div class="action-icon">📸</div>
-                <div class="action-label">View Gallery</div>
-              </div>
-              <div class="action-card">
-                <div class="action-icon">🎯</div>
-                <div class="action-label">Spotting Locations</div>
-              </div>
-              <div class="action-card">
-                <div class="action-icon">👥</div>
-                <div class="action-label">Join Community</div>
-              </div>
-            </div>
+            <p class="hero-subtitle">
+              Experience the art of aviation photography at YVR's most exclusive locations
+            </p>
 
             <div class="hero-cta">
-              <button class="btn-primary">Join VERSA</button>
-              <button class="btn-secondary">View Gallery</button>
+              <button class="btn-primary">
+                Join VERSA
+                <span class="btn-icon">→</span>
+              </button>
+              <button class="btn-secondary">
+                View Gallery
+                <span class="btn-icon">↗</span>
+              </button>
+            </div>
+
+            <div class="hero-stats">
+              <div class="stat-item">
+                <div class="stat-value">25+</div>
+                <div class="stat-label">Elite Photographers</div>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="stat-value">1.2K+</div>
+                <div class="stat-label">Premium Captures</div>
+              </div>
+              <div class="stat-divider"></div>
+              <div class="stat-item">
+                <div class="stat-value">12</div>
+                <div class="stat-label">Exclusive Locations</div>
+              </div>
             </div>
           </div>
         </div>
@@ -106,13 +118,16 @@
     </div>
 
     <!-- Latest Captures -->
-    <section class="latest">
+    <section class="latest" id="latest">
       <div class="container">
         <div class="section-header">
           <div class="header-content">
-            <span class="overline">Featured Work</span>
+            <div class="section-tag">
+              <span class="dot"></span>
+              Featured Work
+            </div>
             <h2>Latest Captures</h2>
-            <p>Discover our most recent premium aviation photographs</p>
+            <p>Experience our most recent premium aviation photographs</p>
           </div>
         </div>
 
@@ -120,46 +135,92 @@
           <div v-for="photo in recentPhotos" 
                :key="photo.id" 
                class="photo-card"
-               @mouseenter="hoverPhoto(photo)"
-               @mouseleave="unhoverPhoto">
+               @click="openModal(photo)">
             <div class="photo-image">
               <img :src="photo.imageUrl" :alt="photo.title">
+              <div class="photo-overlay">
+                <div class="overlay-content">
+                  <span class="view-btn">
+                    View Details
+                    <span class="btn-icon">↗</span>
+                  </span>
+                </div>
+              </div>
             </div>
             <div class="photo-info">
-              <h3>{{ photo.title }}</h3>
-              <p>{{ photo.description }}</p>
+              <div class="info-header">
+                <h3>{{ photo.title }}</h3>
+                <span class="photo-date">{{ photo.date }}</span>
+              </div>
               <div class="photo-meta">
-                <span class="photographer">{{ photo.photographer }}</span>
-                <span class="location">{{ photo.location }}</span>
+                <div class="meta-item">
+                  <span class="meta-icon">📸</span>
+                  <span class="meta-text">{{ photo.photographer }}</span>
+                </div>
+                <div class="meta-item">
+                  <span class="meta-icon">📍</span>
+                  <span class="meta-text">{{ photo.location }}</span>
+                </div>
               </div>
             </div>
           </div>
+        </div>
+
+        <div class="section-footer">
+          <button class="btn-secondary">
+            View All Captures
+            <span class="btn-icon">→</span>
+          </button>
         </div>
       </div>
     </section>
 
     <!-- About Section -->
-    <section class="about">
+    <section class="about" id="about">
       <div class="container">
         <div class="about-grid">
           <div class="about-content">
-            <span class="overline">About VERSA</span>
+            <div class="section-tag">
+              <span class="dot"></span>
+              About VERSA
+            </div>
+            
             <h2>Premium Aviation Photography Experience</h2>
+            
             <p class="about-lead">
-              Join Vancouver's most prestigious aviation photography community and elevate your spotting experience.
+              Join Vancouver's most prestigious aviation photography community and elevate your spotting experience to new heights.
             </p>
+
             <div class="feature-grid">
-              <div class="feature-item" v-for="feature in features" :key="feature.title">
+              <div class="feature-card" v-for="feature in features" :key="feature.title">
                 <div class="feature-icon">{{ feature.icon }}</div>
-                <h3>{{ feature.title }}</h3>
-                <p>{{ feature.description }}</p>
+                <div class="feature-content">
+                  <h3>{{ feature.title }}</h3>
+                  <p>{{ feature.description }}</p>
+                </div>
               </div>
             </div>
+
+            <div class="about-cta">
+              <button class="btn-primary">
+                Join Our Community
+                <span class="btn-icon">→</span>
+              </button>
+              <button class="btn-secondary">
+                Learn More
+                <span class="btn-icon">↗</span>
+              </button>
+            </div>
           </div>
+
           <div class="about-media">
             <div class="media-stack">
-              <img :src="aboutImages[0]" alt="Aviation photography" class="stack-image main">
-              <img :src="aboutImages[1]" alt="Aviation photography" class="stack-image accent">
+              <div class="media-card main">
+                <img :src="aboutImages[0]" alt="Aviation photography" class="media-image">
+              </div>
+              <div class="media-card accent">
+                <img :src="aboutImages[1]" alt="Aviation photography" class="media-image">
+              </div>
             </div>
           </div>
         </div>
@@ -167,12 +228,51 @@
     </section>
 
     <!-- Join Section -->
-    <section class="join">
+    <section class="join" id="join">
+      <div class="join-background">
+        <div class="gradient-overlay"></div>
+      </div>
+      
       <div class="container">
         <div class="join-content">
-          <h2>Ready to Join VERSA?</h2>
-          <p>Start your journey with Vancouver's most exclusive aviation photography community</p>
-          <button class="btn-primary">Apply Now</button>
+          <div class="section-tag">
+            <span class="dot"></span>
+            Join VERSA
+          </div>
+
+          <h2>Ready to Elevate Your Aviation Photography?</h2>
+          
+          <p class="join-lead">
+            Start your journey with Vancouver's most exclusive aviation photography community. 
+            Get access to premium locations, expert guidance, and a network of passionate photographers.
+          </p>
+
+          <div class="join-features">
+            <div class="join-feature">
+              <div class="feature-check">✓</div>
+              <span>Access to exclusive spotting locations</span>
+            </div>
+            <div class="join-feature">
+              <div class="feature-check">✓</div>
+              <span>Professional photography guidance</span>
+            </div>
+            <div class="join-feature">
+              <div class="feature-check">✓</div>
+              <span>Premium community events</span>
+            </div>
+            <div class="join-feature">
+              <div class="feature-check">✓</div>
+              <span>Featured on our platform</span>
+            </div>
+          </div>
+
+          <div class="join-cta">
+            <button class="btn-primary">
+              Apply Now
+              <span class="btn-icon">→</span>
+            </button>
+            <p class="join-note">Limited spots available. Application required.</p>
+          </div>
         </div>
       </div>
     </section>
@@ -444,9 +544,8 @@ onUnmounted(() => {
 <style scoped>
 /* Base Styles */
 :root {
-  /* Enhanced color palette */
-  --primary: #080810;
-  --secondary: #0c0c14;
+  --primary: #0a0a0f;
+  --secondary: #12121a;
   --accent: #00ffd5;
   --accent-dark: #00ccaa;
   --text: #ffffff;
@@ -454,13 +553,13 @@ onUnmounted(() => {
   --gradient-1: linear-gradient(135deg, #00ffd5 0%, #0066ff 100%);
   --gradient-2: linear-gradient(45deg, rgba(0, 255, 213, 0.15) 0%, rgba(0, 102, 255, 0.15) 100%);
   --spacing: clamp(1rem, 5vw, 2rem);
-  --radius: 20px;
-  --radius-lg: 30px;
+  --radius: 16px;
+  --radius-lg: 24px;
   --radius-full: 9999px;
-  --shadow-sm: 0 4px 20px rgba(0, 255, 213, 0.1);
-  --shadow-md: 0 12px 32px rgba(0, 255, 213, 0.15);
-  --shadow-lg: 0 24px 48px rgba(0, 255, 213, 0.2);
-  --transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+  --shadow-sm: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 12px 24px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 24px 48px rgba(0, 0, 0, 0.3);
+  --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Enhanced Typography */
@@ -485,9 +584,9 @@ body {
   min-height: 100vh;
   display: flex;
   align-items: center;
-  padding: 8rem 0;
   overflow: hidden;
   background: var(--primary);
+  padding: 120px 0 60px;
 }
 
 .hero-media {
@@ -502,7 +601,6 @@ body {
   opacity: 0;
   transform: scale(1.1);
   transition: opacity 1.5s ease-out, transform 8s ease-out;
-  filter: brightness(0.8) saturate(1.2);
 }
 
 .hero-image-container.active {
@@ -514,6 +612,7 @@ body {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: brightness(0.6) saturate(1.2) contrast(1.1);
 }
 
 .hero-overlay {
@@ -521,174 +620,156 @@ body {
   inset: 0;
   background: linear-gradient(
     to bottom,
-    rgba(8, 8, 16, 0.3) 0%,
-    rgba(8, 8, 16, 0.8) 60%,
-    rgba(8, 8, 16, 0.98) 100%
+    rgba(10, 10, 15, 0.7) 0%,
+    rgba(10, 10, 15, 0.85) 50%,
+    rgba(10, 10, 15, 0.95) 100%
   );
-  backdrop-filter: blur(10px);
   z-index: 1;
 }
 
 .hero-content {
   position: relative;
   z-index: 2;
+  max-width: 1000px;
+  margin: 0 auto;
 }
 
-.hero-text {
-  max-width: 800px;
-  margin-bottom: 4rem;
+.brand-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--text);
+  margin-bottom: 3rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.hero-text h1 {
-  font-size: clamp(3.5rem, 12vw, 7rem);
+.dot {
+  width: 8px;
+  height: 8px;
+  background: var(--accent);
+  border-radius: 50%;
+  box-shadow: 0 0 20px var(--accent);
+}
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 6rem);
   font-weight: 800;
-  line-height: 0.9;
-  letter-spacing: -0.03em;
+  line-height: 1;
   margin-bottom: 2rem;
-  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.7));
+}
+
+.hero-title .line {
+  display: block;
+  margin-bottom: 0.5rem;
+}
+
+.hero-title .accent {
+  background: var(--gradient-1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
-  text-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  background-clip: text;
 }
 
 .hero-subtitle {
-  font-size: clamp(1.25rem, 4vw, 1.5rem);
+  font-size: clamp(1.25rem, 3vw, 1.5rem);
   color: var(--text-secondary);
   max-width: 600px;
   margin-bottom: 3rem;
-  line-height: 1.6;
-}
-
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  margin-top: 4rem;
-}
-
-.stat-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-lg);
-  padding: 2rem;
-  backdrop-filter: blur(20px);
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-  transition: var(--transition);
-}
-
-.stat-card:hover {
-  transform: translateY(-10px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent);
-  box-shadow: 
-    0 30px 60px rgba(0, 0, 0, 0.5),
-    0 0 40px rgba(0, 255, 213, 0.2),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-.stat-number {
-  font-size: 3.5rem;
-  font-weight: 700;
-  margin-bottom: 0.5rem;
-  background: linear-gradient(to right, var(--accent), #fff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.stat-label {
-  color: var(--text-secondary);
-  font-size: 1.1rem;
-  font-weight: 500;
-}
-
-.quick-actions {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 1.5rem;
-  margin-top: 3rem;
-}
-
-.action-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius);
-  padding: 2rem;
-  text-align: center;
-  cursor: pointer;
-  transition: var(--transition);
-  backdrop-filter: blur(10px);
-  box-shadow: 
-    0 10px 30px rgba(0, 0, 0, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.action-card:hover {
-  transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.05);
-  border-color: var(--accent);
-  box-shadow: 
-    0 20px 40px rgba(0, 0, 0, 0.4),
-    0 0 30px rgba(0, 255, 213, 0.1),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
-}
-
-.action-icon {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: var(--accent);
-}
-
-.action-label {
-  font-weight: 500;
-  color: var(--text);
+  line-height: 1.5;
 }
 
 .hero-cta {
   display: flex;
   gap: 1.5rem;
-  margin-top: 3rem;
+  margin-bottom: 4rem;
+}
+
+.btn-primary,
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem 2.5rem;
+  font-size: 1.125rem;
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  transition: var(--transition);
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent), #0066ff);
-  color: var(--text);
-  padding: 1rem 3rem;
-  border-radius: var(--radius-full);
-  font-weight: 600;
+  background: var(--gradient-1);
   border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  box-shadow: 
-    0 20px 40px rgba(0, 255, 213, 0.2),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.1);
-}
-
-.btn-primary:hover {
-  transform: translateY(-5px);
-  box-shadow: 
-    0 30px 60px rgba(0, 255, 213, 0.3),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+  color: var(--primary);
+  box-shadow: 0 20px 40px rgba(0, 255, 213, 0.3);
 }
 
 .btn-secondary {
   background: rgba(255, 255, 255, 0.1);
-  color: var(--text);
-  padding: 1rem 3rem;
-  border-radius: var(--radius-full);
-  font-weight: 600;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  cursor: pointer;
-  transition: var(--transition);
+  color: var(--text);
   backdrop-filter: blur(10px);
 }
 
+.btn-icon {
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-primary:hover,
 .btn-secondary:hover {
   transform: translateY(-5px);
-  background: rgba(255, 255, 255, 0.15);
-  border-color: var(--accent);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+}
+
+.btn-primary:hover .btn-icon,
+.btn-secondary:hover .btn-icon {
+  transform: translateX(5px);
+}
+
+.hero-stats {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  padding: 3rem;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-value {
+  font-size: 3rem;
+  font-weight: 700;
+  background: var(--gradient-1);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  margin-bottom: 0.5rem;
+}
+
+.stat-label {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 60px;
+  background: linear-gradient(to bottom, transparent, rgba(255, 255, 255, 0.1), transparent);
 }
 
 .scroll-indicator {
@@ -702,7 +783,8 @@ body {
   gap: 1rem;
   color: var(--text-secondary);
   font-size: 0.875rem;
-  opacity: 0.7;
+  font-weight: 500;
+  letter-spacing: 0.1em;
 }
 
 .scroll-line {
@@ -710,7 +792,6 @@ body {
   height: 100px;
   background: linear-gradient(to bottom, var(--accent), transparent);
   position: relative;
-  box-shadow: 0 0 20px var(--accent);
 }
 
 .scroll-dot {
@@ -718,8 +799,8 @@ body {
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 8px;
-  height: 8px;
+  width: 6px;
+  height: 6px;
   background: var(--accent);
   border-radius: 50%;
   animation: scrollDot 2s infinite;
@@ -732,9 +813,37 @@ body {
   100% { transform: translate(-50%, 100px); opacity: 0; }
 }
 
+@media (max-width: 768px) {
+  .hero {
+    padding: 100px 0 40px;
+    text-align: center;
+  }
+
+  .brand-tag {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-cta {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .hero-stats {
+    flex-direction: column;
+    gap: 2rem;
+    padding: 2rem;
+  }
+
+  .stat-divider {
+    width: 80%;
+    height: 1px;
+  }
+}
+
 /* Enhanced Latest Section */
 .latest {
-  padding: 10rem 0;
+  padding: 120px 0;
   background: var(--secondary);
   position: relative;
   overflow: hidden;
@@ -745,127 +854,203 @@ body {
   position: absolute;
   inset: 0;
   background: var(--gradient-2);
-  opacity: 0.5;
+  opacity: 0.3;
 }
 
 .section-header {
-  margin-bottom: 6rem;
   text-align: center;
+  margin-bottom: 80px;
   position: relative;
 }
 
-.overline {
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
   font-size: 0.875rem;
-  text-transform: uppercase;
-  letter-spacing: 0.2em;
-  background: var(--gradient-1);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  display: block;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  color: var(--accent);
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .section-header h2 {
   font-size: clamp(2.5rem, 5vw, 4rem);
-  margin-bottom: 1.5rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
+  margin-bottom: 1.5rem;
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .section-header p {
+  font-size: 1.25rem;
   color: var(--text-secondary);
   max-width: 600px;
   margin: 0 auto;
-  font-size: 1.125rem;
 }
 
 .photo-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 3rem;
-  position: relative;
+  grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+  gap: 2rem;
+  margin-bottom: 60px;
 }
 
 .photo-card {
-  position: relative;
+  background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-lg);
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(20px);
+  cursor: pointer;
 }
 
 .photo-card:hover {
-  transform: translateY(-15px) scale(1.02);
+  transform: translateY(-10px);
   border-color: var(--accent);
-  box-shadow: 0 40px 80px rgba(0, 255, 213, 0.25);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(0, 255, 213, 0.2);
 }
 
 .photo-image {
+  position: relative;
   aspect-ratio: 16/9;
   overflow: hidden;
-  position: relative;
-}
-
-.photo-image::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to bottom, 
-    rgba(8, 8, 16, 0) 0%,
-    rgba(8, 8, 16, 0.8) 100%
-  );
-  opacity: 0;
-  transition: var(--transition);
-}
-
-.photo-card:hover .photo-image::after {
-  opacity: 1;
 }
 
 .photo-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 1.5s ease;
+  transition: transform 1s ease;
 }
 
 .photo-card:hover .photo-image img {
   transform: scale(1.1);
 }
 
+.photo-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: var(--transition);
+}
+
+.photo-card:hover .photo-overlay {
+  opacity: 1;
+}
+
+.view-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 2rem;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  color: var(--text);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transform: translateY(20px);
+  opacity: 0;
+  transition: all 0.4s ease;
+}
+
+.photo-card:hover .view-btn {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 .photo-info {
-  padding: 2.5rem;
+  padding: 2rem;
 }
 
-.photo-info h3 {
-  font-size: 1.5rem;
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
   margin-bottom: 1rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
 }
 
-.photo-info p {
+.info-header h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+  margin: 0;
+}
+
+.photo-date {
+  font-size: 0.875rem;
   color: var(--text-secondary);
-  margin-bottom: 2rem;
-  line-height: 1.6;
 }
 
 .photo-meta {
   display: flex;
-  justify-content: space-between;
-  font-size: 0.875rem;
+  gap: 1.5rem;
+}
+
+.meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.meta-icon {
+  font-size: 1rem;
   color: var(--accent);
-  font-weight: 500;
+}
+
+.meta-text {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+.section-footer {
+  text-align: center;
+  margin-top: 60px;
+}
+
+@media (max-width: 768px) {
+  .latest {
+    padding: 80px 0;
+  }
+
+  .photo-grid {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .photo-info {
+    padding: 1.5rem;
+  }
+
+  .info-header {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .photo-date {
+    font-size: 0.75rem;
+  }
 }
 
 /* Enhanced About Section */
 .about {
-  padding: 10rem 0;
+  padding: 120px 0;
   background: var(--primary);
   position: relative;
   overflow: hidden;
@@ -876,23 +1061,30 @@ body {
   position: absolute;
   inset: 0;
   background: var(--gradient-2);
-  opacity: 0.3;
+  opacity: 0.2;
 }
 
 .about-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 6rem;
+  gap: 80px;
   align-items: center;
+  position: relative;
+}
+
+.about-content {
   position: relative;
 }
 
 .about-content h2 {
   font-size: clamp(2.5rem, 5vw, 4rem);
-  margin-bottom: 2rem;
   font-weight: 800;
-  letter-spacing: -0.02em;
   line-height: 1.1;
+  margin: 2rem 0;
+  background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.7));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .about-lead {
@@ -900,174 +1092,283 @@ body {
   color: var(--text-secondary);
   margin-bottom: 4rem;
   line-height: 1.6;
+  max-width: 540px;
 }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 2rem;
+  margin-bottom: 4rem;
 }
 
-.feature-item {
-  padding: 3rem;
+.feature-card {
+  display: flex;
+  gap: 1.5rem;
+  padding: 2rem;
   background: rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: var(--shadow-md);
-  backdrop-filter: blur(20px);
 }
 
-.feature-item:hover {
-  transform: translateY(-10px) scale(1.02);
-  background: rgba(255, 255, 255, 0.06);
+.feature-card:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.05);
   border-color: var(--accent);
-  box-shadow: 0 30px 60px rgba(0, 255, 213, 0.2);
+  box-shadow: 
+    0 20px 40px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(0, 255, 213, 0.1);
 }
 
 .feature-icon {
-  font-size: 2.5rem;
-  margin-bottom: 1.5rem;
+  font-size: 2rem;
   background: var(--gradient-1);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-.feature-item h3 {
+.feature-content h3 {
   font-size: 1.25rem;
-  margin-bottom: 1rem;
   font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text);
 }
 
-.feature-item p {
-  color: var(--text-secondary);
+.feature-content p {
   font-size: 0.9375rem;
+  color: var(--text-secondary);
   line-height: 1.6;
+}
+
+.about-cta {
+  display: flex;
+  gap: 1.5rem;
 }
 
 .media-stack {
   position: relative;
-  padding-top: 3rem;
-  padding-left: 3rem;
+  height: 100%;
+  min-height: 600px;
 }
 
-.stack-image {
+.media-card {
+  position: absolute;
   border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: var(--transition);
 }
 
-.stack-image.main {
+.media-card.main {
   width: 100%;
   aspect-ratio: 4/3;
-  object-fit: cover;
-  position: relative;
+  right: 0;
+  bottom: 0;
   z-index: 2;
-  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.stack-image.accent {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 80%;
+.media-card.accent {
+  width: 75%;
   aspect-ratio: 1;
-  object-fit: cover;
+  left: 0;
+  top: 0;
   z-index: 1;
-  filter: saturate(1.2) brightness(0.8);
-  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.media-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 1s ease;
+}
+
+.media-card:hover {
+  transform: translateY(-10px);
+  border-color: var(--accent);
+  box-shadow: 
+    0 30px 60px rgba(0, 0, 0, 0.4),
+    0 0 30px rgba(0, 255, 213, 0.2);
+}
+
+.media-card:hover .media-image {
+  transform: scale(1.1);
+}
+
+@media (max-width: 1024px) {
+  .about-grid {
+    grid-template-columns: 1fr;
+    gap: 60px;
+  }
+
+  .about-content {
+    order: 1;
+  }
+
+  .about-media {
+    order: 2;
+  }
+
+  .media-stack {
+    min-height: 500px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about {
+    padding: 80px 0;
+  }
+
+  .feature-card {
+    padding: 1.5rem;
+  }
+
+  .about-cta {
+    flex-direction: column;
+  }
+
+  .media-stack {
+    min-height: 400px;
+  }
+
+  .media-card.accent {
+    width: 70%;
+  }
 }
 
 /* Enhanced Join Section */
 .join {
-  padding: 10rem 0;
-  background: var(--gradient-1);
-  color: var(--primary);
-  text-align: center;
   position: relative;
+  padding: 120px 0;
+  color: var(--text);
   overflow: hidden;
 }
 
-.join::before {
-  content: '';
+.join-background {
   position: absolute;
   inset: 0;
-  background: linear-gradient(45deg, transparent 0%, rgba(255, 255, 255, 0.1) 100%);
+  background: var(--gradient-1);
+  z-index: 0;
+}
+
+.gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(45deg, 
+    rgba(0, 0, 0, 0.4) 0%,
+    transparent 100%
+  );
+  backdrop-filter: blur(20px);
 }
 
 .join-content {
-  max-width: 700px;
-  margin: 0 auto;
-  position: relative;
-}
-
-.join h2 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
-  margin-bottom: 1.5rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-}
-
-.join p {
-  margin-bottom: 3rem;
-  font-size: 1.25rem;
-  opacity: 0.9;
-}
-
-/* Enhanced Buttons */
-.btn-primary,
-.btn-secondary {
-  padding: 1.5rem 4rem;
-  font-size: 1.1rem;
-  font-weight: 600;
-  border-radius: var(--radius-full);
-  border: none;
-  cursor: pointer;
-  transition: var(--transition);
-  letter-spacing: 0.02em;
-  box-shadow: var(--shadow-md);
-}
-
-.btn-primary {
-  background: var(--gradient-1);
-  color: var(--primary);
-  margin-right: 1.5rem;
   position: relative;
   z-index: 1;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
 }
 
-.btn-primary::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: var(--gradient-1);
-  border-radius: var(--radius-full);
-  opacity: 0;
-  z-index: -1;
-  transition: var(--transition);
-  transform: scale(1.05);
+.join-content h2 {
+  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-weight: 800;
+  line-height: 1.1;
+  margin: 2rem 0;
+  color: var(--primary);
 }
 
-.btn-primary:hover::before {
-  opacity: 1;
-  transform: scale(1);
+.join-lead {
+  font-size: 1.25rem;
+  color: rgba(0, 0, 0, 0.8);
+  margin-bottom: 4rem;
+  line-height: 1.6;
 }
 
-.btn-secondary {
-  background: transparent;
-  border: 2px solid var(--text);
-  color: var(--text);
+.join-features {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  margin-bottom: 4rem;
 }
 
-.btn-primary:hover,
-.btn-secondary:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 30px 60px rgba(0, 255, 213, 0.3);
-}
-
-.btn-secondary:hover {
+.join-feature {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
   background: rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-full);
+  color: var(--primary);
+  font-weight: 500;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: var(--transition);
+}
+
+.join-feature:hover {
+  transform: translateY(-5px);
+  background: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.feature-check {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  color: var(--accent);
+  border-radius: 50%;
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.join-cta {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.join-cta .btn-primary {
+  background: var(--primary);
+  color: var(--text);
+  border: none;
+  padding: 1.25rem 3rem;
+  font-size: 1.25rem;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+.join-cta .btn-primary:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.3);
+}
+
+.join-note {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+  font-weight: 500;
+}
+
+@media (max-width: 768px) {
+  .join {
+    padding: 80px 0;
+  }
+
+  .join-features {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .join-feature {
+    padding: 0.875rem 1.25rem;
+  }
+
+  .join-cta .btn-primary {
+    width: 100%;
+    padding: 1rem 2rem;
+  }
 }
 
 /* Enhanced Scroll Indicator */
